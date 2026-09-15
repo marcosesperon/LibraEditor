@@ -15086,10 +15086,10 @@
   // Los nombres de ítem los construye _buildToolbarItem().
   var DEFAULT_TOOLBAR =
     'undo redo | blocktype fontsize | ' +
-    'bold italic underline strikethrough subscript superscript case removeformat | ' +
-    'link forecolor font lineheight specialchars mergetags | ' +
-    'align outdent indent | table image video audio pagebreak | ' +
-    'find wordwrap summary showblocks sourcecode markdown fullscreen print | moveup movedown';
+    'bold italic underline strikethrough | align outdent indent |' +
+    'link forecolor table image video audio | ' +
+    'font lineheight specialchars mergetags subscript superscript case pagebreak removeformat | ' +
+    'find wordwrap summary showblocks sourcecode markdown print| moveup movedown | fullscreen';
 
   // Config de los botones de formato inline (comando execCommand o wrap de tag).
   var TOOLBAR_FORMAT_TOOLS = {
