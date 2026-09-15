@@ -350,8 +350,11 @@
 .mewyse-toolbar-scroll-area.has-overflow-start .mewyse-toolbar-scroll-arrow-prev { display: flex; }
 .mewyse-toolbar-scroll-area.has-overflow-end   .mewyse-toolbar-scroll-arrow-next { display: flex; }
 
-/* Zona fija a la derecha: segunda sección visualmente independiente. */
-.mewyse-toolbar-fixed-end {
+/* Zona fija a la derecha (solo modo scroll): segunda sección visualmente
+   independiente, fuera del área de scroll y de la flecha `→`. Ancla moveup/
+   movedown/fullscreen para que sigan siempre accesibles aunque la toolbar
+   desborde. */
+.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-fixed-end {
   display: flex;
   align-items: center;
   flex-shrink: 0;

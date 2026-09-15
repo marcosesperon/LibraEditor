@@ -2713,6 +2713,13 @@
       host = scrollTrack;
     }
 
+    // En modo scroll, estos ítems se anclan a una zona fija a la derecha (fuera
+    // del área de scroll y de la flecha `→`) para que sigan SIEMPRE accesibles
+    // aunque la toolbar desborde. Solo se anclan los que estén en el spec. En
+    // modo wrap no se anclan (al envolver ya se ven todos).
+    var v_pin_set = scrollMode ? { moveup: true, movedown: true, fullscreen: true } : {};
+    var v_pinned_els = {}; // nombre → elemento anclado (pendiente de mover a la zona fija)
+
     // Construir la toolbar declarativamente desde la opción `toolbar`.
     // Filas → grupos (separados por `|`) → ítems. Cada nombre lo construye
     // _buildToolbarItem(); los grupos vacíos (p. ej. inserción desactivada) se omiten.
@@ -2731,8 +2738,12 @@
         v_group_el.className = 'mewyse-toolbar-group';
         var v_names = v_groups[gi];
         for (var ni = 0; ni < v_names.length; ni++) {
-          var v_item_el = this._buildToolbarItem(v_names[ni]);
-          if (v_item_el) v_group_el.appendChild(v_item_el);
+          var v_name = v_names[ni];
+          var v_item_el = this._buildToolbarItem(v_name);
+          if (!v_item_el) continue;
+          // Ítem anclado: se reserva para la zona fija en vez de ir al track.
+          if (v_pin_set[v_name]) { v_pinned_els[v_name] = v_item_el; continue; }
+          v_group_el.appendChild(v_item_el);
         }
         if (v_group_el.children.length > 0) {
           if (!v_first_in_row) {
@@ -2747,8 +2758,24 @@
     }
 
     // Cablear el scroll/overflow (modo scroll): flechas prev/next y gradientes.
-    // Los ítems (incluidos mover bloque) van en el track scrollable.
+    // Los ítems normales van en el track scrollable; los anclados, en la zona fija.
     if (scrollMode) {
+      // Zona fija a la derecha: clúster compacto con los ítems anclados presentes,
+      // en orden canónico. Se añade DESPUÉS de scrollArea → queda a la derecha de
+      // la flecha de scroll, siempre visible.
+      var v_pin_order = ['moveup', 'movedown', 'fullscreen'];
+      var v_fixed_end = null;
+      for (var pk = 0; pk < v_pin_order.length; pk++) {
+        var v_pin_el = v_pinned_els[v_pin_order[pk]];
+        if (!v_pin_el) continue;
+        if (!v_fixed_end) {
+          v_fixed_end = document.createElement('div');
+          v_fixed_end.className = 'mewyse-toolbar-fixed-end';
+        }
+        v_fixed_end.appendChild(v_pin_el);
+      }
+      if (v_fixed_end) toolbar.appendChild(v_fixed_end);
+
       this._toolbarScroll = { area: scrollArea, track: scrollTrack, prev: scrollPrev, next: scrollNext };
       this._setupToolbarScroll();
     }
