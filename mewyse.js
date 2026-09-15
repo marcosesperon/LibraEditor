@@ -1443,6 +1443,18 @@
           target.tagName === 'TH') {
         self.lastFocusedElement = target;
         self._updateMoveButtons();
+
+        // Si había una imagen seleccionada y el foco entra en un editable de
+        // texto distinto, deseleccionarla. La selección de imagen enfoca la
+        // propia <img> (no un editable), así que seleccionar una imagen no se
+        // auto-deselecciona; pero al pasar a editar texto (p. ej. tras
+        // "insertar bloque arriba", cuyo foco es asíncrono) hay que limpiarla:
+        // si no, el handler global de teclado de imagen seguiría vivo y
+        // secuestraría Enter (crear bloque bajo la imagen) o Backspace (borrarla),
+        // y _getFocusedBlockId() devolvería el id de la imagen, no el del texto.
+        if (self.selectedImage && self.selectedImage.element !== target) {
+          self.deselectImage();
+        }
       }
 
       // Disparar onFocus solo cuando el foco entra al editor desde fuera
@@ -3727,6 +3739,11 @@
     if (!this.imageKeydownHandler) {
       this.imageKeydownHandler = function(e) {
         if (!self.selectedImage) return;
+        // Defensa: actuar SOLO si la imagen seleccionada es de verdad el
+        // elemento con foco. Sin esto, un selectedImage "colgado" (p. ej.
+        // durante la ventana asíncrona en que el foco pasa a un párrafo)
+        // haría que este handler global secuestrara Enter/Backspace del texto.
+        if (document.activeElement !== self.selectedImage.element) return;
 
         // Eliminar imagen con Delete o Backspace
         if (e.key === 'Delete' || e.key === 'Backspace') {
