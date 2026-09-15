@@ -21137,9 +21137,11 @@
    * Cuando el menú se cierra por sus propios medios, debe llamar `_hideBackdrop(name)`
    * para sacar su entrada del stack y, si era la última, retirar el overlay.
    *
-   * El overlay es transparente (z-index 999) — los menús viven en 1000+ y los
-   * modales en 9998+, así que el overlay queda automáticamente por debajo de
-   * cualquier UI flotante y por encima del editor.
+   * El overlay es transparente (z-index 10000) — se sitúa por encima del wrapper
+   * de fullscreen (9998) para que los menús (10001+, insertados en <body>) no
+   * queden tapados en pantalla completa, y por debajo de los propios menús y de
+   * los modales (10020+). Ver la "ESCALERA DE CAPAS" documentada en mewyse.css
+   * (regla .mewyse-overlay).
    */
   meWYSE.prototype._showBackdrop = function(name, closeFn) {
     if (!name || typeof closeFn !== 'function') return;

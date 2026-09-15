@@ -197,8 +197,17 @@
 
 /* Overlay invisible que aparece mientras hay un menú flotante o modal activo.
    Bloquea clicks/teclas en el resto de la página; click en él cierra el menú
-   superior del stack. z-index 999 = encima del editor (auto/0) y debajo de cualquier
-   menú (1000+) o modal (9998+). */
+   superior del stack.
+   ESCALERA DE CAPAS (toda la "chrome" propia del editor vive por ENCIMA del
+   wrapper de fullscreen, que está en 9998; si no, en pantalla completa el wrapper
+   opaco taparía los menús —que se insertan en <body>, hermanos del wrapper—):
+     10000 = backdrop de menús (este)
+     10001 = menús flotantes (slash/mención/emoji/tag/mergetag/opciones/tipo/formato) + toolbar de tabla
+     10002 = pickers que se apilan sobre un menú (color, caracteres especiales)
+     10010 = find & replace
+     10020 = modales (modal-overlay, summary-overlay)
+     10021 = summary tooltip
+     2147483000 = toolbar tooltip (siempre arriba del todo) */
 .mewyse-overlay {
   position: fixed;
   top: 0;
@@ -206,7 +215,7 @@
   right: 0;
   bottom: 0;
   background: transparent;
-  z-index: 999;
+  z-index: 10000;
 }
 
 /* ============================================
@@ -1168,7 +1177,7 @@
   border-radius: var(--mewyse-radius-lg);
   box-shadow: var(--mewyse-shadow-md);
   padding: 4px 6px;
-  z-index: 1001;
+  z-index: 10001;
   animation: fadeIn 0.15s ease;
 }
 
@@ -1353,7 +1362,7 @@
 /* Picker de caracteres especiales */
 .mewyse-special-chars-menu {
   position: fixed;
-  z-index: 1002;
+  z-index: 10002;
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   gap: 2px;
@@ -1394,7 +1403,7 @@
   box-shadow: var(--mewyse-shadow-md);
   padding: 6px;
   min-width: 200px;
-  z-index: 1000;
+  z-index: 10001;
   max-height: 300px;
   overflow-y: auto;
 }
@@ -1444,7 +1453,7 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   padding: 8px;
   min-width: 280px;
-  z-index: 1000;
+  z-index: 10001;
   max-height: 400px;
   overflow-y: auto;
 }
@@ -1515,7 +1524,7 @@
   padding: 8px;
   min-width: 220px;
   max-width: 300px;
-  z-index: 1000;
+  z-index: 10001;
   max-height: 300px;
   overflow-y: auto;
 }
@@ -1583,7 +1592,7 @@
   padding: 8px;
   min-width: 200px;
   max-width: 280px;
-  z-index: 1000;
+  z-index: 10001;
   max-height: 300px;
   overflow-y: auto;
 }
@@ -1663,7 +1672,7 @@
   padding: 8px;
   min-width: 220px;
   max-width: 320px;
-  z-index: 1000;
+  z-index: 10001;
   max-height: 300px;
   overflow-y: auto;
 }
@@ -1720,7 +1729,7 @@
   padding: 8px;
   min-width: 250px;
   max-width: 320px;
-  z-index: 1000;
+  z-index: 10001;
   max-height: 300px;
   overflow-y: auto;
 }
@@ -1875,7 +1884,7 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  z-index: 1001;
+  z-index: 10001;
   animation: fadeIn 0.2s ease;
 }
 
@@ -1931,7 +1940,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
-  z-index: 1002;
+  z-index: 10002;
   animation: fadeIn 0.2s ease;
 }
 
@@ -2017,7 +2026,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
+  z-index: 10020;
   animation: fadeIn 0.2s ease;
 }
 
@@ -2396,7 +2405,7 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   max-height: 400px;
   overflow-y: auto;
   box-shadow: var(--mewyse-shadow-md);
-  z-index: 10001;
+  z-index: 10021;
 }
 
 .mewyse-summary-tooltip-item {
@@ -2445,7 +2454,7 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
+  z-index: 10020;
   animation: fadeIn 0.2s ease;
 }
 
@@ -3090,7 +3099,7 @@ body.mewyse-fullscreen-lock {
   border-radius: var(--mewyse-radius-lg);
   box-shadow: var(--mewyse-shadow-lg);
   padding: 12px;
-  z-index: 9999;
+  z-index: 10010;
   display: flex;
   flex-direction: column;
   gap: 8px;
