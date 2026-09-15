@@ -9,7 +9,12 @@ export interface MeWyseBlock {
   content?: any;
   checked?: boolean;
   alignment?: 'left' | 'center' | 'right' | 'justify';
+  /** Nivel de anidado en listas (bulletList/numberList/checklist), 0-5. */
   indentLevel?: number;
+  /** Sangría de párrafo (paragraph/heading1-3/quote), 1-10. Se renderiza y
+   *  exporta como margin-inline-start (40px por nivel). Independiente de
+   *  indentLevel (que es el anidado de listas). */
+  indent?: number;
   customClass?: string;
   tableStyle?: string;
   language?: string;

@@ -1074,6 +1074,10 @@
     this.currentSelectionTable = null; // Tabla actual donde se está seleccionando
     this.tableCellMouseDownCell = null; // Celda donde se hizo mousedown
     this.tableCellMouseDownBlockId = null; // BlockId de la celda mousedown
+    this._mouseSelecting = false; // true mientras se arrastra con el ratón pulsado
+                                  // dentro del editor (selección en curso). Suprime
+                                  // el menú flotante hasta soltar (evita que el
+                                  // backdrop tape el editor y desajuste la selección).
 
     // Estado del backdrop / overlay invisible que se activa mientras hay un menú o
     // modal flotante abierto. Stack LIFO: el último abierto es el primero en cerrarse
@@ -1580,11 +1584,24 @@
       if (self.isSelectingTableCells) {
         self.endTableCellSelection(self.currentSelectionBlockId);
       }
+
+      // Fin del arrastre de selección: durante el arrastre se suprimió el menú
+      // flotante (ver onSelectionChange). Ahora que el ratón se soltó, reevaluar
+      // la selección para mostrar el menú anclado a la selección ya finalizada.
+      if (self._mouseSelecting) {
+        self._mouseSelecting = false;
+        self.onSelectionChange();
+      }
     };
     document.addEventListener('mouseup', this._handleDocMouseUp);
 
     // Limpiar selección de celdas al hacer clic fuera de la tabla
     this._handleDocMouseDown = function(e) {
+      // Inicio de un posible arrastre de selección dentro del editor: marcar el
+      // estado para suprimir el menú flotante mientras dure el arrastre.
+      if (self.container && self.container.contains(e.target)) {
+        self._mouseSelecting = true;
+      }
       if (self.selectedTableCells.length > 0) {
         var clickedCell = e.target.closest('td, th');
         // No limpiar si el clic fue en la toolbar de tabla (p.ej. botón combinar)
@@ -4154,7 +4171,13 @@
    */
   meWYSE.prototype._canIndent = function(blockId) {
     var block = this.getBlock(blockId);
-    if (!block || !this._isListBlockType(block.type)) return false;
+    if (!block) return false;
+    // Bloque de texto: sangría de párrafo (margin-inline-start), tope INDENT_MAX.
+    if (INDENTABLE_TEXT_BLOCK_TYPES[block.type]) {
+      return (block.indent || 0) < INDENT_MAX;
+    }
+    // Bloque de lista: anidado real (indentLevel).
+    if (!this._isListBlockType(block.type)) return false;
     var currentLevel = block.indentLevel || 0;
     if (currentLevel >= 5) return false;
     var index = this.getBlockIndex(blockId);
@@ -4166,14 +4189,37 @@
   };
 
   /**
-   * ¿El bloque puede REDUCIR su indentación? (nivel actual > 0)
+   * ¿El bloque puede REDUCIR su indentación? Texto: block.indent > 0.
+   * Lista: block.indentLevel > 0.
    * @param {number} blockId
    * @returns {boolean}
    */
   meWYSE.prototype._canOutdent = function(blockId) {
     var block = this.getBlock(blockId);
-    if (!block || !this._isListBlockType(block.type)) return false;
+    if (!block) return false;
+    if (INDENTABLE_TEXT_BLOCK_TYPES[block.type]) return (block.indent || 0) > 0;
+    if (!this._isListBlockType(block.type)) return false;
     return (block.indentLevel || 0) > 0;
+  };
+
+  /**
+   * ¿El caret está colapsado al INICIO del elemento editable? Se usa para que
+   * Tab indente el párrafo solo al principio (en medio inserta tabulación / hace
+   * lo habitual).
+   * @param {HTMLElement} element
+   * @returns {boolean}
+   */
+  meWYSE.prototype._isCaretAtStart = function(element) {
+    if (!element) return false;
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount || !sel.isCollapsed) return false;
+    var range = sel.getRangeAt(0);
+    // Rango desde el inicio del editable hasta el caret: si no contiene texto,
+    // el caret está al principio.
+    var probe = document.createRange();
+    probe.selectNodeContents(element);
+    probe.setEnd(range.startContainer, range.startOffset);
+    return probe.toString().length === 0;
   };
 
   /**
@@ -4183,11 +4229,32 @@
    */
   meWYSE.prototype.indentBlock = function(blockId, delta) {
     var block = this.getBlock(blockId);
-    if (!block || !this._isListBlockType(block.type)) return;
+    if (!block) return;
 
     // Validar según la dirección usando los mismos criterios que la toolbar.
     if (delta > 0 && !this._canIndent(blockId)) return;
     if (delta < 0 && !this._canOutdent(blockId)) return;
+
+    // Bloque de TEXTO: sangría de párrafo. Se aplica el margin DIRECTAMENTE al
+    // elemento existente (sin re-render → caret intacto), como la alineación.
+    if (INDENTABLE_TEXT_BLOCK_TYPES[block.type]) {
+      var v_cur = block.indent || 0;
+      var v_new = Math.max(0, Math.min(INDENT_MAX, v_cur + delta));
+      if (v_new === v_cur) return;
+      this.pushHistory(true);
+      if (v_new > 0) block.indent = v_new; else delete block.indent;
+      var v_el = this.getBlockElementById(blockId);
+      if (v_el) {
+        v_el.style.marginInlineStart = v_new > 0 ? (v_new * INDENT_STEP_PX) + 'px' : '';
+      } else if (!this._patch_block(blockId)) {
+        this.render();
+      }
+      this.triggerChange();
+      this._updateIndentButtons();
+      return;
+    }
+
+    if (!this._isListBlockType(block.type)) return;
 
     var currentLevel = block.indentLevel || 0;
     var newLevel = Math.max(0, Math.min(5, currentLevel + delta));
@@ -6029,6 +6096,12 @@
     // mecanismo (advanced.alignment / tableStyle), por eso se excluyen aquí.
     if (block.alignment && TEXT_ALIGN_BLOCK_TYPES[block.type]) {
       element.style.textAlign = block.alignment;
+    }
+
+    // Sangría de párrafo (margin-inline-start). Solo bloques de texto indentables;
+    // las listas usan su anidado (indentLevel), no esto.
+    if (block.indent && INDENTABLE_TEXT_BLOCK_TYPES[block.type]) {
+      element.style.marginInlineStart = (block.indent * INDENT_STEP_PX) + 'px';
     }
 
     // Eventos para drag & drop
@@ -8613,6 +8686,10 @@
       this._tableToolbar.setAttribute('aria-label', this.t('tableMenu.toolbarLabel'));
       document.body.appendChild(this._tableToolbar);
       this._applyMenuTheme(this._tableToolbar);
+      // Tooltips propios (estilizados) también en la toolbar de tabla, como en la
+      // toolbar principal y el menú flotante. La delegación vive en el contenedor,
+      // así que sigue funcionando aunque _buildTableToolbar recree los botones.
+      this._attachTooltips(this._tableToolbar);
     }
 
     this._buildTableToolbar(info);
@@ -8634,6 +8711,7 @@
   meWYSE.prototype.hideTableToolbar = function() {
     if (this._tableToolbar) {
       if (this._tableToolbar._cancelAnchor) this._tableToolbar._cancelAnchor();
+      this._detachTooltips(this._tableToolbar);
       if (this._tableToolbar.parentNode) this._tableToolbar.parentNode.removeChild(this._tableToolbar);
       this._tableToolbar = null;
     }
@@ -11119,6 +11197,23 @@
         this.indentBlock(blockId, e.shiftKey ? -1 : 1);
         return;
       }
+      // Bloques de texto: sangría de párrafo. Tab indenta SOLO si el caret está
+      // al inicio del bloque (como Word/Docs: en medio del texto Tab hace su
+      // comportamiento normal). Shift+Tab reduce la sangría (desde cualquier
+      // posición, para poder deshacerla siempre).
+      if (currentBlock && INDENTABLE_TEXT_BLOCK_TYPES[currentBlock.type]) {
+        if (e.shiftKey) {
+          if (this._canOutdent(blockId)) {
+            e.preventDefault();
+            this.indentBlock(blockId, -1);
+            return;
+          }
+        } else if (this._isCaretAtStart(element) && this._canIndent(blockId)) {
+          e.preventDefault();
+          this.indentBlock(blockId, 1);
+          return;
+        }
+      }
     }
 
     // Enter: dividir el bloque o crear uno nuevo según la posición del cursor.
@@ -11961,6 +12056,7 @@
       if (block.checked === true) duplicatedBlock.checked = true;
       if (typeof block.alignment === 'string') duplicatedBlock.alignment = block.alignment;
       if (typeof block.indentLevel === 'number') duplicatedBlock.indentLevel = block.indentLevel;
+      if (typeof block.indent === 'number') duplicatedBlock.indent = block.indent;
       if (typeof block.customClass === 'string') duplicatedBlock.customClass = block.customClass;
       if (typeof block.language === 'string') duplicatedBlock.language = block.language;
       if (typeof block.toggleTitle === 'string') duplicatedBlock.toggleTitle = block.toggleTitle;
@@ -12816,6 +12912,16 @@
       return b.customClass ? ' class="' + b.customClass + '"' : '';
     };
 
+    // Helper: devuelve ' style="margin-inline-start:Npx"' si el bloque de texto
+    // tiene sangría de párrafo (block.indent), '' si no. Se aplica a párrafo,
+    // títulos y cita para que print()/exportPdf() reflejen la sangría.
+    var styleAttr = function(b) {
+      if (b.indent && INDENTABLE_TEXT_BLOCK_TYPES[b.type]) {
+        return ' style="margin-inline-start:' + (b.indent * INDENT_STEP_PX) + 'px"';
+      }
+      return '';
+    };
+
     // Si el documento contiene un bloque TOC, los títulos se emiten con un id de
     // ancla (para que los enlaces del índice funcionen en el HTML exportado).
     var v_has_toc = false;
@@ -12866,16 +12972,16 @@
         // Procesar bloques que no son listas
         switch (block.type) {
           case 'heading1':
-            html += '<h1' + idAttr(block) + classAttr(block) + '>' + inline(content) + '</h1>';
+            html += '<h1' + idAttr(block) + classAttr(block) + styleAttr(block) + '>' + inline(content) + '</h1>';
             break;
           case 'heading2':
-            html += '<h2' + idAttr(block) + classAttr(block) + '>' + inline(content) + '</h2>';
+            html += '<h2' + idAttr(block) + classAttr(block) + styleAttr(block) + '>' + inline(content) + '</h2>';
             break;
           case 'heading3':
-            html += '<h3' + idAttr(block) + classAttr(block) + '>' + inline(content) + '</h3>';
+            html += '<h3' + idAttr(block) + classAttr(block) + styleAttr(block) + '>' + inline(content) + '</h3>';
             break;
           case 'quote':
-            html += '<blockquote' + classAttr(block) + '>' + inline(content) + '</blockquote>';
+            html += '<blockquote' + classAttr(block) + styleAttr(block) + '>' + inline(content) + '</blockquote>';
             break;
           case 'code':
             // Solo escapar HTML en bloques de código. Si hay lenguaje válido, se
@@ -12980,7 +13086,7 @@
             html += self._buildTocHTML(blocks);
             break;
           default:
-            html += '<p' + classAttr(block) + '>' + inline(content) + '</p>';
+            html += '<p' + classAttr(block) + styleAttr(block) + '>' + inline(content) + '</p>';
         }
         i++;
       }
@@ -12999,6 +13105,11 @@
     var blocks = this.getFilteredBlocks();
     var i = 0;
     var classAttr = function(b) { return b.customClass ? ' class="' + b.customClass + '"' : ''; };
+    // Sangría de párrafo (margin-inline-start) para el código fuente HTML.
+    var styleAttr = function(b) {
+      return (b.indent && INDENTABLE_TEXT_BLOCK_TYPES[b.type])
+        ? ' style="margin-inline-start:' + (b.indent * INDENT_STEP_PX) + 'px"' : '';
+    };
 
     // Ids de ancla en títulos si hay TOC (igual que getHTML).
     var v_has_toc = false;
@@ -13039,16 +13150,16 @@
         // Procesar bloques que no son listas
         switch (block.type) {
           case 'heading1':
-            html += '<h1' + idAttr(block) + classAttr(block) + '>' + content + '</h1>';
+            html += '<h1' + idAttr(block) + classAttr(block) + styleAttr(block) + '>' + content + '</h1>';
             break;
           case 'heading2':
-            html += '<h2' + idAttr(block) + classAttr(block) + '>' + content + '</h2>';
+            html += '<h2' + idAttr(block) + classAttr(block) + styleAttr(block) + '>' + content + '</h2>';
             break;
           case 'heading3':
-            html += '<h3' + idAttr(block) + classAttr(block) + '>' + content + '</h3>';
+            html += '<h3' + idAttr(block) + classAttr(block) + styleAttr(block) + '>' + content + '</h3>';
             break;
           case 'quote':
-            html += '<blockquote' + classAttr(block) + '>' + content + '</blockquote>';
+            html += '<blockquote' + classAttr(block) + styleAttr(block) + '>' + content + '</blockquote>';
             break;
           case 'code':
             var v_code_lang_src = (block.language && CODE_LANGUAGES.hasOwnProperty(block.language) && block.language !== '')
@@ -13146,7 +13257,7 @@
             html += self._buildTocHTML(blocks);
             break;
           default:
-            html += '<p' + classAttr(block) + '>' + content + '</p>';
+            html += '<p' + classAttr(block) + styleAttr(block) + '>' + content + '</p>';
         }
         i++;
       }
@@ -14372,6 +14483,12 @@
         return;
       }
 
+      // Mientras se arrastra con el ratón pulsado (selección en curso) NO se
+      // monta el menú flotante ni su backdrop: aparecerían sobre el editor y
+      // desajustarían la selección nativa. Se mostrará en el mouseup (ver
+      // _handleDocMouseUp, que reevalúa la selección al soltar).
+      if (self._mouseSelecting) return;
+
       self.showFormatMenu(selection, range);
     }, 100);
   };
@@ -15248,6 +15365,15 @@
     paragraph: 1, heading1: 1, heading2: 1, heading3: 1, quote: 1,
     code: 1, bulletList: 1, numberList: 1, checklist: 1
   };
+
+  // Bloques de TEXTO que admiten sangría de párrafo (margin-inline-start via
+  // block.indent). NO incluye listas (usan indentLevel para el anidado real) ni
+  // code/imagen/tabla. La sangría es independiente de la alineación.
+  var INDENTABLE_TEXT_BLOCK_TYPES = {
+    paragraph: 1, heading1: 1, heading2: 1, heading3: 1, quote: 1
+  };
+  var INDENT_STEP_PX = 40; // px de sangría por nivel
+  var INDENT_MAX = 10;     // niveles máximos de sangría de párrafo
 
   // Nombre del icono (en WYSIWYG_ICONS) por valor de alineación. Lo usa el botón
   // único de alineación (dropdown) para pintar el icono del valor ACTUAL del
@@ -20323,6 +20449,14 @@
       var lvl = Math.floor(block.indentLevel);
       if (!isNaN(lvl) && lvl >= 0 && lvl <= 5) {
         clean.indentLevel = lvl;
+      }
+    }
+
+    // Preservar sangría de párrafo (block.indent, 1-INDENT_MAX) en bloques de texto.
+    if (INDENTABLE_TEXT_BLOCK_TYPES[type] && typeof block.indent === 'number') {
+      var v_ind = Math.floor(block.indent);
+      if (!isNaN(v_ind) && v_ind >= 1 && v_ind <= INDENT_MAX) {
+        clean.indent = v_ind;
       }
     }
 

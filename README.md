@@ -549,6 +549,8 @@ derivado (no se almacena) y se **actualiza solo** a medida que editas los títul
 | `Ctrl/Cmd+Shift+8` | Lista con viñetas |
 | `Tab` (en lista) | Indentar item |
 | `Shift+Tab` (en lista) | Desindentar item |
+| `Tab` al inicio de párrafo | Sangrar párrafo (título/cita también) |
+| `Shift+Tab` en párrafo | Reducir sangría del párrafo |
 | `Enter` | Nuevo bloque (o nueva línea en listas) |
 | `Backspace` en bloque vacío | Eliminar bloque |
 | `↑` al inicio del bloque | Ir al bloque anterior |
@@ -560,7 +562,9 @@ derivado (no se almacena) y se **actualiza solo** a medida que editas los títul
 | `Escape` | Cerrar menú abierto |
 
 La toolbar incluye además **botones de sangría** (indentar/desindentar) que se habilitan/
-deshabilitan según el ítem de lista con foco (mismo efecto que `Tab`/`Shift+Tab`).
+deshabilitan según el bloque con foco:
+- **En listas** anidan/desanidan el ítem (`indentLevel`, hasta 5 niveles).
+- **En párrafos, títulos y citas** aplican **sangría de párrafo** (`block.indent`, hasta 10 niveles de 40px, vía `margin-inline-start`). Se persiste en JSON y se refleja al imprimir/exportar a PDF. Es independiente del anidado de listas.
 
 ## Formato de Texto
 

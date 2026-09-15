@@ -1174,8 +1174,17 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  flex-wrap: wrap;
-  max-width: 95vw;
+  /* width: max-content → el ancho lo fija el CONTENIDO (una sola fila), en vez
+     del "shrink-to-fit" ligado al `left` del anclaje centrado (que lo estrechaba
+     a ~media ventana y provocaba el wrap). nowrap + max-width + overflow: una
+     fila mientras quepa, y scroll horizontal (barra fina) solo si supera la
+     ventana. */
+  flex-wrap: nowrap;
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
   background: var(--mewyse-bg-primary);
   color: var(--mewyse-text-primary);
   border: 1px solid var(--mewyse-border-light);
@@ -1184,6 +1193,13 @@
   padding: 4px 6px;
   z-index: 10001;
   animation: fadeIn 0.15s ease;
+}
+/* Los ítems no se comprimen: cuando no caben, se hace scroll. */
+.mewyse-table-toolbar > * { flex-shrink: 0; }
+.mewyse-table-toolbar::-webkit-scrollbar { height: 6px; }
+.mewyse-table-toolbar::-webkit-scrollbar-thumb {
+  background: var(--mewyse-border-medium);
+  border-radius: 3px;
 }
 
 .mewyse-table-toolbar-btn {
@@ -1897,6 +1913,23 @@
   gap: 2px;
   z-index: 10001;
   animation: fadeIn 0.2s ease;
+  /* width: max-content → el ancho lo fija el contenido (no el "shrink-to-fit"
+     ligado al `left` del anclaje centrado, que podría estrecharlo cerca de los
+     bordes). max-width evita superar la ventana (10px de margen a cada lado, igual
+     que el clamp de anchorMenu); si no caben todas las herramientas, scroll
+     horizontal con barra fina en vez de desbordar/comprimir. */
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+/* Los ítems no se comprimen: cuando no caben, se hace scroll (no se encogen). */
+.mewyse-format-menu > * { flex-shrink: 0; }
+.mewyse-format-menu::-webkit-scrollbar { height: 6px; }
+.mewyse-format-menu::-webkit-scrollbar-thumb {
+  background: var(--mewyse-border-medium);
+  border-radius: 3px;
 }
 
 .mewyse-format-button {
