@@ -89,6 +89,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  width: 100%;
 }
 
 /* Barra de herramientas (solo modo completo) */
@@ -96,7 +97,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 4px;
   background: var(--mewyse-bg-secondary);
   border-bottom: 1px solid var(--mewyse-border-light);
   border-radius: var(--mewyse-radius-xl);
@@ -1282,10 +1283,11 @@
   padding: 6px;
   min-width: 220px;
   z-index: 10001;
+  font-size: 12px;
 }
 
 .mewyse-options-menu-item {
-  padding: 10px 12px;
+  padding: 8px;
   cursor: pointer;
   border-radius: var(--mewyse-radius-md);
   display: flex;
@@ -1433,10 +1435,11 @@
   z-index: 10001;
   max-height: 300px;
   overflow-y: auto;
+  font-size: 12px;
 }
 
 .mewyse-type-menu-item {
-  padding: 10px 12px;
+  padding: 8px;
   cursor: pointer;
   border-radius: var(--mewyse-radius-md);
   display: flex;
@@ -1478,15 +1481,16 @@
   border: 1px solid var(--mewyse-border-light);
   border-radius: var(--mewyse-radius-xl);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  padding: 8px;
+  padding: 6px;
   min-width: 280px;
   z-index: 10001;
   max-height: 400px;
   overflow-y: auto;
+  font-size: 12px;
 }
 
 .mewyse-slash-menu-item {
-  padding: 12px;
+  padding: 8px;
   cursor: pointer;
   border-radius: var(--mewyse-radius-lg);
   display: flex;
@@ -1495,11 +1499,11 @@
   transition: background-color 0.15s ease;
 }
 
-.mewyse-slash-menu-item:hover,
-.mewyse-slash-menu-item.selected {
+.mewyse-slash-menu-item:hover {
   background-color: var(--mewyse-bg-hover);
-  border-left: 3px solid var(--mewyse-accent);
-  padding-left: 9px;
+}
+.mewyse-slash-menu-item.selected {
+  background-color: var(--mewyse-accent);
 }
 
 .mewyse-slash-menu-item:focus-visible {
@@ -1538,6 +1542,10 @@
 
 .mewyse-slash-menu-item .description {
   color: var(--mewyse-text-muted);
+}
+
+.mewyse-slash-menu-item.selected .label, .mewyse-slash-menu-item.selected .description {
+  color: var(--mewyse-text-inverse);
 }
 
 /* Menú de menciones (@mentions) */
@@ -1622,10 +1630,11 @@
   z-index: 10001;
   max-height: 300px;
   overflow-y: auto;
+  font-size: 12px;
 }
 
 .mewyse-tag-menu-item {
-  padding: 8px 12px;
+  padding: 8px;
   cursor: pointer;
   border-radius: var(--mewyse-radius-lg);
   display: flex;
@@ -2078,7 +2087,8 @@
   background: var(--mewyse-bg-primary);
   color: var(--mewyse-text-primary);
   border-radius: var(--mewyse-radius-xl);
-  padding: 24px;
+  padding: 12px;
+  font-size: 12px;
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
@@ -3038,7 +3048,7 @@ body.mewyse-fullscreen-lock {
   outline: 1px dashed rgba(102, 126, 234, 0.5);
   outline-offset: 2px;
   position: relative;
-  margin-top: 20px !important;
+  margin-top: 26px !important;
 }
 
 .mewyse-editor.mewyse-show-blocks .mewyse-block::after {
@@ -3142,13 +3152,14 @@ body.mewyse-fullscreen-lock {
   border: 1px solid var(--mewyse-border-light);
   border-radius: var(--mewyse-radius-lg);
   box-shadow: var(--mewyse-shadow-lg);
-  padding: 12px;
+  padding: 8px;
   z-index: 10010;
   display: flex;
   flex-direction: column;
   gap: 8px;
   font-family: inherit;
   color: var(--mewyse-text-primary);
+  font-size: 12px;
 }
 
 /* (Paleta dark propia del find/replace eliminada: ahora usa la paleta neutra
