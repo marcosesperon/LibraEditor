@@ -1263,7 +1263,7 @@
   box-shadow: var(--mewyse-shadow-md);
   padding: 6px;
   min-width: 220px;
-  z-index: 1000;
+  z-index: 10001;
 }
 
 .mewyse-options-menu-item {
