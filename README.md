@@ -173,6 +173,7 @@ new meWYSE(options)
 | `charCounter` | boolean | `false` | Mostrar barra inferior con contador de palabras, caracteres y tiempo de lectura |
 | `wordWrap` | boolean | `true` | Ajuste de texto: el contenido largo salta de línea dentro del bloque |
 | `toolbarOverflow` | string | `'scroll'` | Comportamiento de la toolbar sin espacio: `'scroll'` (scroll horizontal con flechas, por defecto) o `'wrap'` (salto de línea) |
+| `selectionTools` | string | `'floating'` | Dónde se ofrecen las herramientas que dependen de una selección (sub/superíndice, mayúsculas, quitar formato, enlace, color, fuente y tamaño). `'floating'`: no se pintan en la toolbar, aparecen en el **menú flotante** al seleccionar texto (aunque la toolbar esté activa). `'toolbar'`: se pintan en la toolbar pero **deshabilitadas** hasta que hay selección de texto. **Nota:** negrita, cursiva, subrayado y tachado quedan SIEMPRE en la toolbar y habilitados (funcionan con solo el caret, activando el formato para lo siguiente que escribas) |
 | `rtl` | boolean | `false` | Activar dirección derecha-a-izquierda (árabe, hebreo) |
 | `pasteAsText` | boolean | `false` | Forzar que todo paste entre como texto plano (sin preservar formato) |
 | `escapeHtmlEntities` | boolean | `true` | Escapar entidades HTML en el HTML exportado por `getHTML()` |

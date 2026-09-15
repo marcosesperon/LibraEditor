@@ -587,6 +587,36 @@ editor.focus(blockId); // bloque especifico
       <div id="noToolbarEditor"></div>
     </div>
 
+    <!-- Demo: Herramientas dependientes de seleccion (selectionTools) -->
+    <div class="demo-section">
+      <h2>Herramientas de selecci&oacute;n (<code>selectionTools</code>)</h2>
+      <p>Las herramientas que <strong>necesitan una selecci&oacute;n</strong> para tener sentido (sub/super&iacute;ndice, may&uacute;sculas, quitar formato, enlace, color, fuente y tama&ntilde;o) no tienen por qu&eacute; ocupar la toolbar cuando no se pueden usar. La opci&oacute;n <code>selectionTools</code> decide d&oacute;nde aparecen. <strong>Negrita, cursiva, subrayado y tachado</strong> quedan <strong>siempre</strong> en la toolbar (funcionan con solo el caret y reflejan su <strong>estado activo</strong> con fondo resaltado).</p>
+
+      <h3 style="margin:16px 0 6px;font-size:15px;">1. <code>'floating'</code> (por defecto)</h3>
+      <p>Esas herramientas <strong>no</strong> se pintan en la toolbar; aparecen en el <strong>men&uacute; flotante</strong> al seleccionar texto (aunque la toolbar est&eacute; activa). La alineaci&oacute;n, que es de bloque, se queda en la toolbar.</p>
+      <div class="config-hint">
+        Selecciona una palabra para ver el men&uacute; flotante con color, fuente, tama&ntilde;o, enlace&hellip; Pulsa <strong>negrita</strong> sin seleccionar nada y empieza a escribir: el texto sale en negrita y el bot&oacute;n queda resaltado.
+      </div>
+      <pre class="docs-code"><code>var editor = new meWYSE({
+  target: '#selectionFloatingEditor',
+  toolbar: true
+  // selectionTools: 'floating'  // valor por defecto
+});</code></pre>
+      <div id="selectionFloatingEditor"></div>
+
+      <h3 style="margin:20px 0 6px;font-size:15px;">2. <code>'toolbar'</code></h3>
+      <p>Se pintan en la toolbar pero <strong>deshabilitadas</strong> (en gris) hasta que hay una <strong>selecci&oacute;n de texto</strong>; al colapsar el caret vuelven a deshabilitarse.</p>
+      <div class="config-hint">
+        Fíjate en color, fuente, tama&ntilde;o, enlace, may&uacute;sculas&hellip; salen en gris. Selecciona texto y se habilitan; negrita/cursiva/subrayado/tachado est&aacute;n siempre activas.
+      </div>
+      <pre class="docs-code"><code>var editor = new meWYSE({
+  target: '#selectionToolbarEditor',
+  toolbar: true,
+  selectionTools: 'toolbar'
+});</code></pre>
+      <div id="selectionToolbarEditor"></div>
+    </div>
+
     <!-- Demo: Salto de página -->
     <div class="demo-section">
       <h2>Salto de p&aacute;gina</h2>
@@ -1201,6 +1231,8 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     var toolbarEditor;
     var wrapEditor;
     var noToolbarEditor;
+    var selectionFloatingEditor;
+    var selectionToolbarEditor;
     var pageBreakEditor;
     var dirtyEditor;
     var unknownEditor;
@@ -1266,6 +1298,27 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
         onChange: function(data) {
           console.log('Editor sin toolbar - Contenido:', data.plainText);
         }
+      });
+    }
+
+    // Inicializar editores de selectionTools (floating por defecto y toolbar)
+    function initSelectionToolsEditors() {
+      var demoBlocks = [
+        { id: 1, type: 'heading2', content: 'Herramientas de seleccion' },
+        { id: 2, type: 'paragraph', content: 'Selecciona una parte de este texto para probar las herramientas de formato. Negrita, cursiva, subrayado y tachado funcionan tambien con solo el caret (sin seleccionar).' }
+      ];
+      // 1) floating (por defecto): las tools de seleccion van al menu flotante
+      selectionFloatingEditor = new meWYSE({
+        target: '#selectionFloatingEditor',
+        toolbar: true,
+        blocks: demoBlocks
+      });
+      // 2) toolbar: se muestran en la toolbar pero deshabilitadas hasta que hay seleccion
+      selectionToolbarEditor = new meWYSE({
+        target: '#selectionToolbarEditor',
+        toolbar: true,
+        selectionTools: 'toolbar',
+        blocks: demoBlocks
       });
     }
 
@@ -2238,6 +2291,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
       initToolbarEditor();
       initWrapEditor();
       initNoToolbarEditor();
+      initSelectionToolsEditors();
       initPageBreakEditor();
       initDirtyEditor();
       initUnknownEditor();

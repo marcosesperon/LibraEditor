@@ -949,6 +949,13 @@
     // a la derecha.
     // 'wrap' = saltan a la siguiente fila.
     this.toolbarOverflow = (this.options.toolbarOverflow === 'wrap') ? 'wrap' : 'scroll';
+    // Herramientas dependientes de SELECCIÓN (ver SELECTION_TOOL_NAMES): dónde se
+    // ofrecen cuando hay toolbar.
+    //  'floating' (default): NO se pintan en la toolbar; aparecen en el menú
+    //    flotante de formato al seleccionar texto (aunque la toolbar esté activa).
+    //  'toolbar': se pintan en la toolbar pero DESHABILITADAS hasta que hay una
+    //    selección de texto no colapsada; el menú flotante se suprime con toolbar.
+    this._selectionToolsMode = (this.options.selectionTools === 'toolbar') ? 'toolbar' : 'floating';
     this.pasteAsText = this.options.pasteAsText === true; // Forzar paste solo como texto plano
     // Por defecto, getHTML() escapa los 5 caracteres de entidad HTML (& < > " ')
     // en los nodos de TEXTO del contenido inline (heading, quote, paragraph,
@@ -2382,9 +2389,15 @@
     var cfg = TOOLBAR_FORMAT_TOOLS[name];
     if (!cfg) return null;
     var v_icon = cfg.icon || (cfg.iconName ? WYSIWYG_ICONS[cfg.iconName] : '');
-    return this._makeToolbarButton({
+    var v_btn = this._makeToolbarButton({
       icon: v_icon,
       title: self.t(cfg.labelKey),
+      // preventDefault en mousedown: al pulsar, el foco NO sale del bloque
+      // editable. Así, con el caret colapsado (sin selección), execCommand activa
+      // el formato para lo que se escriba a continuación (toggle de escritura,
+      // comportamiento WYSIWYG estándar); y con texto seleccionado, no se pierde
+      // la selección.
+      onmousedown: function(e) { e.preventDefault(); },
       onclick: function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -2395,8 +2408,18 @@
           var v_applied = self._applyInlineAcrossSelection(function() { document.execCommand(cfg.command, false, null); });
           if (!v_applied) { document.execCommand(cfg.command, false, null); self.triggerChange(); }
         }
+        // Refrescar el estado activo del botón tras alternar el formato.
+        self._updateFormatButtonStates();
       }
     });
+    // Botones con comando execCommand (bold/italic/underline/strikethrough):
+    // se registran para reflejar su ESTADO ACTIVO (fondo resaltado) según el
+    // formato del caret/selección (queryCommandState). Los de tipo wrapTag
+    // (sub/superíndice) no usan execCommand, así que no se registran.
+    if (cfg.command && this._formatStateButtons) {
+      this._formatStateButtons.push({ el: v_btn, command: cfg.command });
+    }
+    return v_btn;
   };
 
   /**
@@ -2732,6 +2755,16 @@
     var v_pin_set = scrollMode ? { moveup: true, movedown: true, fullscreen: true } : {};
     var v_pinned_els = {}; // nombre → elemento anclado (pendiente de mover a la zona fija)
 
+    // Herramientas dependientes de selección: en modo 'floating' NO se pintan en la
+    // toolbar (van al menú flotante); en modo 'toolbar' se pintan y se recogen aquí
+    // para habilitarlas/deshabilitarlas según la selección (_updateSelectionTools).
+    var v_selection_mode = this._selectionToolsMode;
+    this._selectionToolEls = [];
+    // Botones de formato con estado activo (bold/italic/underline/strikethrough):
+    // los rellena _buildFormatButton durante el bucle; _updateFormatButtonStates
+    // les pone/quita la clase `active` según queryCommandState.
+    this._formatStateButtons = [];
+
     // Construir la toolbar declarativamente desde la opción `toolbar`.
     // Filas → grupos (separados por `|`) → ítems. Cada nombre lo construye
     // _buildToolbarItem(); los grupos vacíos (p. ej. inserción desactivada) se omiten.
@@ -2751,10 +2784,18 @@
         var v_names = v_groups[gi];
         for (var ni = 0; ni < v_names.length; ni++) {
           var v_name = v_names[ni];
+          // Herramienta de selección en modo 'floating': se omite de la toolbar
+          // (vive en el menú flotante de formato).
+          if (SELECTION_TOOL_NAMES[v_name] && v_selection_mode === 'floating') continue;
           var v_item_el = this._buildToolbarItem(v_name);
           if (!v_item_el) continue;
           // Ítem anclado: se reserva para la zona fija en vez de ir al track.
           if (v_pin_set[v_name]) { v_pinned_els[v_name] = v_item_el; continue; }
+          // Herramienta de selección en modo 'toolbar': se recoge para gestionar
+          // su estado disabled según la selección.
+          if (SELECTION_TOOL_NAMES[v_name] && v_selection_mode === 'toolbar') {
+            this._selectionToolEls.push(v_item_el);
+          }
           v_group_el.appendChild(v_item_el);
         }
         if (v_group_el.children.length > 0) {
@@ -2807,7 +2848,74 @@
     // delegación sobre la toolbar.
     this._attachTooltips(toolbar);
 
+    // Estado inicial de las herramientas de selección (modo 'toolbar'): sin
+    // selección al cargar → deshabilitadas.
+    this._updateSelectionTools();
+    // Estado activo inicial de los botones de formato (sin foco → inactivos).
+    this._updateFormatButtonStates();
+
     return toolbar;
+  };
+
+  /**
+   * Refleja el ESTADO ACTIVO (clase `active` → fondo resaltado) de los botones de
+   * formato de la toolbar (bold/italic/underline/strikethrough) según el formato
+   * del caret/selección, vía `document.queryCommandState`. Se llama en cada cambio
+   * de selección/caret y tras pulsar un botón. Si el foco no está dentro del
+   * editor, todos quedan inactivos (queryCommandState se refiere al editable
+   * enfocado).
+   */
+  meWYSE.prototype._updateFormatButtonStates = function() {
+    if (!this._formatStateButtons || !this._formatStateButtons.length) return;
+    var v_focused = this.container && this.container.contains(document.activeElement);
+    for (var i = 0; i < this._formatStateButtons.length; i++) {
+      var v_it = this._formatStateButtons[i];
+      var v_on = false;
+      if (v_focused) {
+        try { v_on = document.queryCommandState(v_it.command); } catch (e) { v_on = false; }
+      }
+      v_it.el.classList.toggle('active', v_on);
+    }
+  };
+
+  /**
+   * Habilita/deshabilita las herramientas de selección de la toolbar según haya
+   * o no una selección de texto NO colapsada dentro del editor. Solo aplica en
+   * modo `selectionTools: 'toolbar'` (en 'floating' esos ítems no están en la
+   * toolbar). Deshabilita tanto el propio botón como los `<button>` internos
+   * (p. ej. los pasos [−]/[+] del stepper de tamaño de fuente).
+   */
+  meWYSE.prototype._updateSelectionTools = function() {
+    if (this._selectionToolsMode !== 'toolbar') return;
+    if (!this._selectionToolEls || !this._selectionToolEls.length) return;
+    var v_enabled = this._hasUsableSelection();
+    for (var i = 0; i < this._selectionToolEls.length; i++) {
+      var v_el = this._selectionToolEls[i];
+      if (!v_el) continue;
+      if (v_el.tagName === 'BUTTON') v_el.disabled = !v_enabled;
+      var v_inner = v_el.querySelectorAll ? v_el.querySelectorAll('button') : [];
+      for (var j = 0; j < v_inner.length; j++) v_inner[j].disabled = !v_enabled;
+      // Clase para atenuar contenedores que no son <button> (p. ej. el stepper).
+      if (v_el.classList) v_el.classList.toggle('mewyse-tool-disabled', !v_enabled);
+    }
+  };
+
+  /**
+   * ¿Hay una selección de texto NO colapsada dentro del editor? Base para
+   * habilitar las herramientas de selección (mismo criterio que el menú flotante).
+   * @returns {boolean}
+   */
+  meWYSE.prototype._hasUsableSelection = function() {
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount || sel.isCollapsed || sel.toString().trim() === '') return false;
+    var range = sel.getRangeAt(0);
+    var node = range.commonAncestorContainer;
+    if (node && node.nodeType === 3) node = node.parentNode;
+    while (node) {
+      if (node === this.container) return true;
+      node = node.parentNode;
+    }
+    return false;
   };
 
   /**
@@ -14185,6 +14293,10 @@
       return;
     }
 
+    // Reflejar el estado activo de los botones de formato (bold/italic/…) en cada
+    // cambio de selección/caret (inmediato, sin esperar al timeout del menú).
+    this._updateFormatButtonStates();
+
     // Limpiar timeout anterior
     if (this.formatMenuTimeout) {
       clearTimeout(this.formatMenuTimeout);
@@ -14196,6 +14308,9 @@
       self._updateTableToolbar();
       // Reflejar el tamaño de fuente del caret en el stepper (si existe).
       self._updateFontSizeStepper();
+      // Habilitar/deshabilitar las herramientas de selección de la toolbar
+      // (modo 'toolbar') según haya o no selección de texto.
+      self._updateSelectionTools();
 
       var selection = window.getSelection();
 
@@ -14270,10 +14385,12 @@
     var self = this;
     var isCrossBlock = !!crossBlockReference;
 
-    // Si la toolbar está activa, las acciones de formato (B/I/U, color, etc.)
-    // ya están disponibles ahí — el menú flotante sería redundante. Evitamos
-    // mostrarlo y cerramos cualquier menú abierto por si quedaba uno previo.
-    if (this.showToolbar) {
+    // Con toolbar activa, el menú flotante solo se suprime en modo
+    // `selectionTools: 'toolbar'` (ahí las herramientas de formato viven en la
+    // propia toolbar → sería redundante). En modo 'floating' (default) las
+    // herramientas de selección NO están en la toolbar, así que el menú flotante
+    // SÍ debe mostrarse aunque la toolbar esté activa.
+    if (this.showToolbar && this._selectionToolsMode === 'toolbar') {
       this.closeFormatMenu();
       return;
     }
@@ -14290,23 +14407,39 @@
       { action: 'italic', label: 'I', titleKey: 'tooltips.italic', command: 'italic' },
       { action: 'underline', label: 'U', titleKey: 'tooltips.underline', command: 'underline' },
       { action: 'strikethrough', label: 'S', titleKey: 'tooltips.strikethrough', command: 'strikeThrough' },
-      { action: 'subscript', label: WYSIWYG_ICONS.subscript, titleKey: 'tooltips.subscript', type: 'wrapTag', tag: 'sub', crossCommand: 'subscript' },
-      { action: 'superscript', label: WYSIWYG_ICONS.superscript, titleKey: 'tooltips.superscript', type: 'wrapTag', tag: 'sup', crossCommand: 'superscript' },
-      { action: 'caseMenu', label: 'Aa', titleKey: 'tooltips.toggleCase', type: 'caseMenu' },
-      { action: 'removeFormat', label: WYSIWYG_ICONS.removeFormat, titleKey: 'tooltips.removeFormat', type: 'removeFormat' },
       { action: 'separator', type: 'separator' },
       { action: 'link', label: WYSIWYG_ICONS.link, titleKey: 'tooltips.insertLink', command: 'createLink' },
-      { action: 'separator', type: 'separator' },
       { action: 'color', label: 'A', titleKey: 'tooltips.color', type: 'colorPicker' },
       { action: 'separator', type: 'separator' },
-      { action: 'alignMenu', label: WYSIWYG_ICONS.alignLeft, titleKey: 'tooltips.alignLeft', type: 'alignMenu' }
+      { action: 'caseMenu', label: 'Aa', titleKey: 'tooltips.toggleCase', type: 'caseMenu' },
+      { action: 'subscript', label: WYSIWYG_ICONS.subscript, titleKey: 'tooltips.subscript', type: 'wrapTag', tag: 'sub', crossCommand: 'subscript' },
+      { action: 'superscript', label: WYSIWYG_ICONS.superscript, titleKey: 'tooltips.superscript', type: 'wrapTag', tag: 'sup', crossCommand: 'superscript' },
+      { action: 'removeFormat', label: WYSIWYG_ICONS.removeFormat, titleKey: 'tooltips.removeFormat', type: 'removeFormat' },
+      { action: 'separator', type: 'separator' },
+      { action: 'font', label: WYSIWYG_ICONS.font, titleKey: 'tooltips.font', type: 'fontMenu' }
     ];
+    tools.push({ action: 'fontSize', type: 'fontSizeStepper' });
+
+    // La alineación es de BLOQUE (no de la selección) y, cuando hay toolbar activa,
+    // ya está allí → incluir el botón de alineación en el menú flotante solo si
+    // NO hay toolbar (editor sin barra: el menú flotante es su única UI).
+    if (!this.showToolbar) {
+      tools.push({ action: 'separator', type: 'separator' });
+      tools.push({ action: 'alignMenu', label: WYSIWYG_ICONS.alignLeft, titleKey: 'tooltips.alignLeft', type: 'alignMenu' });
+    }
 
     tools.forEach(function(tool) {
       if (tool.type === 'separator') {
         var separator = document.createElement('div');
         separator.className = 'mewyse-format-separator';
         menu.appendChild(separator);
+        return;
+      }
+
+      // Tamaño de fuente: reutiliza el stepper [−][valor][+] (no es un botón
+      // simple). Fija this._fontSizeDisplay al stepper del menú flotante.
+      if (tool.type === 'fontSizeStepper') {
+        menu.appendChild(self._buildFontSizeStepper());
         return;
       }
 
@@ -14320,6 +14453,10 @@
       // Botón único de alineación: icono del valor actual (sin flecha lateral).
       if (tool.type === 'alignMenu') {
         button.innerHTML = self._alignButtonInnerHTML(self._getCurrentAlignment() || 'left');
+        button.setAttribute('aria-haspopup', 'true');
+      }
+      // Botón de familia de fuente: abre el menú de fuente (submenú).
+      if (tool.type === 'fontMenu') {
         button.setAttribute('aria-haspopup', 'true');
       }
 
@@ -14344,6 +14481,8 @@
             self.removeFormat();
           } else if (tool.type === 'colorPicker') {
             self.showUnifiedColorPicker(button);
+          } else if (tool.type === 'fontMenu') {
+            self.showFontMenu(button);
           } else if (tool.type === 'wrapTag') {
             // Sub/sup en cross-block: usar el comando nativo (coherente con el
             // resto de formatos cross-block, que van por execCommand).
@@ -14363,6 +14502,8 @@
             self.removeFormat();
           } else if (tool.type === 'colorPicker') {
             self.showUnifiedColorPicker(button);
+          } else if (tool.type === 'fontMenu') {
+            self.showFontMenu(button);
           } else if (tool.type === 'wrapTag') {
             // Sub/superíndice: envolver en <sub>/<sup> (toggle) + persistir.
             self._wrapSelectionInTag(tool.tag);
@@ -14385,6 +14526,9 @@
     // Tooltips propios también en el menú flotante de formato (se desadjunta en
     // closeFormatMenu, ya que el menú se recrea en cada selección).
     this._attachTooltips(menu);
+
+    // Reflejar el tamaño de fuente de la selección en el stepper recién creado.
+    this._updateFontSizeStepper();
 
     // Guardar el range para poder calcular su posición dinámicamente
     this.formatMenuRange = range;
@@ -15127,6 +15271,20 @@
     'link forecolor table image video audio | ' +
     'font lineheight specialchars mergetags subscript superscript case pagebreak removeformat | ' +
     'find wordwrap summary showblocks sourcecode markdown print| moveup movedown | fullscreen';
+
+  // Ítems de toolbar que DEPENDEN de una selección de texto para aplicarse.
+  // Según la opción `selectionTools`:
+  //  - 'floating' (default): NO se pintan en la toolbar; van al menú flotante de formato.
+  //  - 'toolbar': se pintan pero deshabilitados hasta que hay selección no colapsada.
+  // NO están aquí (a propósito):
+  //  - bold/italic/underline/strikethrough: son "toggles de escritura" (funcionan
+  //    con solo el caret, activando el formato para lo que se escriba después) →
+  //    siempre en la toolbar y siempre habilitados, como en TinyMCE/Word/Docs.
+  //  - align: aplica al bloque aunque no haya selección.
+  var SELECTION_TOOL_NAMES = {
+    subscript: 1, superscript: 1, case: 1, removeformat: 1,
+    link: 1, forecolor: 1, font: 1, fontsize: 1
+  };
 
   // Config de los botones de formato inline (comando execCommand o wrap de tag).
   var TOOLBAR_FORMAT_TOOLS = {

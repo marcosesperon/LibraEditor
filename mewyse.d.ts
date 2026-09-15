@@ -65,6 +65,16 @@ export interface MeWyseOptions {
    *  showblocks sourcecode markdown fullscreen print exportword exportpdf moveup movedown.
    *  (print entra en el default; exportword/exportpdf no). */
   toolbar?: boolean | string | string[];
+  /** Dónde se ofrecen las herramientas dependientes de selección (subscript,
+   *  superscript, case, removeformat, link, forecolor, font, fontsize) cuando hay
+   *  toolbar:
+   *  - 'floating' (default): NO se pintan en la toolbar; aparecen en el menú
+   *    flotante de formato al seleccionar texto (aunque la toolbar esté activa).
+   *  - 'toolbar': se pintan en la toolbar pero deshabilitadas hasta que hay una
+   *    selección de texto no colapsada.
+   *  Nota: bold/italic/underline/strikethrough quedan SIEMPRE en la toolbar y
+   *  habilitados (toggles de escritura: funcionan con solo el caret). */
+  selectionTools?: 'floating' | 'toolbar';
   summary?: boolean;
   /** Tema: 'dark' (oscuro), 'auto' (sigue prefers-color-scheme del OS en vivo),
    *  'compact', o custom. Sin especificar → claro (no auto-detecta). */
