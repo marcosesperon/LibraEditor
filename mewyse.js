@@ -3121,86 +3121,95 @@
           };
           imageContainer.appendChild(editButton);
 
-          // Crear handle de redimensionamiento
-          var resizeHandle = document.createElement('div');
-          resizeHandle.className = 'mewyse-image-resize-handle';
-          resizeHandle.title = self.t('tooltips.dragToResize');
-
-          // Variables para el redimensionamiento
-          var isResizing = false;
-          var startX, startY, startWidth;
+          // Ratio fijo de la imagen de la celda (calculado al insertar).
           var cellAspectRatio = width / height;
 
-          resizeHandle.onmousedown = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
+          // Crea un handle de redimensionado para una esquina. v_sign invierte el
+          // sentido: +1 en la esquina inferior-derecha, -1 en la superior-izquierda
+          // (arrastrar hacia fuera agranda en ambas).
+          var v_make_cell_resize_handle = function(v_corner_class, v_sign) {
+            var handle = document.createElement('div');
+            handle.className = 'mewyse-image-resize-handle ' + v_corner_class;
+            handle.title = self.t('tooltips.dragToResize');
 
-            isResizing = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            startWidth = parseInt(imgElement.style.width);
+            var isResizing = false;
+            var startX, startY, startWidth;
 
-            document.body.style.cursor = 'nwse-resize';
-            imageContainer.classList.add('mewyse-image-resizing');
-            document.body.style.userSelect = 'none';
+            var mouseMoveHandler = function(e) {
+              if (!isResizing) return;
 
-            // Registrar los listeners SOLO durante el arrastre (se quitan en
-            // mouseUpHandler): así el resize funciona en CADA uso, no solo el
-            // primero, y no quedan listeners colgando en document tras insertar.
-            document.addEventListener('mousemove', mouseMoveHandler);
-            document.addEventListener('mouseup', mouseUpHandler);
-          };
+              var deltaX = e.clientX - startX;
+              var deltaY = e.clientY - startY;
+              var delta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
 
-          var mouseMoveHandler = function(e) {
-            if (!isResizing) return;
+              var newWidth = startWidth + v_sign * delta;
+              var newHeight = Math.round(newWidth / cellAspectRatio);
 
-            var deltaX = e.clientX - startX;
-            var deltaY = e.clientY - startY;
-            var delta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
+              if (newWidth < 50) {
+                newWidth = 50;
+                newHeight = Math.round(newWidth / cellAspectRatio);
+              }
 
-            var newWidth = startWidth + delta;
-            var newHeight = Math.round(newWidth / cellAspectRatio);
+              imgElement.style.width = newWidth + 'px';
+              imgElement.style.height = newHeight + 'px';
+            };
 
-            if (newWidth < 50) {
-              newWidth = 50;
-              newHeight = Math.round(newWidth / cellAspectRatio);
-            }
+            var mouseUpHandler = function(e) {
+              if (!isResizing) return;
 
-            imgElement.style.width = newWidth + 'px';
-            imgElement.style.height = newHeight + 'px';
-          };
+              isResizing = false;
+              document.body.style.cursor = '';
+              imageContainer.classList.remove('mewyse-image-resizing');
+              document.body.style.userSelect = '';
 
-          var mouseUpHandler = function(e) {
-            if (!isResizing) return;
+              // Remover event listeners
+              document.removeEventListener('mousemove', mouseMoveHandler);
+              document.removeEventListener('mouseup', mouseUpHandler);
 
-            isResizing = false;
-            document.body.style.cursor = '';
-            imageContainer.classList.remove('mewyse-image-resizing');
-            document.body.style.userSelect = '';
-
-            // Remover event listeners
-            document.removeEventListener('mousemove', mouseMoveHandler);
-            document.removeEventListener('mouseup', mouseUpHandler);
-
-            // Actualizar el contenido de la tabla
-            var tableElement = tableCell.closest('table');
-            if (tableElement) {
-              var tableWrapper = tableElement.closest('.mewyse-table-wrapper');
-              if (tableWrapper) {
-                var blockElement = tableWrapper.closest('[data-block-id]');
-                if (blockElement) {
-                  var blockId = parseInt(blockElement.getAttribute('data-block-id'));
-                  self.updateBlockContent(blockId, tableElement.innerHTML);
+              // Actualizar el contenido de la tabla
+              var tableElement = tableCell.closest('table');
+              if (tableElement) {
+                var tableWrapper = tableElement.closest('.mewyse-table-wrapper');
+                if (tableWrapper) {
+                  var blockElement = tableWrapper.closest('[data-block-id]');
+                  if (blockElement) {
+                    var blockId = parseInt(blockElement.getAttribute('data-block-id'));
+                    self.updateBlockContent(blockId, tableElement.innerHTML);
+                  }
                 }
               }
-            }
 
-            self.triggerChange();
-            // Tras redimensionar, dejar la imagen de la celda seleccionada/enfocada
-            self.selectImage(imgElement, null, true, tableCell);
+              self.triggerChange();
+              // Tras redimensionar, dejar la imagen de la celda seleccionada/enfocada
+              self.selectImage(imgElement, null, true, tableCell);
+            };
+
+            handle.onmousedown = function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+
+              isResizing = true;
+              startX = e.clientX;
+              startY = e.clientY;
+              startWidth = parseInt(imgElement.style.width);
+
+              document.body.style.cursor = 'nwse-resize';
+              imageContainer.classList.add('mewyse-image-resizing');
+              document.body.style.userSelect = 'none';
+
+              // Registrar los listeners SOLO durante el arrastre (se quitan en
+              // mouseUpHandler): así el resize funciona en CADA uso, no solo el
+              // primero, y no quedan listeners colgando en document tras insertar.
+              document.addEventListener('mousemove', mouseMoveHandler);
+              document.addEventListener('mouseup', mouseUpHandler);
+            };
+
+            return handle;
           };
 
-          imageContainer.appendChild(resizeHandle);
+          // Handle inferior-derecho (existente) + superior-izquierdo (nuevo).
+          imageContainer.appendChild(v_make_cell_resize_handle('mewyse-image-resize-handle-se', 1));
+          imageContainer.appendChild(v_make_cell_resize_handle('mewyse-image-resize-handle-nw', -1));
 
           // Añadir contenedor al wrapper
           imageWrapper.appendChild(imageContainer);
@@ -6178,13 +6187,6 @@
     };
     imageContainer.appendChild(editImageBtn);
 
-    // Handle de redimensionamiento
-    var resizeHandle = document.createElement('div');
-    resizeHandle.className = 'mewyse-image-resize-handle';
-    resizeHandle.title = self.t('tooltips.dragToResize');
-
-    var isResizing = false;
-    var startX, startY, startWidth;
     // Ratio: de las dimensiones del bloque si existen; si no (imagen a tamaño
     // natural, sin dims), de las dimensiones naturales del <img>. Se recalcula
     // al iniciar el arrastre por si la imagen aún no había cargado al renderizar.
@@ -6199,63 +6201,81 @@
     };
     var aspectRatio = v_get_aspect_ratio();
 
-    var mousemoveHandler = function(e) {
-      if (!isResizing) return;
-      var deltaX = e.clientX - startX;
-      var deltaY = e.clientY - startY;
-      var delta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
-      var newWidth = startWidth + delta;
-      var newHeight = Math.round(newWidth / aspectRatio);
-      if (newWidth < 50) {
-        newWidth = 50;
-        newHeight = Math.round(newWidth / aspectRatio);
-      }
-      img.style.width = newWidth + 'px';
-      img.style.height = newHeight + 'px';
+    // Crea un handle de redimensionado para una esquina. v_sign invierte el
+    // sentido del arrastre: +1 en la esquina inferior-derecha (arrastrar hacia
+    // fuera = abajo/derecha agranda) y -1 en la superior-izquierda (arrastrar
+    // hacia fuera = arriba/izquierda agranda). La imagen está en flujo, así que
+    // su esquina superior-izquierda queda anclada; solo cambia el tamaño.
+    var v_make_resize_handle = function(v_corner_class, v_sign) {
+      var handle = document.createElement('div');
+      handle.className = 'mewyse-image-resize-handle ' + v_corner_class;
+      handle.title = self.t('tooltips.dragToResize');
+
+      var isResizing = false;
+      var startX, startY, startWidth;
+
+      var mousemoveHandler = function(e) {
+        if (!isResizing) return;
+        var deltaX = e.clientX - startX;
+        var deltaY = e.clientY - startY;
+        var delta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
+        var newWidth = startWidth + v_sign * delta;
+        var newHeight = Math.round(newWidth / aspectRatio);
+        if (newWidth < 50) {
+          newWidth = 50;
+          newHeight = Math.round(newWidth / aspectRatio);
+        }
+        img.style.width = newWidth + 'px';
+        img.style.height = newHeight + 'px';
+      };
+
+      var mouseupHandler = function(e) {
+        if (!isResizing) return;
+        isResizing = false;
+        document.body.style.cursor = '';
+        imageContainer.classList.remove('mewyse-image-resizing');
+        document.body.style.userSelect = '';
+
+        // Remover los listeners de este arrastre (se re-añaden en el próximo mousedown)
+        document.removeEventListener('mousemove', mousemoveHandler);
+        document.removeEventListener('mouseup', mouseupHandler);
+
+        var finalWidth = parseInt(img.style.width);
+        var finalHeight = parseInt(img.style.height);
+        if (block.content) {
+          block.content.width = finalWidth;
+          block.content.height = finalHeight;
+        }
+        self.triggerChange();
+        // Tras redimensionar, dejar la imagen seleccionada/enfocada
+        self.selectImage(img, block.id, false);
+      };
+
+      handle.onmousedown = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        isResizing = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        // Recalcular ratio ahora (la imagen ya está cargada) y partir del ancho
+        // real renderizado si el bloque no tenía dimensiones fijadas.
+        aspectRatio = v_get_aspect_ratio();
+        startWidth = parseInt(img.style.width) || img.offsetWidth || 200;
+        document.body.style.cursor = 'nwse-resize';
+        imageContainer.classList.add('mewyse-image-resizing');
+        document.body.style.userSelect = 'none';
+        // Registrar los listeners SOLO durante el arrastre: así funciona en cada
+        // uso (no solo el primero) y no quedan listeners colgando en document.
+        document.addEventListener('mousemove', mousemoveHandler);
+        document.addEventListener('mouseup', mouseupHandler);
+      };
+
+      return handle;
     };
 
-    var mouseupHandler = function(e) {
-      if (!isResizing) return;
-      isResizing = false;
-      document.body.style.cursor = '';
-      imageContainer.classList.remove('mewyse-image-resizing');
-      document.body.style.userSelect = '';
-
-      // Remover los listeners de este arrastre (se re-añaden en el próximo mousedown)
-      document.removeEventListener('mousemove', mousemoveHandler);
-      document.removeEventListener('mouseup', mouseupHandler);
-
-      var finalWidth = parseInt(img.style.width);
-      var finalHeight = parseInt(img.style.height);
-      if (block.content) {
-        block.content.width = finalWidth;
-        block.content.height = finalHeight;
-      }
-      self.triggerChange();
-      // Tras redimensionar, dejar la imagen seleccionada/enfocada
-      self.selectImage(img, block.id, false);
-    };
-
-    resizeHandle.onmousedown = function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      isResizing = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      // Recalcular ratio ahora (la imagen ya está cargada) y partir del ancho
-      // real renderizado si el bloque no tenía dimensiones fijadas.
-      aspectRatio = v_get_aspect_ratio();
-      startWidth = parseInt(img.style.width) || img.offsetWidth || 200;
-      document.body.style.cursor = 'nwse-resize';
-      imageContainer.classList.add('mewyse-image-resizing');
-      document.body.style.userSelect = 'none';
-      // Registrar los listeners SOLO durante el arrastre: así funciona en cada
-      // uso (no solo el primero) y no quedan listeners colgando en document.
-      document.addEventListener('mousemove', mousemoveHandler);
-      document.addEventListener('mouseup', mouseupHandler);
-    };
-
-    imageContainer.appendChild(resizeHandle);
+    // Handle inferior-derecho (existente) + superior-izquierdo (nuevo).
+    imageContainer.appendChild(v_make_resize_handle('mewyse-image-resize-handle-se', 1));
+    imageContainer.appendChild(v_make_resize_handle('mewyse-image-resize-handle-nw', -1));
     imageWrapper.appendChild(imageContainer);
 
     img.onclick = function(e) {

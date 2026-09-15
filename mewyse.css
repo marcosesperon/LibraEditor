@@ -1073,8 +1073,6 @@
 }
 .mewyse-editor-styled .mewyse-image-resize-handle {
   position: absolute;
-  bottom: 0;
-  right: 0;
   width: 16px;
   height: 16px;
   background: var(--mewyse-accent);
@@ -1086,6 +1084,10 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   z-index: 2;
 }
+/* Esquinas del handle de redimensionado: la inferior-derecha (existente) y la
+   superior-izquierda (nueva), ambas sobre la diagonal → cursor nwse-resize. */
+.mewyse-editor-styled .mewyse-image-resize-handle-se { bottom: 0; right: 0; }
+.mewyse-editor-styled .mewyse-image-resize-handle-nw { top: 0; left: 0; }
 .mewyse-editor-styled .mewyse-image-container:hover .mewyse-image-resize-handle {
   opacity: 1;
 }
