@@ -2502,7 +2502,7 @@
         });
       case 'forecolor':
         var v_color = this._makeToolbarButton({
-          icon: 'A', title: this.t('tooltips.color'),
+          icon: WYSIWYG_ICONS.palette, title: this.t('tooltips.color'),
           onclick: function(e) { e.preventDefault(); self._runAction('forecolor', { source: 'toolbar', event: e, button: v_color }); }
         });
         return v_color;
@@ -14542,7 +14542,7 @@
       { name: 'case', action: 'caseMenu', label: 'Aa', titleKey: 'tooltips.toggleCase', type: 'caseMenu' },
       { action: 'separator', type: 'separator' },
       { name: 'link', action: 'link', label: WYSIWYG_ICONS.link, titleKey: 'tooltips.insertLink' },
-      { name: 'forecolor', action: 'color', label: 'A', titleKey: 'tooltips.color', type: 'colorPicker' },
+      { name: 'forecolor', action: 'color', label: WYSIWYG_ICONS.palette, titleKey: 'tooltips.color', type: 'colorPicker' },
       { action: 'separator', type: 'separator' },
       { name: 'subscript', action: 'subscript', label: WYSIWYG_ICONS.subscript, titleKey: 'tooltips.subscript' },
       { name: 'superscript', action: 'superscript', label: WYSIWYG_ICONS.superscript, titleKey: 'tooltips.superscript' },
