@@ -241,6 +241,86 @@ new meWYSE({ target: '#ed', toolbar: false });
 
 > `mergetags` solo aparece si pasas `mergeTags`; `table`/`image`/`video`/`audio` respetan `disabledBlocks`. `print` está en el default (imprime solo el contenido del editor); `exportword`/`exportpdf` no están en el default: añádelos a la spec si los quieres.
 
+### Acciones personalizables (`actions` / `disabledActions`)
+
+Toolbar, menú flotante y atajos de teclado comparten un **registro central de acciones**. Eso permite **añadir botones propios**, **desactivar** acciones estándar y **cambiar el comportamiento** de una estándar — sin tener que redeclarar el resto de la toolbar. Los nombres de las acciones estándar son los **ítems de la tabla de arriba**.
+
+```javascript
+new meWYSE({
+  target: '#ed',
+  toolbar: true,
+
+  // Quitar estándar: desaparecen del botón, del menú flotante Y de su atajo
+  disabledActions: ['strikethrough', 'print'],
+
+  actions: [
+    // 1) Acción propia DENTRO del grupo de negrita, y también en el menú flotante
+    { name: 'mayus', icon: 'MAY', tooltip: 'Pasar a MAYÚSCULAS',
+      placement: 'both', position: { after: 'bold' },
+      requiresSelection: true,                         // gris hasta que haya selección
+      onClick: function (ctx) { ctx.editor.applyCaseTransform('upper'); } },
+
+    // 2) Acción propia en GRUPO PROPIO (con separadores) tras el grupo de inserción
+    { name: 'fecha', icon: '<svg …>', tooltip: 'Insertar fecha',
+      position: { after: 'audio', group: 'new' },
+      onClick: function () { document.execCommand('insertText', false, new Date().toLocaleDateString()); } },
+
+    // 3) Habilitada solo en ciertos bloques
+    { name: 'soloh1', icon: 'H1?', tooltip: 'Solo en Título 1',
+      isEnabled: function (ctx) { return !!ctx.block && ctx.block.type === 'heading1'; },
+      onClick: function (ctx) { console.log(ctx.block); } },
+
+    // 4) SOBRESCRIBIR una estándar (mismo `name`): afecta a botón, flotante y atajo
+    { name: 'bold', onClick: function (ctx) {
+        registrar(ctx);      // tu lógica
+        ctx.callDefault();   // …y ejecuta la negrita original
+      } },
+
+    // 5) Override que solo cambia el aspecto (sin onClick → comportamiento estándar)
+    { name: 'link', icon: 'URL', tooltip: 'Insertar enlace' }
+  ]
+});
+```
+
+**Posición** (`position`), siempre relativa a una acción **estándar**:
+
+| Valor | Efecto |
+|---|---|
+| `{ after: 'bold' }` / `{ before: 'italic' }` | **Dentro** del grupo de esa acción, justo después/antes |
+| `{ after: 'audio', group: 'new' }` | **Grupo propio** (con separadores) pegado al grupo del ancla |
+| `'start'` / `'end'` (o sin `position`) | Grupo propio al inicio / al final |
+
+> Si el nombre de la acción aparece en el string `toolbar` (p. ej. `'undo redo \| bold miAccion'`), **manda el string** y `position` se ignora. Varias acciones con la misma ancla y `group:'new'` comparten ese grupo nuevo; el orden del array decide el orden entre ellas.
+
+**Otras claves**: `placement` (`'toolbar'` por defecto, `'floating'`, `'both'`), `icon` (SVG en crudo, clave de `WYSIWYG_ICONS` o texto), `requiresSelection`, `isEnabled(ctx)` e `isActive(ctx)` (fondo resaltado), reevaluados al cambiar foco o selección.
+
+**El `ctx` del callback** extiende el payload de `onChange`:
+
+```javascript
+onClick: function (ctx) {
+  ctx.editor;        // instancia (toda la API pública)
+  ctx.action;        // nombre de la acción
+  ctx.source;        // 'toolbar' | 'floating' | 'shortcut' | 'api'
+  ctx.button;        // botón que la disparó (para anclar un menú propio)
+  ctx.selection;     // { has, isCollapsed, text, range }
+  ctx.block;         // { id, type, content } del bloque con el caret (o null)
+  ctx.html;          // …y json / markdown / plainText / blocks / hasChanges (perezosos)
+  ctx.callDefault(); // solo en overrides: ejecuta el comportamiento original
+}
+```
+
+> No hagas `JSON.stringify(ctx)`: `ctx.editor` es circular. Usa `ctx.json`.
+
+**En runtime** (repintan la toolbar en su sitio):
+
+```javascript
+editor.registerAction({ name: 'mia', icon: 'M', tooltip: 'Mía', onClick: fn }); // añade o sustituye
+editor.unregisterAction('mia');              // quita la custom (o retira un override)
+editor.setActionDisabled('print', true);     // desactiva/reactiva como disabledActions
+```
+
+> `fontsize` (stepper) y `blocktype` (selector) son compuestos: admiten desactivarse y sobrescribir su `onClick`, pero no cambiar su `icon`.
+
 ### Métodos
 
 #### Exportar contenido

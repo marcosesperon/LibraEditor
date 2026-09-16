@@ -689,6 +689,25 @@ editor.focus(blockId); // bloque especifico
           <pre id="actionsOutputContent"></pre>
         </div>
       </div>
+
+      <h3 style="margin:20px 0 6px;font-size:15px;">3. En runtime</h3>
+      <p>Las mismas capacidades desde c&oacute;digo, despu&eacute;s de crear el editor: la toolbar se <strong>repinta en su sitio</strong>.</p>
+      <div class="config-hint">
+        Pulsa los botones y observa la toolbar del <strong>primer editor</strong> (el de arriba): aparece/desaparece el bot&oacute;n <strong>RT</strong> y se desactiva/reactiva <strong>imprimir</strong>.
+      </div>
+      <pre class="docs-code"><code>editor.registerAction({ name: 'runtime', icon: 'RT', tooltip: 'Anadida en runtime',
+                        position: { after: 'undo' },
+                        onClick: function (ctx) { alert('Origen: ' + ctx.source); } });
+editor.unregisterAction('runtime');
+editor.setActionDisabled('print', true);   // y false para reactivarla</code></pre>
+      <div class="controls">
+        <div class="button-group">
+          <button class="btn" onclick="actionsEditor.registerAction({ name:'runtime', icon:'RT', tooltip:'Anadida en runtime', position:{ after:'undo' }, onClick:function(ctx){ alert('Origen: ' + ctx.source); } })">registerAction</button>
+          <button class="btn btn-secondary" onclick="actionsEditor.unregisterAction('runtime')">unregisterAction</button>
+          <button class="btn btn-secondary" onclick="actionsEditor.setActionDisabled('print', true)">Desactivar imprimir</button>
+          <button class="btn btn-secondary" onclick="actionsEditor.setActionDisabled('print', false)">Reactivar imprimir</button>
+        </div>
+      </div>
     </div>
 
     <!-- Demo: Salto de página -->

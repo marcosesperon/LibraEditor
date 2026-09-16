@@ -2815,6 +2815,10 @@
           if (!v_item_el) continue;
           // Ítem anclado: se reserva para la zona fija en vez de ir al track.
           if (v_pin_set[v_name]) { v_pinned_els[v_name] = v_item_el; continue; }
+          // Override de una acción estándar con `icon`/`tooltip` propios: se
+          // repintan sobre el botón ya construido (su onclick ya pasa por
+          // _runAction). No aplica a compuestos (stepper `fontsize`, `blocktype`).
+          this._applyOverrideAppearance(v_name, v_item_el);
           // Herramienta de selección en modo 'toolbar': se recoge para gestionar
           // su estado disabled según la selección.
           if (SELECTION_TOOL_NAMES[v_name] && v_selection_mode === 'toolbar') {
@@ -14602,6 +14606,17 @@
         return;
       }
 
+      // Override con icon/tooltip propios: se reflejan también en el flotante.
+      var v_ov = self._actionOverrides[tool.name];
+      if (v_ov && (typeof v_ov.icon === 'string' || typeof v_ov.tooltip === 'string')) {
+        tool = {
+          name: tool.name, action: tool.action, type: tool.type,
+          label: (typeof v_ov.icon === 'string') ? self._resolveActionIcon(v_ov.icon, v_ov.tooltip || tool.name) : tool.label,
+          titleKey: tool.titleKey,
+          _title: (typeof v_ov.tooltip === 'string') ? v_ov.tooltip : null
+        };
+      }
+
       // Tamaño de fuente: reutiliza el stepper [−][valor][+] (no es un botón
       // simple). Fija this._fontSizeDisplay al stepper del menú flotante.
       if (tool.type === 'fontSizeStepper') {
@@ -14612,8 +14627,9 @@
       var button = document.createElement('button');
       button.className = 'mewyse-format-button';
       button.innerHTML = tool.label;
-      button.title = self.t(tool.titleKey);
-      button.setAttribute('aria-label', self.t(tool.titleKey));
+      var v_title = tool._title || self.t(tool.titleKey);
+      button.title = v_title;
+      button.setAttribute('aria-label', v_title);
       button.setAttribute('data-action', tool.action);
 
       // Botón único de alineación: icono del valor actual (sin flecha lateral).
@@ -22557,6 +22573,115 @@
       var v_it = this._customStateButtons[i];
       if (v_it && v_it.el) this._applyCustomActionState(v_it.el, v_it.def);
     }
+  };
+
+  /**
+   * Si `v_name` tiene un override con `icon` y/o `tooltip` propios, los aplica
+   * sobre el botón estándar ya construido (su onclick ya pasa por _runAction).
+   * No aplica a ítems COMPUESTOS (stepper `fontsize`, `blocktype`: su innerHTML
+   * incluye el nombre del tipo/flecha y repintarlo lo rompería).
+   * @param {string} v_name
+   * @param {HTMLElement} v_el
+   */
+  meWYSE.prototype._applyOverrideAppearance = function(v_name, v_el) {
+    var def = this._actionOverrides ? this._actionOverrides[v_name] : null;
+    if (!def || !v_el || v_name === 'fontsize' || v_name === 'blocktype') return;
+    if (v_el.tagName !== 'BUTTON') return;
+    if (typeof def.icon === 'string' && def.icon) {
+      v_el.innerHTML = this._resolveActionIcon(def.icon, def.tooltip || v_name);
+    }
+    if (typeof def.tooltip === 'string' && def.tooltip) {
+      v_el.title = def.tooltip;
+      v_el.setAttribute('aria-label', def.tooltip);
+      // El tooltip propio migra `title` a data-mewyse-tip en el primer hover;
+      // si ya se migró, refrescarlo para que no quede el texto antiguo.
+      if (v_el.getAttribute('data-mewyse-tip')) v_el.setAttribute('data-mewyse-tip', def.tooltip);
+    }
+  };
+
+  /**
+   * Reconstruye la toolbar EN SU SITIO tras cambiar el registro de acciones
+   * (registerAction/unregisterAction/setActionDisabled). Crea una toolbar nueva,
+   * sustituye el nodo anterior y reaplica los estados por foco. No hace nada si
+   * el editor no tiene toolbar.
+   */
+  meWYSE.prototype._rebuildToolbar = function() {
+    if (!this.showToolbar || !this.toolbar || !this.toolbar.parentNode) return;
+    // Cerrar menús/tooltips que apunten a botones de la toolbar vieja.
+    this._detachTooltips(this.toolbar);
+    if (this._toolbarScroll && this._toolbarScroll.area) {
+      // Quitar los listeners del track anterior (los re-crea _setupToolbarScroll).
+      if (this._toolbarScrollListeners) {
+        for (var i = 0; i < this._toolbarScrollListeners.length; i++) {
+          var l = this._toolbarScrollListeners[i];
+          try { l.el.removeEventListener(l.type, l.fn, l.opts); } catch (e) {}
+        }
+        this._toolbarScrollListeners = null;
+      }
+      this._toolbarScroll = null;
+    }
+    var v_old = this.toolbar;
+    var v_new = this.createToolbar();
+    v_old.parentNode.replaceChild(v_new, v_old);
+    this.toolbar = v_new;
+    // Reaplicar estados que dependen del foco/selección actual.
+    this._updateMoveButtons();
+    this._updateFormatButtonStates();
+    this._updateSelectionTools();
+    this._updateCustomActionStates();
+  };
+
+  /**
+   * Registra (o sustituye) una acción en RUNTIME y repinta la toolbar.
+   * Nombre estándar → override; nombre nuevo → acción custom (requiere onClick).
+   * @param {Object} def - misma forma que los ítems de la opción `actions`
+   * @returns {boolean} true si se registró
+   */
+  meWYSE.prototype.registerAction = function(def) {
+    if (this._destroyed) return false;
+    if (!this._registerActionDef(def)) return false;
+    this._rebuildToolbar();
+    this.closeFormatMenu(); // se reconstruirá con la nueva acción
+    return true;
+  };
+
+  /**
+   * Elimina una acción registrada en runtime: una custom desaparece de toolbar y
+   * menú flotante; un override se retira y la acción estándar vuelve a su
+   * comportamiento por defecto. No afecta a `disabledActions`.
+   * @param {string} v_name
+   * @returns {boolean} true si existía
+   */
+  meWYSE.prototype.unregisterAction = function(v_name) {
+    if (this._destroyed || typeof v_name !== 'string') return false;
+    var v_found = false;
+    if (this._actionOverrides[v_name]) { delete this._actionOverrides[v_name]; v_found = true; }
+    if (this._customActionsByName[v_name]) {
+      delete this._customActionsByName[v_name];
+      for (var i = 0; i < this._customActions.length; i++) {
+        if (this._customActions[i].name === v_name) { this._customActions.splice(i, 1); break; }
+      }
+      v_found = true;
+    }
+    if (v_found) { this._rebuildToolbar(); this.closeFormatMenu(); }
+    return v_found;
+  };
+
+  /**
+   * Activa/desactiva una acción en runtime (equivale a `disabledActions`): al
+   * desactivarla desaparece de la toolbar y del menú flotante y su atajo de
+   * teclado queda anulado.
+   * @param {string} v_name
+   * @param {boolean} v_disabled - true desactiva, false reactiva
+   * @returns {boolean}
+   */
+  meWYSE.prototype.setActionDisabled = function(v_name, v_disabled) {
+    if (this._destroyed || typeof v_name !== 'string' || !v_name) return false;
+    if (v_disabled === false) delete this._disabledActions[v_name];
+    else this._disabledActions[v_name] = true;
+    this._rebuildToolbar();
+    this.closeFormatMenu();
+    return true;
   };
 
   /**
