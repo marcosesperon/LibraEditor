@@ -617,6 +617,80 @@ editor.focus(blockId); // bloque especifico
       <div id="selectionToolbarEditor"></div>
     </div>
 
+    <!-- Demo: Acciones personalizables (actions / disabledActions) -->
+    <div class="demo-section">
+      <h2>Acciones personalizables (<code>actions</code> / <code>disabledActions</code>)</h2>
+      <p>Toolbar, men&uacute; flotante y atajos de teclado comparten un <strong>registro central de acciones</strong>. Eso permite <strong>a&ntilde;adir botones propios</strong>, <strong>desactivar</strong> acciones est&aacute;ndar y <strong>cambiar el comportamiento</strong> de una est&aacute;ndar &mdash; sin tener que redeclarar el resto de la toolbar.</p>
+
+      <h3 style="margin:16px 0 6px;font-size:15px;">1. A&ntilde;adir acciones propias</h3>
+      <p>Cada acci&oacute;n define <code>icon</code>, <code>tooltip</code>, <code>position</code>, <code>placement</code> y su <code>onClick</code>. La <strong>posici&oacute;n es relativa a una acci&oacute;n est&aacute;ndar</strong>: <code>{ after: 'bold' }</code> la coloca <em>dentro</em> de ese grupo, y a&ntilde;adiendo <code>group: 'new'</code> crea un <strong>grupo propio</strong> (con separadores). Sin <code>position</code> va al final.</p>
+      <div class="config-hint">
+        <strong>MAY</strong> (junto a negrita) y <strong>#</strong> (contar) solo se habilitan al <strong>seleccionar texto</strong> (<code>requiresSelection</code>). <strong>Fecha</strong> est&aacute; en su propio grupo tras las de inserci&oacute;n. <strong>H1?</strong> solo se habilita con el cursor en un <strong>t&iacute;tulo 1</strong> (<code>isEnabled</code>). Selecciona texto y mira tambi&eacute;n el <strong>men&uacute; flotante</strong>: MAY y # aparecen ah&iacute; (<code>placement: 'both'</code>).
+      </div>
+      <pre class="docs-code"><code>var editor = new meWYSE({
+  target: '#actionsEditor',
+  toolbar: true,
+  actions: [
+    // Dentro del grupo de negrita, y tambien en el menu flotante
+    { name: 'mayus', icon: 'MAY', tooltip: 'Pasar a MAYUSCULAS',
+      placement: 'both', position: { after: 'bold' },
+      requiresSelection: true,
+      onClick: function(ctx) { ctx.editor.applyCaseTransform('upper'); } },
+
+    // Cuenta palabras/caracteres de la seleccion (o de todo el documento)
+    { name: 'contar', icon: '#', tooltip: 'Contar',
+      placement: 'both', position: { after: 'mayus' },
+      requiresSelection: true,
+      onClick: function(ctx) {
+        var t = ctx.selection.text || ctx.plainText;
+        alert(t.trim().split(/\s+/).length + ' palabras, ' + t.length + ' caracteres');
+      } },
+
+    // Grupo PROPIO (separadores) justo despues del grupo de insercion.
+    // icon admite SVG en crudo, clave de WYSIWYG_ICONS o texto ('MAY', '#')
+    { name: 'fecha', icon: '&lt;svg ...&gt;', tooltip: 'Insertar fecha',
+      position: { after: 'audio', group: 'new' },
+      onClick: function(ctx) {
+        document.execCommand('insertText', false, new Date().toLocaleDateString());
+      } },
+
+    // Habilitada solo si el cursor esta en un Titulo 1
+    { name: 'soloh1', icon: 'H1?', tooltip: 'Solo en Titulo 1',
+      isEnabled: function(ctx) { return !!ctx.block &amp;&amp; ctx.block.type === 'heading1'; },
+      onClick: function(ctx) { alert('Bloque: ' + ctx.block.type); } }
+  ]
+});</code></pre>
+      <div id="actionsEditor"></div>
+
+      <h3 style="margin:20px 0 6px;font-size:15px;">2. Desactivar est&aacute;ndar y cambiar su comportamiento</h3>
+      <p><code>disabledActions</code> quita acciones <strong>sin redeclarar la toolbar</strong>: desaparecen del bot&oacute;n, del men&uacute; flotante <strong>y de su atajo</strong>. Y una acci&oacute;n de <code>actions</code> cuyo <code>name</code> sea uno <strong>est&aacute;ndar</strong> lo <strong>sobrescribe</strong>: el callback recibe <code>ctx.callDefault()</code> para envolver el comportamiento original en vez de reemplazarlo.</p>
+      <div class="config-hint">
+        Aqu&iacute; <strong>tachado e imprimir est&aacute;n desactivados</strong> (tampoco funciona <code>Ctrl+Shift+X</code>). Y <strong>negrita est&aacute; sobrescrita</strong>: registra la llamada en el panel de abajo y luego aplica la negrita real con <code>ctx.callDefault()</code> &mdash; pru&eacute;balo con el bot&oacute;n, desde el men&uacute; flotante y con <code>Ctrl+B</code> (mira el campo <code>source</code>).
+      </div>
+      <pre class="docs-code"><code>var editor = new meWYSE({
+  target: '#actionsOverrideEditor',
+  toolbar: true,
+  // Quitar estandar (boton + menu flotante + atajo)
+  disabledActions: ['strikethrough', 'print'],
+  actions: [
+    // Mismo `name` que una estandar => la sobrescribe
+    { name: 'bold', onClick: function(ctx) {
+        registrar(ctx);        // ctx.action, ctx.source, ctx.selection.text...
+        ctx.callDefault();     // y ejecuta la negrita original
+      } }
+  ]
+});</code></pre>
+      <div id="actionsOverrideEditor"></div>
+      <div class="controls">
+        <div class="button-group">
+          <button class="btn btn-secondary" onclick="showOutput('actionsOutput','actionsOutputContent','(sin llamadas todavia)')">Limpiar registro</button>
+        </div>
+        <div id="actionsOutput" class="output" style="display:none;">
+          <pre id="actionsOutputContent"></pre>
+        </div>
+      </div>
+    </div>
+
     <!-- Demo: Salto de página -->
     <div class="demo-section">
       <h2>Salto de p&aacute;gina</h2>
@@ -1233,6 +1307,8 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     var noToolbarEditor;
     var selectionFloatingEditor;
     var selectionToolbarEditor;
+    var actionsEditor;
+    var actionsOverrideEditor;
     var pageBreakEditor;
     var dirtyEditor;
     var unknownEditor;
@@ -1319,6 +1395,86 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
         toolbar: true,
         selectionTools: 'toolbar',
         blocks: demoBlocks
+      });
+    }
+
+    // Inicializar editores de acciones personalizables (actions / disabledActions)
+    function initActionsEditors() {
+      // 1) Acciones propias: posiciones, placement y estado dinamico
+      actionsEditor = new meWYSE({
+        target: '#actionsEditor',
+        toolbar: true,
+        blocks: [
+          { id: 1, type: 'heading1', content: 'Acciones propias' },
+          { id: 2, type: 'paragraph', content: 'Selecciona parte de este texto y prueba MAY (mayusculas) o # (contar). Con el cursor en este parrafo, H1? sale deshabilitada; ponlo en el titulo de arriba y se habilita.' }
+        ],
+        actions: [
+          // Dentro del grupo de negrita, y tambien en el menu flotante
+          {
+            name: 'mayus', icon: 'MAY', tooltip: 'Pasar a MAYUSCULAS',
+            placement: 'both', position: { after: 'bold' },
+            requiresSelection: true,
+            onClick: function(ctx) { ctx.editor.applyCaseTransform('upper'); }
+          },
+          // Cuenta palabras/caracteres de la seleccion (o de todo el documento)
+          {
+            name: 'contar', icon: '#', tooltip: 'Contar palabras y caracteres',
+            placement: 'both', position: { after: 'mayus' },
+            requiresSelection: true,
+            onClick: function(ctx) {
+              var v_texto = ctx.selection.text || ctx.plainText;
+              var v_palabras = v_texto.trim() ? v_texto.trim().split(/\s+/).length : 0;
+              alert(v_palabras + ' palabras, ' + v_texto.length + ' caracteres');
+            }
+          },
+          // Grupo PROPIO (con separadores) justo despues del grupo de insercion.
+          // `icon` admite: SVG en crudo (como aqui), clave de WYSIWYG_ICONS, o texto.
+          {
+            name: 'fecha',
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>',
+            tooltip: 'Insertar fecha de hoy',
+            position: { after: 'audio', group: 'new' },
+            onClick: function(ctx) {
+              document.execCommand('insertText', false, new Date().toLocaleDateString());
+            }
+          },
+          // Habilitada solo si el cursor esta en un Titulo 1
+          {
+            name: 'soloh1', icon: 'H1?', tooltip: 'Solo activa en Titulo 1',
+            isEnabled: function(ctx) { return !!ctx.block && ctx.block.type === 'heading1'; },
+            onClick: function(ctx) { alert('Estas en un bloque: ' + ctx.block.type); }
+          }
+        ]
+      });
+
+      // 2) Desactivar estandar + sobrescribir una estandar con callDefault
+      var v_llamadas = [];
+      actionsOverrideEditor = new meWYSE({
+        target: '#actionsOverrideEditor',
+        toolbar: true,
+        blocks: [
+          { id: 1, type: 'paragraph', content: 'Selecciona algo y pulsa negrita (boton, menu flotante o Ctrl+B): se registra abajo y luego se aplica.' }
+        ],
+        // Quitar estandar: boton + menu flotante + atajo de teclado
+        disabledActions: ['strikethrough', 'print'],
+        actions: [
+          // Mismo `name` que una estandar => la sobrescribe
+          {
+            name: 'bold',
+            onClick: function(ctx) {
+              v_llamadas.unshift({
+                accion: ctx.action,
+                origen: ctx.source,            // 'toolbar' | 'floating' | 'shortcut'
+                seleccion: ctx.selection.text,
+                bloque: ctx.block && ctx.block.type,
+                cambios: ctx.hasChanges
+              });
+              showOutput('actionsOutput', 'actionsOutputContent',
+                JSON.stringify(v_llamadas.slice(0, 5), null, 2));
+              ctx.callDefault(); // ejecuta la negrita original
+            }
+          }
+        ]
       });
     }
 
@@ -2292,6 +2448,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
       initWrapEditor();
       initNoToolbarEditor();
       initSelectionToolsEditors();
+      initActionsEditors();
       initPageBreakEditor();
       initDirtyEditor();
       initUnknownEditor();
