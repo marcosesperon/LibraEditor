@@ -138,6 +138,13 @@
   height: 16px;
 }
 
+/* Etiqueta de texto de una acción custom sin SVG (icon = texto / sin icon). */
+.mewyse-action-label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
 .mewyse-toolbar-button:hover {
   background: var(--mewyse-bg-active);
   border-color: var(--mewyse-text-muted);

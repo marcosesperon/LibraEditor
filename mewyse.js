@@ -956,6 +956,10 @@
     //  'toolbar': se pintan en la toolbar pero DESHABILITADAS hasta que hay una
     //    selección de texto no colapsada; el menú flotante se suprime con toolbar.
     this._selectionToolsMode = (this.options.selectionTools === 'toolbar') ? 'toolbar' : 'floating';
+    // Registro central de acciones (toolbar · menú flotante · atajos): acciones
+    // custom (`actions` con nombre nuevo), overrides de estándar (`actions` con
+    // nombre estándar) y desactivadas (`disabledActions`). Ver _runAction.
+    this._initActionRegistry();
     this.pasteAsText = this.options.pasteAsText === true; // Forzar paste solo como texto plano
     // Por defecto, getHTML() escapa los 5 caracteres de entidad HTML (& < > " ')
     // en los nodos de TEXTO del contenido inline (heading, quote, paragraph,
@@ -1454,6 +1458,7 @@
           target.tagName === 'TH') {
         self.lastFocusedElement = target;
         self._updateMoveButtons();
+        self._updateCustomActionStates();
 
         // Si había una imagen seleccionada y el foco entra en un editable de
         // texto distinto, deseleccionarla. La selección de imagen enfoca la
@@ -2418,13 +2423,9 @@
       onclick: function(e) {
         e.preventDefault();
         e.stopPropagation();
-        if (cfg.type === 'wrapTag') {
-          var v_wrapped = self._applyInlineAcrossSelection(function() { self._wrapSelectionInTag(cfg.tag); });
-          if (!v_wrapped) { self._wrapSelectionInTag(cfg.tag); self._persistActiveBlockContent(); }
-        } else {
-          var v_applied = self._applyInlineAcrossSelection(function() { document.execCommand(cfg.command, false, null); });
-          if (!v_applied) { document.execCommand(cfg.command, false, null); self.triggerChange(); }
-        }
+        // La lógica (cross-block/inline) vive en _runDefaultAction; pasar por
+        // _runAction aplica overrides/desactivaciones del registro de acciones.
+        self._runAction(name, { source: 'toolbar', event: e, button: e.currentTarget });
         // Refrescar el estado activo del botón tras alternar el formato.
         self._updateFormatButtonStates();
       }
@@ -2447,24 +2448,31 @@
    */
   meWYSE.prototype._buildToolbarItem = function(name) {
     var self = this;
+    // Acción CUSTOM registrada (opción `actions` / registerAction): botón genérico
+    // con su icono/tooltip que despacha por _runAction. Tiene prioridad sobre el
+    // switch de estándar (un nombre custom nunca coincide con uno estándar: esos
+    // se tratan como override en _registerActionDef).
+    if (this._customActionsByName && this._customActionsByName[name]) {
+      return this._buildCustomActionButton(this._customActionsByName[name], 'toolbar');
+    }
     switch (name) {
       case 'undo':
         return (this.undoButton = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.undo, title: this.t('tooltips.undo'), disabled: true,
           onmousedown: function(e) { e.preventDefault(); },
-          onclick: function(e) { e.preventDefault(); self.undo(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('undo', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       case 'redo':
         return (this.redoButton = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.redo, title: this.t('tooltips.redo'), disabled: true,
           onmousedown: function(e) { e.preventDefault(); },
-          onclick: function(e) { e.preventDefault(); self.redo(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('redo', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       case 'blocktype':
         var v_bt = this._makeToolbarButton({
           icon: this.t('misc.text') + ' <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>',
           title: this.t('tooltips.changeBlockType'), dropdown: true, className: 'mewyse-toolbar-dropdown-wide',
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.showToolbarBlockTypeMenu(v_bt); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('blocktype', { source: 'toolbar', event: e, button: v_bt }); }
         });
         v_bt.setAttribute('aria-expanded', 'false');
         v_bt.setAttribute('aria-haspopup', 'listbox');
@@ -2479,30 +2487,30 @@
         var v_case = this._makeToolbarButton({
           icon: '<span style="font-size:13px;font-weight:600">Aa</span> <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>',
           title: this.t('tooltips.toggleCase'), dropdown: true,
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.showCaseMenu(v_case); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('case', { source: 'toolbar', event: e, button: v_case }); }
         });
         return v_case;
       case 'removeformat':
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.removeFormat, title: this.t('tooltips.removeFormat'),
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.removeFormat(); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('removeformat', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'link':
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.link, title: this.t('tooltips.insertLink'),
-          onclick: function(e) { e.preventDefault(); self.createLink(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('link', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'forecolor':
         var v_color = this._makeToolbarButton({
           icon: 'A', title: this.t('tooltips.color'),
-          onclick: function(e) { e.preventDefault(); self.showUnifiedColorPicker(v_color); }
+          onclick: function(e) { e.preventDefault(); self._runAction('forecolor', { source: 'toolbar', event: e, button: v_color }); }
         });
         return v_color;
       case 'font':
         var v_font = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.font + ' <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>',
           title: this.t('tooltips.font'), dropdown: true,
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.showFontMenu(v_font); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('font', { source: 'toolbar', event: e, button: v_font }); }
         });
         return v_font;
       case 'lineheight':
@@ -2510,13 +2518,13 @@
           icon: WYSIWYG_ICONS.lineHeight + ' <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>',
           title: this.t('tooltips.lineHeight'), dropdown: true,
           onmousedown: function(e) { e.preventDefault(); },
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.showLineHeightMenu(v_lh); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('lineheight', { source: 'toolbar', event: e, button: v_lh }); }
         });
         return v_lh;
       case 'specialchars':
         var v_chars = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.specialChars, title: this.t('tooltips.specialChars'),
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.showSpecialCharsMenu(v_chars); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('specialchars', { source: 'toolbar', event: e, button: v_chars }); }
         });
         return v_chars;
       case 'mergetags':
@@ -2524,24 +2532,13 @@
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.mergeTag, title: this.t('tooltips.mergeTag'),
           onmousedown: function(e) { e.preventDefault(); },
-          onclick: function(e) {
-            e.preventDefault();
-            var sel = window.getSelection();
-            if (!sel || !sel.rangeCount) return;
-            var node = sel.getRangeAt(0).commonAncestorContainer;
-            var elx = (node.nodeType === 1) ? node : node.parentElement;
-            var blockEl = (elx && elx.closest) ? elx.closest('.mewyse-block[data-block-id]') : null;
-            if (!blockEl) return;
-            var editable = self.getEditableElement(blockEl);
-            var bId = parseInt(blockEl.getAttribute('data-block-id'), 10);
-            if (editable) self.showMergeTagMenu(bId, editable);
-          }
+          onclick: function(e) { e.preventDefault(); self._runAction('mergetags', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'align':
         var v_align = this._makeToolbarButton({
           icon: this._alignButtonInnerHTML('left'), title: this.t('tooltips.alignLeft'),
           onmousedown: function(e) { e.preventDefault(); },
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.showAlignMenu(v_align); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('align', { source: 'toolbar', event: e, button: v_align }); }
         });
         v_align.setAttribute('aria-haspopup', 'true');
         this.alignButton = v_align;
@@ -2550,54 +2547,54 @@
         return (this.outdentButton = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.outdent, title: this.t('tooltips.outdent'), disabled: true,
           onmousedown: function(e) { e.preventDefault(); },
-          onclick: function(e) { e.preventDefault(); var v_id = self._getFocusedBlockId(); if (v_id !== null) self.indentBlock(v_id, -1); }
+          onclick: function(e) { e.preventDefault(); self._runAction('outdent', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       case 'indent':
         return (this.indentButton = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.indent, title: this.t('tooltips.indent'), disabled: true,
           onmousedown: function(e) { e.preventDefault(); },
-          onclick: function(e) { e.preventDefault(); var v_id = self._getFocusedBlockId(); if (v_id !== null) self.indentBlock(v_id, 1); }
+          onclick: function(e) { e.preventDefault(); self._runAction('indent', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       case 'table':
         if (this._isBlockDisabled('table')) return null;
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.table, title: this.t('tooltips.insertTable'),
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.insertTableBlock(); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('table', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'image':
         if (this._isBlockDisabled('image')) return null;
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.image, title: this.t('tooltips.insertImage'),
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.insertImageBlock(); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('image', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'video':
         if (this._isBlockDisabled('video')) return null;
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.video, title: this.t('tooltips.insertVideo'),
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.insertVideoBlock(); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('video', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'audio':
         if (this._isBlockDisabled('audio')) return null;
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.audio, title: this.t('tooltips.insertAudio'),
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.insertAudioBlock(); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('audio', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'pagebreak':
         if (this._isBlockDisabled('pageBreak')) return null;
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.pageBreak, title: this.t('tooltips.pageBreak'),
-          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self.insertPageBreak(); }
+          onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('pagebreak', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'find':
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.search, title: this.t('tooltips.findReplace') + ' (Ctrl+F)',
-          onclick: function(e) { e.preventDefault(); self.showFindReplace(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('find', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'wordwrap':
         var v_ww = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.wordWrap, title: this.t('tooltips.wordWrap'),
           onclick: function(e) {
-            e.preventDefault(); self.toggleWordWrap();
+            e.preventDefault(); self._runAction('wordwrap', { source: 'toolbar', event: e, button: v_ww });
             v_ww.setAttribute('aria-pressed', self.wordWrap ? 'true' : 'false');
             v_ww.classList.toggle('active', self.wordWrap);
           }
@@ -2609,7 +2606,7 @@
       case 'summary':
         var v_sum = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.summaryPanel, title: this.t('tooltips.summary'),
-          onclick: function(e) { e.preventDefault(); self.toggleOutlinePanel(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('summary', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
         v_sum.setAttribute('aria-pressed', this.outlinePanel ? 'true' : 'false');
         if (this.outlinePanel) v_sum.classList.add('active');
@@ -2619,7 +2616,7 @@
         var v_sb = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.showBlocks, title: this.t('tooltips.showBlocks'),
           onclick: function(e) {
-            e.preventDefault(); self.toggleShowBlocks();
+            e.preventDefault(); self._runAction('showblocks', { source: 'toolbar', event: e, button: v_sb });
             v_sb.setAttribute('aria-pressed', self.showingBlocks ? 'true' : 'false');
             v_sb.classList.toggle('active', self.showingBlocks);
           }
@@ -2630,17 +2627,17 @@
       case 'sourcecode':
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.sourceCode, title: this.t('tooltips.sourceCode'),
-          onclick: function(e) { e.preventDefault(); self._showCodeSourceModal('html'); }
+          onclick: function(e) { e.preventDefault(); self._runAction('sourcecode', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'markdown':
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.markdown, title: this.t('tooltips.markdown'),
-          onclick: function(e) { e.preventDefault(); self._showCodeSourceModal('markdown'); }
+          onclick: function(e) { e.preventDefault(); self._runAction('markdown', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'fullscreen':
         var v_fsn = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.fullscreen, title: this.t('tooltips.fullscreen'),
-          onclick: function(e) { e.preventDefault(); self.toggleFullscreen(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('fullscreen', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
         v_fsn.setAttribute('aria-pressed', 'false');
         this.fullscreenButton = v_fsn;
@@ -2648,27 +2645,27 @@
       case 'print':
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.print, title: this.t('tooltips.print'),
-          onclick: function(e) { e.preventDefault(); self.print(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('print', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'exportword':
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.exportWord, title: this.t('tooltips.exportWord'),
-          onclick: function(e) { e.preventDefault(); self.exportWord(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('exportword', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'exportpdf':
         return this._makeToolbarButton({
           icon: WYSIWYG_ICONS.exportPdf, title: this.t('tooltips.exportPdf'),
-          onclick: function(e) { e.preventDefault(); self.exportPdf(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('exportpdf', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'moveup':
         return (this.moveUpButton = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.arrowUp, title: this.t('tooltips.moveBlockUp'), disabled: true,
-          onclick: function(e) { e.preventDefault(); self.moveBlockUp(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('moveup', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       case 'movedown':
         return (this.moveDownButton = this._makeToolbarButton({
           icon: WYSIWYG_ICONS.arrowDown, title: this.t('tooltips.moveBlockDown'), disabled: true,
-          onclick: function(e) { e.preventDefault(); self.moveBlockDown(); }
+          onclick: function(e) { e.preventDefault(); self._runAction('movedown', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       default:
         return null; // nombre desconocido → se ignora
@@ -2781,11 +2778,19 @@
     // los rellena _buildFormatButton durante el bucle; _updateFormatButtonStates
     // les pone/quita la clase `active` según queryCommandState.
     this._formatStateButtons = [];
+    // Botones de acciones CUSTOM con estado dinámico (requiresSelection /
+    // isEnabled / isActive): los rellena _buildCustomActionButton;
+    // _updateCustomActionStates los reevalúa en foco/selección.
+    this._customStateButtons = [];
 
     // Construir la toolbar declarativamente desde la opción `toolbar`.
     // Filas → grupos (separados por `|`) → ítems. Cada nombre lo construye
     // _buildToolbarItem(); los grupos vacíos (p. ej. inserción desactivada) se omiten.
     var v_rows = this._normalizeToolbarSpec(this.options.toolbar);
+    // Insertar las acciones CUSTOM (placement toolbar|both) según su `position`
+    // (ancla relativa, grupo propio, start/end). Si el nombre ya viene en el
+    // string `toolbar`, manda el string.
+    this._insertCustomActionsIntoRows(v_rows, 'toolbar');
     for (var r = 0; r < v_rows.length; r++) {
       if (r > 0 && !scrollMode) {
         // Salto de fila (solo en modo wrap; en scroll todo va en una sola fila).
@@ -2801,6 +2806,8 @@
         var v_names = v_groups[gi];
         for (var ni = 0; ni < v_names.length; ni++) {
           var v_name = v_names[ni];
+          // Acción desactivada por `disabledActions`: no se pinta.
+          if (this._disabledActions[v_name]) continue;
           // Herramienta de selección en modo 'floating': se omite de la toolbar
           // (vive en el menú flotante de formato).
           if (SELECTION_TOOL_NAMES[v_name] && v_selection_mode === 'floating') continue;
@@ -2870,6 +2877,8 @@
     this._updateSelectionTools();
     // Estado activo inicial de los botones de formato (sin foco → inactivos).
     this._updateFormatButtonStates();
+    // Estado inicial de las acciones custom con estado dinámico.
+    this._updateCustomActionStates();
 
     return toolbar;
   };
@@ -11074,7 +11083,7 @@
     // Ctrl+Shift+Z: rehacer (debe ir antes de Ctrl+Z)
     if (isCtrlOrCmd && e.shiftKey && (e.key === 'z' || e.key === 'Z')) {
       e.preventDefault();
-      this.redo();
+      this._runAction('redo', { source: 'shortcut', event: e });
       return;
     }
 
@@ -11083,15 +11092,13 @@
       // Ctrl+Shift+K → removeFormat
       if (e.key === 'k' || e.key === 'K') {
         e.preventDefault();
-        this.removeFormat();
+        this._runAction('removeformat', { source: 'shortcut', event: e });
         return;
       }
       // Ctrl+Shift+X → strikethrough
       if (e.key === 'x' || e.key === 'X') {
         e.preventDefault();
-        document.execCommand('strikeThrough', false, null);
-        this.updateBlockContent(blockId, element.innerHTML);
-        this.triggerChange();
+        this._runAction('strikethrough', { source: 'shortcut', event: e });
         return;
       }
       // Ctrl+Shift+7 → lista numerada
@@ -11133,25 +11140,21 @@
     }
 
     if (isCtrlOrCmd && !e.shiftKey && !e.altKey) {
+      // Ctrl+B / Ctrl+I / Ctrl+U → pasan por el registro de acciones (aplica
+      // overrides/desactivaciones); la lógica vive en _runDefaultAction.
       if (e.key === 'b' || e.key === 'B') {
         e.preventDefault();
-        document.execCommand('bold', false, null);
-        this.updateBlockContent(blockId, element.innerHTML);
-        this.triggerChange();
+        this._runAction('bold', { source: 'shortcut', event: e });
         return;
       }
       if (e.key === 'i' || e.key === 'I') {
         e.preventDefault();
-        document.execCommand('italic', false, null);
-        this.updateBlockContent(blockId, element.innerHTML);
-        this.triggerChange();
+        this._runAction('italic', { source: 'shortcut', event: e });
         return;
       }
       if (e.key === 'u' || e.key === 'U') {
         e.preventDefault();
-        document.execCommand('underline', false, null);
-        this.updateBlockContent(blockId, element.innerHTML);
-        this.triggerChange();
+        this._runAction('underline', { source: 'shortcut', event: e });
         return;
       }
       // Ctrl+E → code inline (envuelve selección en <code>)
@@ -11165,29 +11168,27 @@
       // Ctrl+. → superíndice, Ctrl+, → subíndice (envuelven en <sup>/<sub>)
       if (e.key === '.' || e.key === ',') {
         e.preventDefault();
-        this._wrapSelectionInTag(e.key === '.' ? 'sup' : 'sub');
-        this.updateBlockContent(blockId, element.innerHTML);
-        this.triggerChange();
+        this._runAction(e.key === '.' ? 'superscript' : 'subscript', { source: 'shortcut', event: e });
         return;
       }
       if (e.key === 'z' || e.key === 'Z') {
         e.preventDefault();
-        this.undo();
+        this._runAction('undo', { source: 'shortcut', event: e });
         return;
       }
       if (e.key === 'y' || e.key === 'Y') {
         e.preventDefault();
-        this.redo();
+        this._runAction('redo', { source: 'shortcut', event: e });
         return;
       }
       if (e.key === 'k' || e.key === 'K') {
         e.preventDefault();
-        this.createLink();
+        this._runAction('link', { source: 'shortcut', event: e });
         return;
       }
       if (e.key === 'f' || e.key === 'F') {
         e.preventDefault();
-        this.showFindReplace();
+        this._runAction('find', { source: 'shortcut', event: e });
         return;
       }
     }
@@ -14412,6 +14413,8 @@
     // Reflejar el estado activo de los botones de formato (bold/italic/…) en cada
     // cambio de selección/caret (inmediato, sin esperar al timeout del menú).
     this._updateFormatButtonStates();
+    // Y el estado dinámico de las acciones custom (requiresSelection/isEnabled/isActive).
+    this._updateCustomActionStates();
 
     // Limpiar timeout anterior
     if (this.formatMenuTimeout) {
@@ -14524,37 +14527,78 @@
     menu.className = 'mewyse-format-menu';
     this.formatMenu = menu;
 
+    // `name` = nombre PÚBLICO de la acción (el mismo de la toolbar / STANDARD_ACTION_NAMES);
+    // por él pasan disabledActions/overrides vía _runAction. `action` se conserva
+    // solo como data-action/estilo del botón.
     var tools = [
-      { action: 'bold', label: 'B', titleKey: 'tooltips.bold', command: 'bold' },
-      { action: 'italic', label: 'I', titleKey: 'tooltips.italic', command: 'italic' },
-      { action: 'underline', label: 'U', titleKey: 'tooltips.underline', command: 'underline' },
-      { action: 'strikethrough', label: 'S', titleKey: 'tooltips.strikethrough', command: 'strikeThrough' },
-      { action: 'caseMenu', label: 'Aa', titleKey: 'tooltips.toggleCase', type: 'caseMenu' },
+      { name: 'bold', action: 'bold', label: 'B', titleKey: 'tooltips.bold' },
+      { name: 'italic', action: 'italic', label: 'I', titleKey: 'tooltips.italic' },
+      { name: 'underline', action: 'underline', label: 'U', titleKey: 'tooltips.underline' },
+      { name: 'strikethrough', action: 'strikethrough', label: 'S', titleKey: 'tooltips.strikethrough' },
+      { name: 'case', action: 'caseMenu', label: 'Aa', titleKey: 'tooltips.toggleCase', type: 'caseMenu' },
       { action: 'separator', type: 'separator' },
-      { action: 'link', label: WYSIWYG_ICONS.link, titleKey: 'tooltips.insertLink', command: 'createLink' },
-      { action: 'color', label: 'A', titleKey: 'tooltips.color', type: 'colorPicker' },
+      { name: 'link', action: 'link', label: WYSIWYG_ICONS.link, titleKey: 'tooltips.insertLink' },
+      { name: 'forecolor', action: 'color', label: 'A', titleKey: 'tooltips.color', type: 'colorPicker' },
       { action: 'separator', type: 'separator' },
-      { action: 'subscript', label: WYSIWYG_ICONS.subscript, titleKey: 'tooltips.subscript', type: 'wrapTag', tag: 'sub', crossCommand: 'subscript' },
-      { action: 'superscript', label: WYSIWYG_ICONS.superscript, titleKey: 'tooltips.superscript', type: 'wrapTag', tag: 'sup', crossCommand: 'superscript' },
-      { action: 'removeFormat', label: WYSIWYG_ICONS.removeFormat, titleKey: 'tooltips.removeFormat', type: 'removeFormat' },
+      { name: 'subscript', action: 'subscript', label: WYSIWYG_ICONS.subscript, titleKey: 'tooltips.subscript' },
+      { name: 'superscript', action: 'superscript', label: WYSIWYG_ICONS.superscript, titleKey: 'tooltips.superscript' },
+      { name: 'removeformat', action: 'removeFormat', label: WYSIWYG_ICONS.removeFormat, titleKey: 'tooltips.removeFormat' },
       { action: 'separator', type: 'separator' },
-      { action: 'font', label: WYSIWYG_ICONS.font, titleKey: 'tooltips.font', type: 'fontMenu' }
+      { name: 'font', action: 'font', label: WYSIWYG_ICONS.font, titleKey: 'tooltips.font', type: 'fontMenu' }
     ];
-    tools.push({ action: 'fontSize', type: 'fontSizeStepper' });
+    tools.push({ name: 'fontsize', action: 'fontSize', type: 'fontSizeStepper' });
 
     // La alineación es de BLOQUE (no de la selección) y, cuando hay toolbar activa,
     // ya está allí → incluir el botón de alineación en el menú flotante solo si
     // NO hay toolbar (editor sin barra: el menú flotante es su única UI).
     if (!this.showToolbar) {
       tools.push({ action: 'separator', type: 'separator' });
-      tools.push({ action: 'alignMenu', label: WYSIWYG_ICONS.alignLeft, titleKey: 'tooltips.alignLeft', type: 'alignMenu' });
+      tools.push({ name: 'align', action: 'alignMenu', label: WYSIWYG_ICONS.alignLeft, titleKey: 'tooltips.alignLeft', type: 'alignMenu' });
+    }
+
+    // Acciones CUSTOM con placement 'floating'|'both': se anclan por su nombre
+    // público sobre los GRUPOS del menú (los separadores son los límites de grupo)
+    // con el mismo algoritmo que la toolbar (_insertCustomActionsIntoRows). Se
+    // trabaja con nombres y luego se reconstruye el array de tools.
+    if (this._customActions && this._customActions.length) {
+      var v_fl_by_name = {};
+      var v_fl_rows = [[[]]]; // una fila → grupos de nombres
+      for (var ti = 0; ti < tools.length; ti++) {
+        if (tools[ti].type === 'separator') { v_fl_rows[0].push([]); continue; }
+        v_fl_by_name[tools[ti].name] = tools[ti];
+        v_fl_rows[0][v_fl_rows[0].length - 1].push(tools[ti].name);
+      }
+      this._insertCustomActionsIntoRows(v_fl_rows, 'floating');
+      var v_tools2 = [];
+      for (var gi2 = 0; gi2 < v_fl_rows[0].length; gi2++) {
+        var v_grp = v_fl_rows[0][gi2];
+        if (!v_grp.length) continue;
+        if (v_tools2.length) v_tools2.push({ action: 'separator', type: 'separator' });
+        for (var ni2 = 0; ni2 < v_grp.length; ni2++) {
+          var v_nm = v_grp[ni2];
+          if (v_fl_by_name[v_nm]) v_tools2.push(v_fl_by_name[v_nm]);
+          else if (this._customActionsByName[v_nm]) v_tools2.push({ name: v_nm, type: 'custom', custom: this._customActionsByName[v_nm] });
+        }
+      }
+      tools = v_tools2;
     }
 
     tools.forEach(function(tool) {
+      // Acción desactivada por `disabledActions`: no se pinta en el flotante.
+      if (tool.name && self._disabledActions[tool.name]) return;
+
       if (tool.type === 'separator') {
         var separator = document.createElement('div');
         separator.className = 'mewyse-format-separator';
         menu.appendChild(separator);
+        return;
+      }
+
+      // Acción CUSTOM (placement floating|both): botón .mewyse-format-button que
+      // despacha por _runAction; su estado (requiresSelection/isEnabled/isActive)
+      // se evalúa al construir (el menú se recrea en cada selección).
+      if (tool.type === 'custom') {
+        menu.appendChild(self._buildCustomActionButton(tool.custom, 'floating'));
         return;
       }
 
@@ -14589,54 +14633,12 @@
       if (tool.action === 'strikethrough') button.style.textDecoration = 'line-through';
       if (tool.action === 'toggleCase') { button.style.fontSize = '13px'; button.style.fontWeight = '600'; }
 
+      // Toda la lógica (cross-block e inline) vive en _runDefaultAction; pasar
+      // por _runAction aplica overrides/desactivaciones del registro de acciones.
       button.onclick = function(e) {
         e.preventDefault();
         e.stopPropagation();
-
-        if (self.crossBlockSelection) {
-          // Cross-block: delegar al sistema cross-block
-          if (tool.type === 'alignMenu') {
-            self.showAlignMenu(button);
-          } else if (tool.type === 'caseMenu') {
-            self.showCaseMenu(button);
-          } else if (tool.type === 'removeFormat') {
-            self.removeFormat();
-          } else if (tool.type === 'colorPicker') {
-            self.showUnifiedColorPicker(button);
-          } else if (tool.type === 'fontMenu') {
-            self.showFontMenu(button);
-          } else if (tool.type === 'wrapTag') {
-            // Sub/sup en cross-block: usar el comando nativo (coherente con el
-            // resto de formatos cross-block, que van por execCommand).
-            self.applyCrossBlockFormat(tool.crossCommand);
-          } else if (tool.command === 'createLink') {
-            // Links no soportados en cross-block, ignorar
-          } else if (tool.command) {
-            self.applyCrossBlockFormat(tool.command);
-          }
-        } else {
-          // Normal single-block
-          if (tool.type === 'alignMenu') {
-            self.showAlignMenu(button);
-          } else if (tool.type === 'caseMenu') {
-            self.showCaseMenu(button);
-          } else if (tool.type === 'removeFormat') {
-            self.removeFormat();
-          } else if (tool.type === 'colorPicker') {
-            self.showUnifiedColorPicker(button);
-          } else if (tool.type === 'fontMenu') {
-            self.showFontMenu(button);
-          } else if (tool.type === 'wrapTag') {
-            // Sub/superíndice: envolver en <sub>/<sup> (toggle) + persistir.
-            self._wrapSelectionInTag(tool.tag);
-            self._persistActiveBlockContent();
-          } else if (tool.command === 'createLink') {
-            self.createLink();
-          } else if (tool.command) {
-            document.execCommand(tool.command, false, null);
-            self.triggerChange();
-          }
-        }
+        self._runAction(tool.name, { source: 'floating', event: e, button: button });
       };
 
       menu.appendChild(button);
@@ -15415,6 +15417,21 @@
   var SELECTION_TOOL_NAMES = {
     subscript: 1, superscript: 1, case: 1, removeformat: 1,
     link: 1, forecolor: 1, font: 1, fontsize: 1
+  };
+
+  // Nombres PÚBLICOS de las acciones estándar (= ítems de la toolbar). Son los
+  // nombres que se usan en `disabledActions`, como `name` de un override en
+  // `actions`, y como ancla (`position.after/before`) de las acciones custom.
+  // Todas pasan por _runAction → _runDefaultAction (toolbar, menú flotante y
+  // atajos comparten así una única implementación por acción).
+  var STANDARD_ACTION_NAMES = {
+    undo: 1, redo: 1, blocktype: 1, fontsize: 1,
+    bold: 1, italic: 1, underline: 1, strikethrough: 1, subscript: 1, superscript: 1,
+    'case': 1, removeformat: 1, link: 1, forecolor: 1, font: 1, lineheight: 1,
+    specialchars: 1, mergetags: 1, align: 1, outdent: 1, indent: 1,
+    table: 1, image: 1, video: 1, audio: 1, pagebreak: 1,
+    find: 1, wordwrap: 1, summary: 1, showblocks: 1, sourcecode: 1, markdown: 1,
+    fullscreen: 1, print: 1, exportword: 1, exportpdf: 1, moveup: 1, movedown: 1
   };
 
   // Config de los botones de formato inline (comando execCommand o wrap de tag).
@@ -22104,6 +22121,442 @@
     }
     this.triggerChange();
     return true;
+  };
+
+  // =========================================================================
+  // REGISTRO CENTRAL DE ACCIONES (toolbar · menú flotante · atajos)
+  // =========================================================================
+
+  /**
+   * Inicializa el registro de acciones a partir de las opciones del constructor:
+   *  - `actions: [ {name, ...}, ... ]` → nombre ESTÁNDAR = override; nuevo = custom.
+   *  - `disabledActions: ['print', ...]` → se quitan de toolbar/flotante y su
+   *    atajo queda anulado.
+   * El array se recorre en orden (anclaje determinista de los customs).
+   */
+  meWYSE.prototype._initActionRegistry = function() {
+    this._customActions = [];        // defs custom, en orden de declaración
+    this._customActionsByName = {};  // nombre → def custom
+    this._actionOverrides = {};      // nombre estándar → def override
+    this._disabledActions = {};      // nombre → true
+    var v_defs = this.options.actions;
+    if (Object.prototype.toString.call(v_defs) === '[object Array]') {
+      for (var i = 0; i < v_defs.length; i++) this._registerActionDef(v_defs[i]);
+    }
+    var v_dis = this.options.disabledActions;
+    if (Object.prototype.toString.call(v_dis) === '[object Array]') {
+      for (var j = 0; j < v_dis.length; j++) {
+        if (typeof v_dis[j] === 'string' && v_dis[j]) this._disabledActions[v_dis[j]] = true;
+      }
+    }
+  };
+
+  /**
+   * Valida y guarda una definición de acción. Devuelve true si se registró.
+   *  - Estándar (STANDARD_ACTION_NAMES): override → solo requiere `name`; puede
+   *    traer onClick (con ctx.callDefault), icon, tooltip, isEnabled, isActive.
+   *    `fontsize` (stepper) no admite override (usar disabledActions).
+   *  - Custom: requiere `onClick`. Se normalizan placement ('toolbar' por
+   *    defecto | 'floating' | 'both'), tooltip y requiresSelection.
+   * @param {Object} def
+   * @returns {boolean}
+   */
+  meWYSE.prototype._registerActionDef = function(def) {
+    if (!def || typeof def.name !== 'string' || !def.name) {
+      console.warn('meWYSE: acción sin `name` válido', def);
+      return false;
+    }
+    var v_name = def.name;
+    if (STANDARD_ACTION_NAMES[v_name]) {
+      if (v_name === 'fontsize') {
+        console.warn('meWYSE: la acción `fontsize` (stepper) no admite override; usa disabledActions');
+        return false;
+      }
+      this._actionOverrides[v_name] = def;
+      return true;
+    }
+    if (typeof def.onClick !== 'function') {
+      console.warn('meWYSE: la acción custom `' + v_name + '` necesita `onClick`');
+      return false;
+    }
+    var v_pl = def.placement;
+    if (v_pl !== 'toolbar' && v_pl !== 'floating' && v_pl !== 'both') v_pl = 'toolbar';
+    var v_norm = {
+      name: v_name,
+      icon: def.icon,
+      tooltip: (typeof def.tooltip === 'string') ? def.tooltip : v_name,
+      placement: v_pl,
+      position: def.position,
+      onClick: def.onClick,
+      isEnabled: (typeof def.isEnabled === 'function') ? def.isEnabled : null,
+      isActive: (typeof def.isActive === 'function') ? def.isActive : null,
+      requiresSelection: def.requiresSelection === true
+    };
+    if (this._customActionsByName[v_name]) {
+      // Re-registro: sustituir en su posición actual del array
+      for (var i = 0; i < this._customActions.length; i++) {
+        if (this._customActions[i].name === v_name) { this._customActions[i] = v_norm; break; }
+      }
+    } else {
+      this._customActions.push(v_norm);
+    }
+    this._customActionsByName[v_name] = v_norm;
+    return true;
+  };
+
+  /**
+   * Construye el contexto que reciben los callbacks de acción. Parte del payload
+   * perezoso de onChange (editor, blocks, html/json/markdown/plainText/hasChanges,
+   * focusedBlockId/Type) y añade: action, source ('toolbar'|'floating'|'shortcut'|
+   * 'api'), event, button (ancla), selection {has, isCollapsed, text, range},
+   * block {id, type, content} y callDefault() (lo fija _runAction en overrides).
+   * @param {string} v_name
+   * @param {Object} v_opts - { source, event, button }
+   * @returns {Object}
+   */
+  meWYSE.prototype._makeActionContext = function(v_name, v_opts) {
+    v_opts = v_opts || {};
+    var v_active = document.activeElement;
+    var v_focused = (v_active && this.container && this.container.contains(v_active)) ? v_active : null;
+    var ctx = this._make_change_payload(v_focused);
+    ctx.action = v_name;
+    ctx.source = v_opts.source || 'api';
+    ctx.event = v_opts.event || null;
+    ctx.button = v_opts.button || null;
+
+    var sel = window.getSelection();
+    var v_has_range = !!(sel && sel.rangeCount);
+    ctx.selection = {
+      has: this._hasUsableSelection(),
+      isCollapsed: v_has_range ? sel.isCollapsed : true,
+      text: v_has_range ? sel.toString() : '',
+      range: v_has_range ? sel.getRangeAt(0) : null
+    };
+
+    var v_bid = (ctx.focusedBlockId != null) ? ctx.focusedBlockId : this._getFocusedBlockId();
+    var v_blk = (v_bid != null) ? this.getBlock(v_bid) : null;
+    ctx.block = v_blk ? { id: v_blk.id, type: v_blk.type, content: v_blk.content } : null;
+    ctx.callDefault = function() {}; // sin efecto salvo en overrides
+    return ctx;
+  };
+
+  /**
+   * Despachador único de acciones. Lo llaman los botones de la toolbar, el menú
+   * flotante y los atajos de teclado. Orden: desactivada → no-op; override →
+   * onClick(ctx) con ctx.callDefault() = comportamiento original; custom →
+   * onClick(ctx); si no → _runDefaultAction. Los callbacks del consumidor van
+   * en try/catch (un error suyo no rompe el editor); los defaults no se
+   * envuelven (sus errores deben verse tal cual).
+   * @param {string} v_name
+   * @param {Object} v_opts - { source, event, button }
+   * @returns {boolean} false si estaba desactivada o el editor destruido
+   */
+  meWYSE.prototype._runAction = function(v_name, v_opts) {
+    if (this._destroyed) return false;
+    if (this._disabledActions && this._disabledActions[v_name]) return false;
+    var self = this;
+    var ctx = this._makeActionContext(v_name, v_opts);
+    var v_override = this._actionOverrides ? this._actionOverrides[v_name] : null;
+    var v_custom = this._customActionsByName ? this._customActionsByName[v_name] : null;
+
+    if (v_override) {
+      ctx.callDefault = function() { self._runDefaultAction(v_name, ctx); };
+      if (typeof v_override.onClick === 'function') {
+        try { v_override.onClick(ctx); }
+        catch (e) { console.error('meWYSE: error en el override de `' + v_name + '`', e); }
+      } else {
+        this._runDefaultAction(v_name, ctx);
+      }
+      return true;
+    }
+    if (v_custom) {
+      try { v_custom.onClick(ctx); }
+      catch (e2) { console.error('meWYSE: error en la acción `' + v_name + '`', e2); }
+      return true;
+    }
+    this._runDefaultAction(v_name, ctx);
+    return true;
+  };
+
+  /**
+   * Implementación por defecto de cada acción estándar (única para toolbar,
+   * menú flotante y atajos). Los desplegables necesitan el botón ancla
+   * (ctx.button; para blocktype/align hay fallback a la ref de la toolbar).
+   * @param {string} v_name
+   * @param {Object} ctx
+   */
+  meWYSE.prototype._runDefaultAction = function(v_name, ctx) {
+    var v_btn = ctx && ctx.button ? ctx.button : null;
+    var v_id;
+    switch (v_name) {
+      case 'undo': this.undo(); break;
+      case 'redo': this.redo(); break;
+      case 'blocktype':
+        v_btn = v_btn || this._blockTypeButton;
+        if (v_btn) this.showToolbarBlockTypeMenu(v_btn);
+        break;
+      case 'fontsize': break; // stepper: sus botones [−]/[+] tienen su propia lógica
+      case 'bold': this._applyInlineFormatCommand('bold'); break;
+      case 'italic': this._applyInlineFormatCommand('italic'); break;
+      case 'underline': this._applyInlineFormatCommand('underline'); break;
+      case 'strikethrough': this._applyInlineFormatCommand('strikeThrough'); break;
+      case 'subscript': this._applyInlineWrapTag('sub'); break;
+      case 'superscript': this._applyInlineWrapTag('sup'); break;
+      case 'case': if (v_btn) this.showCaseMenu(v_btn); break;
+      case 'removeformat': this.removeFormat(); break;
+      case 'link':
+        // Enlaces no soportados en selección cross-block (comportamiento previo
+        // del menú flotante).
+        if (!this.crossBlockSelection) this.createLink();
+        break;
+      case 'forecolor': if (v_btn) this.showUnifiedColorPicker(v_btn); break;
+      case 'font': if (v_btn) this.showFontMenu(v_btn); break;
+      case 'lineheight': if (v_btn) this.showLineHeightMenu(v_btn); break;
+      case 'specialchars': if (v_btn) this.showSpecialCharsMenu(v_btn); break;
+      case 'mergetags': this._openMergeTagMenuFromSelection(); break;
+      case 'align':
+        v_btn = v_btn || this.alignButton;
+        if (v_btn) this.showAlignMenu(v_btn);
+        break;
+      case 'outdent':
+        v_id = this._getFocusedBlockId();
+        if (v_id !== null) this.indentBlock(v_id, -1);
+        break;
+      case 'indent':
+        v_id = this._getFocusedBlockId();
+        if (v_id !== null) this.indentBlock(v_id, 1);
+        break;
+      case 'table': this.insertTableBlock(); break;
+      case 'image': this.insertImageBlock(); break;
+      case 'video': this.insertVideoBlock(); break;
+      case 'audio': this.insertAudioBlock(); break;
+      case 'pagebreak': this.insertPageBreak(); break;
+      case 'find': this.showFindReplace(); break;
+      case 'wordwrap': this.toggleWordWrap(); break;
+      case 'summary': this.toggleOutlinePanel(); break;
+      case 'showblocks': this.toggleShowBlocks(); break;
+      case 'sourcecode': this._showCodeSourceModal('html'); break;
+      case 'markdown': this._showCodeSourceModal('markdown'); break;
+      case 'fullscreen': this.toggleFullscreen(); break;
+      case 'print': this.print(); break;
+      case 'exportword': this.exportWord(); break;
+      case 'exportpdf': this.exportPdf(); break;
+      case 'moveup': this.moveBlockUp(); break;
+      case 'movedown': this.moveBlockDown(); break;
+      default: break; // nombre no estándar sin custom: nada que hacer
+    }
+  };
+
+  /**
+   * Aplica un comando inline (bold/italic/underline/strikeThrough) sobre la
+   * selección: primero intenta la vía cross-block/multi-bloque
+   * (_applyInlineAcrossSelection); si no aplica, execCommand sobre la selección
+   * nativa y persistencia del bloque activo (cubre toolbar, flotante y atajos).
+   * @param {string} v_cmd
+   */
+  meWYSE.prototype._applyInlineFormatCommand = function(v_cmd) {
+    var v_applied = this._applyInlineAcrossSelection(function() { document.execCommand(v_cmd, false, null); });
+    if (!v_applied) {
+      document.execCommand(v_cmd, false, null);
+      if (!this._persistActiveBlockContent()) this.triggerChange();
+    }
+  };
+
+  /**
+   * Envuelve/desenvuelve la selección en una etiqueta inline (sub/sup) con la
+   * misma estrategia cross-block → inline que _applyInlineFormatCommand.
+   * @param {string} v_tag
+   */
+  meWYSE.prototype._applyInlineWrapTag = function(v_tag) {
+    var self = this;
+    var v_applied = this._applyInlineAcrossSelection(function() { self._wrapSelectionInTag(v_tag); });
+    if (!v_applied) {
+      this._wrapSelectionInTag(v_tag);
+      if (!this._persistActiveBlockContent()) this.triggerChange();
+    }
+  };
+
+  /**
+   * Abre el menú de merge tags para el bloque que contiene la selección (antes
+   * inline en el botón `mergetags` de la toolbar).
+   */
+  meWYSE.prototype._openMergeTagMenuFromSelection = function() {
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+    var v_node = sel.getRangeAt(0).commonAncestorContainer;
+    var v_el = (v_node.nodeType === 1) ? v_node : v_node.parentElement;
+    var v_block_el = (v_el && v_el.closest) ? v_el.closest('.mewyse-block[data-block-id]') : null;
+    if (!v_block_el) return;
+    var v_editable = this.getEditableElement(v_block_el);
+    var v_bid = parseInt(v_block_el.getAttribute('data-block-id'), 10);
+    if (v_editable) this.showMergeTagMenu(v_bid, v_editable);
+  };
+
+  /**
+   * Inserta las acciones CUSTOM de una superficie en el spec normalizado
+   * `v_rows` = [fila][grupo][nombres] según su `position`:
+   *  - `{ after|before: 'X' }`           → dentro del grupo de X (sin separador).
+   *  - `{ after|before: 'X', group:'new' }` → grupo PROPIO pegado al de X; los
+   *    customs consecutivos con la misma ancla+dirección comparten ese grupo.
+   *  - `'start'` / `'end'` (o sin position) → grupo propio al inicio / al final.
+   *  - Ancla inexistente en esta superficie → 'end'.
+   * Si el nombre ya está en el spec (p. ej. en el string `toolbar`), manda el spec.
+   * Se recorre `this._customActions` en orden (determinista).
+   * @param {Array} v_rows
+   * @param {string} v_surface - 'toolbar' | 'floating'
+   */
+  meWYSE.prototype._insertCustomActionsIntoRows = function(v_rows, v_surface) {
+    if (!this._customActions || !this._customActions.length || !v_rows || !v_rows.length) return;
+    var v_created = {}; // clave de anclaje → grupo (array) ya creado, para compartirlo
+    var v_find = function(v_name) {
+      for (var r = 0; r < v_rows.length; r++) {
+        for (var g = 0; g < v_rows[r].length; g++) {
+          for (var n = 0; n < v_rows[r][g].length; n++) {
+            if (v_rows[r][g][n] === v_name) return { r: r, g: g, n: n };
+          }
+        }
+      }
+      return null;
+    };
+    for (var i = 0; i < this._customActions.length; i++) {
+      var def = this._customActions[i];
+      var v_ok = (v_surface === 'toolbar')
+        ? (def.placement === 'toolbar' || def.placement === 'both')
+        : (def.placement === 'floating' || def.placement === 'both');
+      if (!v_ok) continue;
+      if (v_find(def.name)) continue; // ya colocado por el spec
+
+      var pos = def.position;
+      var v_mode = 'end', v_anchor = null, v_dir = 'after', v_new = false;
+      if (pos === 'start') {
+        v_mode = 'start';
+      } else if (pos && typeof pos === 'object') {
+        if (typeof pos.after === 'string') { v_anchor = pos.after; v_dir = 'after'; v_mode = 'rel'; }
+        else if (typeof pos.before === 'string') { v_anchor = pos.before; v_dir = 'before'; v_mode = 'rel'; }
+        v_new = pos.group === 'new';
+      }
+      var v_loc = (v_mode === 'rel') ? v_find(v_anchor) : null;
+      if (v_mode === 'rel' && !v_loc) v_mode = 'end';
+
+      if (v_mode === 'rel' && !v_new) {
+        // Mismo grupo que el ancla, justo después/antes de ella.
+        v_rows[v_loc.r][v_loc.g].splice(v_dir === 'after' ? v_loc.n + 1 : v_loc.n, 0, def.name);
+        continue;
+      }
+      // Grupo propio (start / end / rel+new), compartido por customs consecutivos.
+      var v_key = (v_mode === 'rel') ? ('rel|' + v_anchor + '|' + v_dir) : v_mode;
+      var v_group = v_created[v_key];
+      if (!v_group) {
+        v_group = [];
+        if (v_mode === 'start') v_rows[0].unshift(v_group);
+        else if (v_mode === 'end') v_rows[v_rows.length - 1].push(v_group);
+        else v_rows[v_loc.r].splice(v_dir === 'after' ? v_loc.g + 1 : v_loc.g, 0, v_group);
+        v_created[v_key] = v_group;
+      }
+      v_group.push(def.name);
+    }
+  };
+
+  /**
+   * Resuelve el `icon` de una acción custom a HTML: string que empieza por '<'
+   * → SVG/HTML tal cual; clave de WYSIWYG_ICONS → ese SVG; otro texto → etiqueta
+   * escapada. Sin icono → tooltip escapado como etiqueta.
+   * @param {string} v_icon
+   * @param {string} v_fallback
+   * @returns {string}
+   */
+  meWYSE.prototype._resolveActionIcon = function(v_icon, v_fallback) {
+    if (typeof v_icon === 'string' && v_icon) {
+      if (v_icon.charAt(0) === '<') return v_icon;
+      if (WYSIWYG_ICONS[v_icon]) return WYSIWYG_ICONS[v_icon];
+      return '<span class="mewyse-action-label">' + escapeHtml(v_icon) + '</span>';
+    }
+    return '<span class="mewyse-action-label">' + escapeHtml(v_fallback || '?') + '</span>';
+  };
+
+  /**
+   * Construye el botón de una acción CUSTOM para una superficie: en la toolbar
+   * es un .mewyse-toolbar-button (onmousedown+preventDefault para no perder el
+   * caret) y se registra para el estado dinámico; en el flotante es un
+   * .mewyse-format-button con el estado evaluado al construir.
+   * @param {Object} def
+   * @param {string} v_source - 'toolbar' | 'floating'
+   * @returns {HTMLButtonElement}
+   */
+  meWYSE.prototype._buildCustomActionButton = function(def, v_source) {
+    var self = this;
+    var v_icon = this._resolveActionIcon(def.icon, def.tooltip);
+    var v_safe = String(def.name).replace(/[^a-zA-Z0-9_-]/g, '');
+    var btn;
+    if (v_source === 'floating') {
+      btn = document.createElement('button');
+      btn.className = 'mewyse-format-button mewyse-custom-action';
+      btn.innerHTML = v_icon;
+      btn.title = def.tooltip;
+      btn.setAttribute('aria-label', def.tooltip);
+      btn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        self._runAction(def.name, { source: 'floating', event: e, button: btn });
+      };
+      this._applyCustomActionState(btn, def);
+    } else {
+      btn = this._makeToolbarButton({
+        icon: v_icon, title: def.tooltip, className: 'mewyse-custom-action',
+        onmousedown: function(e) { e.preventDefault(); },
+        onclick: function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          self._runAction(def.name, { source: 'toolbar', event: e, button: e.currentTarget });
+          self._updateCustomActionStates();
+        }
+      });
+      if (def.requiresSelection || def.isEnabled || def.isActive) {
+        this._customStateButtons.push({ el: btn, def: def });
+      }
+    }
+    btn.setAttribute('data-action', def.name);
+    if (v_safe) btn.classList.add('mewyse-action-' + v_safe);
+    return btn;
+  };
+
+  /**
+   * Aplica a un botón custom su estado: disabled si `requiresSelection` sin
+   * selección o si `isEnabled(ctx)` devuelve false; clase `active` según
+   * `isActive(ctx)`. Los predicados del consumidor van en try/catch.
+   * @param {HTMLElement} v_el
+   * @param {Object} def
+   */
+  meWYSE.prototype._applyCustomActionState = function(v_el, def) {
+    var v_enabled = true;
+    if (def.requiresSelection && !this._hasUsableSelection()) v_enabled = false;
+    var ctx = null;
+    if (v_enabled && def.isEnabled) {
+      try {
+        ctx = this._makeActionContext(def.name, { source: 'state' });
+        v_enabled = !!def.isEnabled(ctx);
+      } catch (e) { console.error('meWYSE: error en isEnabled de `' + def.name + '`', e); }
+    }
+    v_el.disabled = !v_enabled;
+    if (def.isActive) {
+      try {
+        if (!ctx) ctx = this._makeActionContext(def.name, { source: 'state' });
+        v_el.classList.toggle('active', !!def.isActive(ctx));
+      } catch (e2) { console.error('meWYSE: error en isActive de `' + def.name + '`', e2); }
+    }
+  };
+
+  /**
+   * Reevalúa el estado dinámico de todos los botones custom de la toolbar. Se
+   * llama en focusin, en cada onSelectionChange, tras pulsar un custom y al
+   * crear la toolbar. (Los del flotante se evalúan al construir el menú.)
+   */
+  meWYSE.prototype._updateCustomActionStates = function() {
+    if (!this._customStateButtons || !this._customStateButtons.length) return;
+    for (var i = 0; i < this._customStateButtons.length; i++) {
+      var v_it = this._customStateButtons[i];
+      if (v_it && v_it.el) this._applyCustomActionState(v_it.el, v_it.def);
+    }
   };
 
   /**
