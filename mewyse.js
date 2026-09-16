@@ -5679,7 +5679,12 @@
     var activeElement = document.activeElement;
 
     // Si no se proporciona focusBlockId, intentar capturar del elemento activo
-    if (!focusedBlockId && activeElement && activeElement.isContentEditable) {
+    // Solo si el elemento activo está DENTRO de este editor: con varios editores en
+    // la página (cuyos bloques pueden compartir id, p. ej. ambos `1`), el foco de
+    // OTRO editor haría que este "heredase" su blockId y se auto-enfocara tras el
+    // render (setTimeout de abajo), colapsando cualquier selección hecha aquí.
+    if (!focusedBlockId && activeElement && activeElement.isContentEditable &&
+        this.container && this.container.contains(activeElement)) {
       var blockElement = activeElement.closest('[data-block-id]');
       if (blockElement) {
         focusedBlockId = parseInt(blockElement.getAttribute('data-block-id'));
