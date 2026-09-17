@@ -200,7 +200,7 @@ export default class LibraEditor {
   loadFromMarkdown(md: string): void;
   /** ¿El contenido ha cambiado respecto a la última línea base "limpia"?
    *  La base se captura tras la carga inicial (incluida la normalización
-   *  HTML→bloques de un textarea) y tras cada loadFrom*/markPristine, así que
+   *  HTML→bloques de un textarea) y tras cada loadFromX/markPristine, así que
    *  entrar y salir sin editar devuelve false. */
   isDirty(): boolean;
   /** Alias semántico de isDirty(). */
