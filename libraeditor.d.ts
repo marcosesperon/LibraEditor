@@ -81,7 +81,7 @@ export interface LibraEditorActionContext extends LibraEditorChangePayload {
 export interface LibraEditorActionDef {
   /** Identificador. Estándar = override; nuevo = acción custom. */
   name: string;
-  /** SVG en crudo (empieza por '<'), clave de WYSIWYG_ICONS, o texto (etiqueta). */
+  /** SVG en crudo (empieza por '<'), clave de LIBRAEDITOR_ICONS, o texto (etiqueta). */
   icon?: string;
   /** Texto del tooltip / aria-label. Por defecto, el `name`. */
   tooltip?: string;
@@ -151,7 +151,12 @@ export interface LibraEditorOptions {
   rtl?: boolean;
   wordWrap?: boolean;
   contentStyles?: boolean;
-  lang?: 'es' | 'en' | Record<string, any>;
+  /** Idioma de la interfaz. Además de los incorporados ('es', 'en'), admite el
+   *  código de cualquier idioma registrado en `LibraEditor.translations`, o un
+   *  objeto de traducciones suelto que se mergea sobre el español.
+   *  (`string & {}` mantiene el autocompletado de los incorporados sin cerrar
+   *  el tipo a esos dos valores.) */
+  lang?: 'es' | 'en' | (string & {}) | Record<string, any>;
   autoFocus?: boolean;
   minHeight?: number | string;
   maxHeight?: number | string;
@@ -186,8 +191,30 @@ export interface LibraEditorOptions {
   [key: string]: any;
 }
 
+export interface LibraEditorEmoji {
+  /** Nombre por el que se filtra al escribir `:algo`. */
+  name: string;
+  /** El carácter Unicode que se inserta. */
+  emoji: string;
+  category: string;
+}
+
 export default class LibraEditor {
   constructor(options: LibraEditorOptions);
+
+  /** Iconos SVG del editor, indexados por nombre. Es el objeto VIVO: añadir una
+   *  clave la hace usable como `icon: 'miIcono'` en una acción, y sobrescribir
+   *  una existente cambia el icono estándar. Debe hacerse ANTES de instanciar
+   *  (una toolbar ya pintada no se repinta sola). */
+  static icons: Record<string, string>;
+
+  /** Traducciones por código de idioma ('es', 'en'). Registrar uno nuevo lo
+   *  habilita para la opción `lang`. Objeto VIVO, como `icons`. */
+  static translations: Record<string, any>;
+
+  /** Datos del selector de emojis (`:`). Objeto VIVO, como `icons`. */
+  static emojis: LibraEditorEmoji[];
+
   blocks: LibraEditorBlock[];
   getHTML(): string;
   getSafeHTML(): string;

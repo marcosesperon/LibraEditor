@@ -65,7 +65,7 @@ Los tres primeros están **reproducidos en vivo**.
   `_resolveMenuFullIndex(menu, selector, visualIndex)` que traduce el índice visual (teclado) al real
   (`data-index`). `selectSlashMenuItem`/`selectMentionItem`/`selectEmojiItem`/`selectTagItem` ahora
   reciben SIEMPRE el índice real e indexan el array completo (`slashMenuTypes`/`mentions`/
-  `WYSIWYG_EMOJIS`/`tags`); los 4 handlers Enter convierten con el helper. → [libraeditor.js:14690](libraeditor.js:14690).
+  `LIBRAEDITOR_EMOJIS`/`tags`); los 4 handlers Enter convierten con el helper. → [libraeditor.js:14690](libraeditor.js:14690).
   - VERIFICADO: filtrar menciones por "car" y clicar inserta "Carlos Ruiz"; resolver mapea visual→real correctamente.
 
 - [x] **2.2 ✅ Resize de imagen en celda roto al 2º uso + fuga. RESUELTO.** Portado el patrón de

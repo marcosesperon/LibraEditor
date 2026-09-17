@@ -10,7 +10,7 @@
   /**
    * Traducciones del editor
    */
-  var WYSIWYG_TRANSLATIONS = {
+  var LIBRAEDITOR_TRANSLATIONS = {
     es: {
       blockTypes: {
         paragraph: 'Párrafo',
@@ -590,7 +590,7 @@
   /**
    * Lista de emojis para el emoji picker
    */
-  var WYSIWYG_EMOJIS = [
+  var LIBRAEDITOR_EMOJIS = [
     // Caras y emociones
     { name: 'smile', emoji: '😊', category: 'faces' },
     { name: 'smiley', emoji: '😃', category: 'faces' },
@@ -811,7 +811,7 @@
   /**
    * Iconos SVG del editor
    */
-  var WYSIWYG_ICONS = {
+  var LIBRAEDITOR_ICONS = {
     dragHandle: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>',
     chevronDown: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
     link: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
@@ -1140,11 +1140,11 @@
 
     // Inicializar traducciones
     if (typeof this.options.lang === 'string') {
-      this.translations = WYSIWYG_TRANSLATIONS[this.options.lang] || WYSIWYG_TRANSLATIONS.es;
+      this.translations = LIBRAEDITOR_TRANSLATIONS[this.options.lang] || LIBRAEDITOR_TRANSLATIONS.es;
     } else if (this.options.lang && typeof this.options.lang === 'object') {
-      this.translations = this.mergeDeep(WYSIWYG_TRANSLATIONS.es, this.options.lang);
+      this.translations = this.mergeDeep(LIBRAEDITOR_TRANSLATIONS.es, this.options.lang);
     } else {
-      this.translations = WYSIWYG_TRANSLATIONS.es;
+      this.translations = LIBRAEDITOR_TRANSLATIONS.es;
     }
 
     if (!this.target) {
@@ -1367,7 +1367,7 @@
       value = value[keys[i]];
       if (value === undefined) {
         // Fallback a espanol si no existe la clave
-        value = WYSIWYG_TRANSLATIONS.es;
+        value = LIBRAEDITOR_TRANSLATIONS.es;
         for (j = 0; j < keys.length; j++) {
           value = value[keys[j]];
           if (value === undefined) return key;
@@ -2194,7 +2194,7 @@
     // Crear el boton handle
     var handle = document.createElement('button');
     handle.className = 'libraeditor-handle';
-    handle.innerHTML = WYSIWYG_ICONS.dragHandle;
+    handle.innerHTML = LIBRAEDITOR_ICONS.dragHandle;
     handle.title = this.t('tooltips.dragToReorder');
     handle.setAttribute('aria-label', this.t('tooltips.dragToReorder'));
     handle.draggable = true;
@@ -2410,7 +2410,7 @@
     var self = this;
     var cfg = TOOLBAR_FORMAT_TOOLS[name];
     if (!cfg) return null;
-    var v_icon = cfg.icon || (cfg.iconName ? WYSIWYG_ICONS[cfg.iconName] : '');
+    var v_icon = cfg.icon || (cfg.iconName ? LIBRAEDITOR_ICONS[cfg.iconName] : '');
     var v_btn = this._makeToolbarButton({
       icon: v_icon,
       title: self.t(cfg.labelKey),
@@ -2458,19 +2458,19 @@
     switch (name) {
       case 'undo':
         return (this.undoButton = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.undo, title: this.t('tooltips.undo'), disabled: true,
+          icon: LIBRAEDITOR_ICONS.undo, title: this.t('tooltips.undo'), disabled: true,
           onmousedown: function(e) { e.preventDefault(); },
           onclick: function(e) { e.preventDefault(); self._runAction('undo', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       case 'redo':
         return (this.redoButton = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.redo, title: this.t('tooltips.redo'), disabled: true,
+          icon: LIBRAEDITOR_ICONS.redo, title: this.t('tooltips.redo'), disabled: true,
           onmousedown: function(e) { e.preventDefault(); },
           onclick: function(e) { e.preventDefault(); self._runAction('redo', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       case 'blocktype':
         var v_bt = this._makeToolbarButton({
-          icon: this.t('misc.text') + ' <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>',
+          icon: this.t('misc.text') + ' <span class="dropdown-arrow">' + LIBRAEDITOR_ICONS.chevronDown + '</span>',
           title: this.t('tooltips.changeBlockType'), dropdown: true, className: 'libraeditor-toolbar-dropdown-wide',
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('blocktype', { source: 'toolbar', event: e, button: v_bt }); }
         });
@@ -2485,37 +2485,37 @@
         return this._buildFormatButton(name);
       case 'case':
         var v_case = this._makeToolbarButton({
-          icon: '<span style="font-size:13px;font-weight:600">Aa</span> <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>',
+          icon: '<span style="font-size:13px;font-weight:600">Aa</span> <span class="dropdown-arrow">' + LIBRAEDITOR_ICONS.chevronDown + '</span>',
           title: this.t('tooltips.toggleCase'), dropdown: true,
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('case', { source: 'toolbar', event: e, button: v_case }); }
         });
         return v_case;
       case 'removeformat':
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.removeFormat, title: this.t('tooltips.removeFormat'),
+          icon: LIBRAEDITOR_ICONS.removeFormat, title: this.t('tooltips.removeFormat'),
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('removeformat', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'link':
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.link, title: this.t('tooltips.insertLink'),
+          icon: LIBRAEDITOR_ICONS.link, title: this.t('tooltips.insertLink'),
           onclick: function(e) { e.preventDefault(); self._runAction('link', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'forecolor':
         var v_color = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.palette, title: this.t('tooltips.color'),
+          icon: LIBRAEDITOR_ICONS.palette, title: this.t('tooltips.color'),
           onclick: function(e) { e.preventDefault(); self._runAction('forecolor', { source: 'toolbar', event: e, button: v_color }); }
         });
         return v_color;
       case 'font':
         var v_font = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.font + ' <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>',
+          icon: LIBRAEDITOR_ICONS.font + ' <span class="dropdown-arrow">' + LIBRAEDITOR_ICONS.chevronDown + '</span>',
           title: this.t('tooltips.font'), dropdown: true,
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('font', { source: 'toolbar', event: e, button: v_font }); }
         });
         return v_font;
       case 'lineheight':
         var v_lh = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.lineHeight + ' <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>',
+          icon: LIBRAEDITOR_ICONS.lineHeight + ' <span class="dropdown-arrow">' + LIBRAEDITOR_ICONS.chevronDown + '</span>',
           title: this.t('tooltips.lineHeight'), dropdown: true,
           onmousedown: function(e) { e.preventDefault(); },
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('lineheight', { source: 'toolbar', event: e, button: v_lh }); }
@@ -2523,14 +2523,14 @@
         return v_lh;
       case 'specialchars':
         var v_chars = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.specialChars, title: this.t('tooltips.specialChars'),
+          icon: LIBRAEDITOR_ICONS.specialChars, title: this.t('tooltips.specialChars'),
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('specialchars', { source: 'toolbar', event: e, button: v_chars }); }
         });
         return v_chars;
       case 'mergetags':
         if (!this.mergeTags || this.mergeTags.length === 0) return null;
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.mergeTag, title: this.t('tooltips.mergeTag'),
+          icon: LIBRAEDITOR_ICONS.mergeTag, title: this.t('tooltips.mergeTag'),
           onmousedown: function(e) { e.preventDefault(); },
           onclick: function(e) { e.preventDefault(); self._runAction('mergetags', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
@@ -2545,54 +2545,54 @@
         return v_align;
       case 'outdent':
         return (this.outdentButton = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.outdent, title: this.t('tooltips.outdent'), disabled: true,
+          icon: LIBRAEDITOR_ICONS.outdent, title: this.t('tooltips.outdent'), disabled: true,
           onmousedown: function(e) { e.preventDefault(); },
           onclick: function(e) { e.preventDefault(); self._runAction('outdent', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       case 'indent':
         return (this.indentButton = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.indent, title: this.t('tooltips.indent'), disabled: true,
+          icon: LIBRAEDITOR_ICONS.indent, title: this.t('tooltips.indent'), disabled: true,
           onmousedown: function(e) { e.preventDefault(); },
           onclick: function(e) { e.preventDefault(); self._runAction('indent', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       case 'table':
         if (this._isBlockDisabled('table')) return null;
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.table, title: this.t('tooltips.insertTable'),
+          icon: LIBRAEDITOR_ICONS.table, title: this.t('tooltips.insertTable'),
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('table', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'image':
         if (this._isBlockDisabled('image')) return null;
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.image, title: this.t('tooltips.insertImage'),
+          icon: LIBRAEDITOR_ICONS.image, title: this.t('tooltips.insertImage'),
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('image', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'video':
         if (this._isBlockDisabled('video')) return null;
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.video, title: this.t('tooltips.insertVideo'),
+          icon: LIBRAEDITOR_ICONS.video, title: this.t('tooltips.insertVideo'),
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('video', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'audio':
         if (this._isBlockDisabled('audio')) return null;
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.audio, title: this.t('tooltips.insertAudio'),
+          icon: LIBRAEDITOR_ICONS.audio, title: this.t('tooltips.insertAudio'),
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('audio', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'pagebreak':
         if (this._isBlockDisabled('pageBreak')) return null;
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.pageBreak, title: this.t('tooltips.pageBreak'),
+          icon: LIBRAEDITOR_ICONS.pageBreak, title: this.t('tooltips.pageBreak'),
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('pagebreak', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'find':
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.search, title: this.t('tooltips.findReplace') + ' (Ctrl+F)',
+          icon: LIBRAEDITOR_ICONS.search, title: this.t('tooltips.findReplace') + ' (Ctrl+F)',
           onclick: function(e) { e.preventDefault(); self._runAction('find', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'wordwrap':
         var v_ww = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.wordWrap, title: this.t('tooltips.wordWrap'),
+          icon: LIBRAEDITOR_ICONS.wordWrap, title: this.t('tooltips.wordWrap'),
           onclick: function(e) {
             e.preventDefault(); self._runAction('wordwrap', { source: 'toolbar', event: e, button: v_ww });
             v_ww.setAttribute('aria-pressed', self.wordWrap ? 'true' : 'false');
@@ -2605,7 +2605,7 @@
         return v_ww;
       case 'summary':
         var v_sum = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.summaryPanel, title: this.t('tooltips.summary'),
+          icon: LIBRAEDITOR_ICONS.summaryPanel, title: this.t('tooltips.summary'),
           onclick: function(e) { e.preventDefault(); self._runAction('summary', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
         v_sum.setAttribute('aria-pressed', this.outlinePanel ? 'true' : 'false');
@@ -2614,7 +2614,7 @@
         return v_sum;
       case 'showblocks':
         var v_sb = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.showBlocks, title: this.t('tooltips.showBlocks'),
+          icon: LIBRAEDITOR_ICONS.showBlocks, title: this.t('tooltips.showBlocks'),
           onclick: function(e) {
             e.preventDefault(); self._runAction('showblocks', { source: 'toolbar', event: e, button: v_sb });
             v_sb.setAttribute('aria-pressed', self.showingBlocks ? 'true' : 'false');
@@ -2626,17 +2626,17 @@
         return v_sb;
       case 'sourcecode':
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.sourceCode, title: this.t('tooltips.sourceCode'),
+          icon: LIBRAEDITOR_ICONS.sourceCode, title: this.t('tooltips.sourceCode'),
           onclick: function(e) { e.preventDefault(); self._runAction('sourcecode', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'markdown':
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.markdown, title: this.t('tooltips.markdown'),
+          icon: LIBRAEDITOR_ICONS.markdown, title: this.t('tooltips.markdown'),
           onclick: function(e) { e.preventDefault(); self._runAction('markdown', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'fullscreen':
         var v_fsn = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.fullscreen, title: this.t('tooltips.fullscreen'),
+          icon: LIBRAEDITOR_ICONS.fullscreen, title: this.t('tooltips.fullscreen'),
           onclick: function(e) { e.preventDefault(); self._runAction('fullscreen', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
         v_fsn.setAttribute('aria-pressed', 'false');
@@ -2644,27 +2644,27 @@
         return v_fsn;
       case 'print':
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.print, title: this.t('tooltips.print'),
+          icon: LIBRAEDITOR_ICONS.print, title: this.t('tooltips.print'),
           onclick: function(e) { e.preventDefault(); self._runAction('print', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'exportword':
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.exportWord, title: this.t('tooltips.exportWord'),
+          icon: LIBRAEDITOR_ICONS.exportWord, title: this.t('tooltips.exportWord'),
           onclick: function(e) { e.preventDefault(); self._runAction('exportword', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'exportpdf':
         return this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.exportPdf, title: this.t('tooltips.exportPdf'),
+          icon: LIBRAEDITOR_ICONS.exportPdf, title: this.t('tooltips.exportPdf'),
           onclick: function(e) { e.preventDefault(); self._runAction('exportpdf', { source: 'toolbar', event: e, button: e.currentTarget }); }
         });
       case 'moveup':
         return (this.moveUpButton = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.arrowUp, title: this.t('tooltips.moveBlockUp'), disabled: true,
+          icon: LIBRAEDITOR_ICONS.arrowUp, title: this.t('tooltips.moveBlockUp'), disabled: true,
           onclick: function(e) { e.preventDefault(); self._runAction('moveup', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       case 'movedown':
         return (this.moveDownButton = this._makeToolbarButton({
-          icon: WYSIWYG_ICONS.arrowDown, title: this.t('tooltips.moveBlockDown'), disabled: true,
+          icon: LIBRAEDITOR_ICONS.arrowDown, title: this.t('tooltips.moveBlockDown'), disabled: true,
           onclick: function(e) { e.preventDefault(); self._runAction('movedown', { source: 'toolbar', event: e, button: e.currentTarget }); }
         }));
       default:
@@ -2682,7 +2682,7 @@
     v_stepper.className = 'libraeditor-font-size-stepper';
 
     var v_dec = this._makeToolbarButton({
-      icon: WYSIWYG_ICONS.minus, title: this.t('tooltips.fontSizeDecrease'), className: 'libraeditor-font-size-step',
+      icon: LIBRAEDITOR_ICONS.minus, title: this.t('tooltips.fontSizeDecrease'), className: 'libraeditor-font-size-step',
       onmousedown: function(e) { e.preventDefault(); },
       onclick: function(e) { e.preventDefault(); self._stepFontSize(-1); }
     });
@@ -2691,7 +2691,7 @@
     v_val.textContent = '—';
     this._fontSizeDisplay = v_val;
     var v_inc = this._makeToolbarButton({
-      icon: WYSIWYG_ICONS.plus, title: this.t('tooltips.fontSizeIncrease'), className: 'libraeditor-font-size-step',
+      icon: LIBRAEDITOR_ICONS.plus, title: this.t('tooltips.fontSizeIncrease'), className: 'libraeditor-font-size-step',
       onmousedown: function(e) { e.preventDefault(); },
       onclick: function(e) { e.preventDefault(); self._stepFontSize(1); }
     });
@@ -2739,7 +2739,7 @@
       scrollPrev = document.createElement('button');
       scrollPrev.type = 'button';
       scrollPrev.className = 'libraeditor-toolbar-scroll-arrow libraeditor-toolbar-scroll-arrow-prev';
-      scrollPrev.innerHTML = WYSIWYG_ICONS.arrowLeft || WYSIWYG_ICONS.chevronDown;
+      scrollPrev.innerHTML = LIBRAEDITOR_ICONS.arrowLeft || LIBRAEDITOR_ICONS.chevronDown;
       scrollPrev.title = this.t('tooltips.scrollPrev');
       scrollPrev.setAttribute('aria-label', this.t('tooltips.scrollPrev'));
       scrollPrev.tabIndex = -1;
@@ -2748,7 +2748,7 @@
       scrollNext = document.createElement('button');
       scrollNext.type = 'button';
       scrollNext.className = 'libraeditor-toolbar-scroll-arrow libraeditor-toolbar-scroll-arrow-next';
-      scrollNext.innerHTML = WYSIWYG_ICONS.arrowRight || WYSIWYG_ICONS.chevronDown;
+      scrollNext.innerHTML = LIBRAEDITOR_ICONS.arrowRight || LIBRAEDITOR_ICONS.chevronDown;
       scrollNext.title = this.t('tooltips.scrollNext');
       scrollNext.setAttribute('aria-label', this.t('tooltips.scrollNext'));
       scrollNext.tabIndex = -1;
@@ -3262,7 +3262,7 @@
           // Crear botón de edición
           var editButton = document.createElement('button');
           editButton.className = 'libraeditor-image-edit-btn';
-          editButton.innerHTML = WYSIWYG_ICONS.gear;
+          editButton.innerHTML = LIBRAEDITOR_ICONS.gear;
           editButton.title = self.t('tooltips.editDimensions');
           editButton.onclick = function(e) {
             e.preventDefault();
@@ -3812,7 +3812,7 @@
     // Botón edit
     var editButton = document.createElement('button');
     editButton.className = 'libraeditor-image-edit-btn';
-    editButton.innerHTML = WYSIWYG_ICONS.gear;
+    editButton.innerHTML = LIBRAEDITOR_ICONS.gear;
     editButton.title = self.t('tooltips.editDimensions');
     editButton.onclick = function(e) {
       e.preventDefault();
@@ -4490,7 +4490,7 @@
     var toggleBtn = document.createElement('button');
     toggleBtn.type = 'button';
     toggleBtn.className = 'libraeditor-modal-advanced-toggle';
-    toggleBtn.innerHTML = '<span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span> ' + self.t('modals.advancedOptions');
+    toggleBtn.innerHTML = '<span class="dropdown-arrow">' + LIBRAEDITOR_ICONS.chevronDown + '</span> ' + self.t('modals.advancedOptions');
 
     var panel = document.createElement('div');
     panel.className = 'libraeditor-modal-advanced-panel';
@@ -5103,7 +5103,7 @@
       ? this.t('blockTypes.' + blockType)
       : this.t('misc.text');
     this._blockTypeButton.innerHTML = escape_attr(label) +
-      ' <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>';
+      ' <span class="dropdown-arrow">' + LIBRAEDITOR_ICONS.chevronDown + '</span>';
   };
 
   LibraEditor.prototype.showToolbarBlockTypeMenu = function(buttonElement) {
@@ -5189,15 +5189,15 @@
     // contenido o crearían un bloque roto— y se insertan con su propio flujo
     // (botones de la toolbar / menú slash).
     var blockTypes = [
-      { type: 'paragraph', icon: WYSIWYG_ICONS.paragraph },
-      { type: 'heading1', icon: WYSIWYG_ICONS.heading1 },
-      { type: 'heading2', icon: WYSIWYG_ICONS.heading2 },
-      { type: 'heading3', icon: WYSIWYG_ICONS.heading3 },
-      { type: 'quote', icon: WYSIWYG_ICONS.quote },
-      { type: 'code', icon: WYSIWYG_ICONS.code },
-      { type: 'bulletList', icon: WYSIWYG_ICONS.bulletList },
-      { type: 'numberList', icon: WYSIWYG_ICONS.numberList },
-      { type: 'checklist', icon: WYSIWYG_ICONS.checklist }
+      { type: 'paragraph', icon: LIBRAEDITOR_ICONS.paragraph },
+      { type: 'heading1', icon: LIBRAEDITOR_ICONS.heading1 },
+      { type: 'heading2', icon: LIBRAEDITOR_ICONS.heading2 },
+      { type: 'heading3', icon: LIBRAEDITOR_ICONS.heading3 },
+      { type: 'quote', icon: LIBRAEDITOR_ICONS.quote },
+      { type: 'code', icon: LIBRAEDITOR_ICONS.code },
+      { type: 'bulletList', icon: LIBRAEDITOR_ICONS.bulletList },
+      { type: 'numberList', icon: LIBRAEDITOR_ICONS.numberList },
+      { type: 'checklist', icon: LIBRAEDITOR_ICONS.checklist }
     ];
 
     blockTypes.forEach(function(blockType) {
@@ -5225,7 +5225,7 @@
         item.className = 'libraeditor-type-menu-item';
         item.setAttribute('role', 'option');
         // Preview: aplicar la clase al span del label para que el usuario vea el estilo
-        item.innerHTML = '<span class="icon">' + (WYSIWYG_ICONS[sf.block] || WYSIWYG_ICONS.paragraph) +
+        item.innerHTML = '<span class="icon">' + (LIBRAEDITOR_ICONS[sf.block] || LIBRAEDITOR_ICONS.paragraph) +
                         '</span><span class="libraeditor-style-preview ' + sf.className + '">' + sf.title + '</span>';
         item.onclick = function(e) {
           e.preventDefault();
@@ -6002,7 +6002,7 @@
         v_coBtn.setAttribute('contenteditable', 'false');
         v_coBtn.setAttribute('type', 'button');
         v_coBtn.title = self.t('callout.variant');
-        v_coBtn.innerHTML = WYSIWYG_ICONS.callout;
+        v_coBtn.innerHTML = LIBRAEDITOR_ICONS.callout;
         v_coBtn.onclick = function(e) {
           e.preventDefault();
           e.stopPropagation();
@@ -6036,7 +6036,7 @@
         v_tg_caret.setAttribute('contenteditable', 'false');
         v_tg_caret.setAttribute('type', 'button');
         v_tg_caret.setAttribute('aria-label', self.t('toggle.toggle'));
-        v_tg_caret.innerHTML = WYSIWYG_ICONS.toggleCaret;
+        v_tg_caret.innerHTML = LIBRAEDITOR_ICONS.toggleCaret;
         v_tg_caret.onclick = function(e) {
           e.preventDefault();
           e.stopPropagation();
@@ -6394,7 +6394,7 @@
     // Botón para editar dimensiones
     var editImageBtn = document.createElement('button');
     editImageBtn.className = 'libraeditor-image-edit-btn';
-    editImageBtn.innerHTML = WYSIWYG_ICONS.gear;
+    editImageBtn.innerHTML = LIBRAEDITOR_ICONS.gear;
     editImageBtn.title = self.t('tooltips.editDimensions');
     editImageBtn.onclick = function(e) {
       e.preventDefault();
@@ -8821,7 +8821,7 @@
     };
 
     var tb = this._tableToolbar;
-    var I = WYSIWYG_ICONS;
+    var I = LIBRAEDITOR_ICONS;
 
     // --- Grupo FILA ---
     tb.appendChild(makeBtn(I.tableRowAbove, 'tableMenu.insertRowAbove', function(){ run(function(){ self.executeRowAction(table, rowIndex, 'insertBefore', blockId); }); }));
@@ -8930,7 +8930,7 @@
     var removeBtn = document.createElement('button');
     removeBtn.type = 'button';
     removeBtn.className = 'libraeditor-color-button libraeditor-color-remove';
-    removeBtn.innerHTML = WYSIWYG_ICONS.close;
+    removeBtn.innerHTML = LIBRAEDITOR_ICONS.close;
     removeBtn.title = self.t('colors.removeColor');
     removeBtn.onmousedown = function(e) { e.preventDefault(); e.stopPropagation(); };
     removeBtn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); apply(''); };
@@ -9403,24 +9403,24 @@
     this.slashMenuBlockId = blockId;
 
     var types = [
-      { type: 'paragraph', icon: WYSIWYG_ICONS.paragraph },
-      { type: 'heading1', icon: WYSIWYG_ICONS.heading1 },
-      { type: 'heading2', icon: WYSIWYG_ICONS.heading2 },
-      { type: 'heading3', icon: WYSIWYG_ICONS.heading3 },
-      { type: 'quote', icon: WYSIWYG_ICONS.quote },
-      { type: 'code', icon: WYSIWYG_ICONS.code },
-      { type: 'bulletList', icon: WYSIWYG_ICONS.bulletList },
-      { type: 'numberList', icon: WYSIWYG_ICONS.numberList },
-      { type: 'checklist', icon: WYSIWYG_ICONS.checklist },
-      { type: 'table', icon: WYSIWYG_ICONS.table },
-      { type: 'image', icon: WYSIWYG_ICONS.image },
-      { type: 'video', icon: WYSIWYG_ICONS.video },
-      { type: 'audio', icon: WYSIWYG_ICONS.audio },
-      { type: 'divider', icon: WYSIWYG_ICONS.divider },
-      { type: 'pageBreak', icon: WYSIWYG_ICONS.pageBreak },
-      { type: 'callout', icon: WYSIWYG_ICONS.callout },
-      { type: 'toggle', icon: WYSIWYG_ICONS.toggle },
-      { type: 'toc', icon: WYSIWYG_ICONS.toc }
+      { type: 'paragraph', icon: LIBRAEDITOR_ICONS.paragraph },
+      { type: 'heading1', icon: LIBRAEDITOR_ICONS.heading1 },
+      { type: 'heading2', icon: LIBRAEDITOR_ICONS.heading2 },
+      { type: 'heading3', icon: LIBRAEDITOR_ICONS.heading3 },
+      { type: 'quote', icon: LIBRAEDITOR_ICONS.quote },
+      { type: 'code', icon: LIBRAEDITOR_ICONS.code },
+      { type: 'bulletList', icon: LIBRAEDITOR_ICONS.bulletList },
+      { type: 'numberList', icon: LIBRAEDITOR_ICONS.numberList },
+      { type: 'checklist', icon: LIBRAEDITOR_ICONS.checklist },
+      { type: 'table', icon: LIBRAEDITOR_ICONS.table },
+      { type: 'image', icon: LIBRAEDITOR_ICONS.image },
+      { type: 'video', icon: LIBRAEDITOR_ICONS.video },
+      { type: 'audio', icon: LIBRAEDITOR_ICONS.audio },
+      { type: 'divider', icon: LIBRAEDITOR_ICONS.divider },
+      { type: 'pageBreak', icon: LIBRAEDITOR_ICONS.pageBreak },
+      { type: 'callout', icon: LIBRAEDITOR_ICONS.callout },
+      { type: 'toggle', icon: LIBRAEDITOR_ICONS.toggle },
+      { type: 'toc', icon: LIBRAEDITOR_ICONS.toc }
     ];
 
     // Filtrar los tipos desactivados por opción (disabledBlocks)
@@ -10023,8 +10023,8 @@
 
     // Crear items del menú
     this.emojiMenuItems = [];
-    for (var i = 0; i < WYSIWYG_EMOJIS.length; i++) {
-      var emojiData = WYSIWYG_EMOJIS[i];
+    for (var i = 0; i < LIBRAEDITOR_EMOJIS.length; i++) {
+      var emojiData = LIBRAEDITOR_EMOJIS[i];
       this.emojiMenuItems.push(emojiData);
 
       var item = document.createElement('div');
@@ -10147,8 +10147,8 @@
 
     this.emojiMenuItems = [];
 
-    for (var i = 0; i < WYSIWYG_EMOJIS.length; i++) {
-      var emojiData = WYSIWYG_EMOJIS[i];
+    for (var i = 0; i < LIBRAEDITOR_EMOJIS.length; i++) {
+      var emojiData = LIBRAEDITOR_EMOJIS[i];
       var item = items[i];
       var matches = emojiData.name.toLowerCase().indexOf(searchLower) !== -1;
 
@@ -10222,10 +10222,10 @@
    * @param {number} index
    */
   LibraEditor.prototype.selectEmojiItem = function(index) {
-    // `index` es SIEMPRE el índice real en WYSIWYG_EMOJIS (el data-index del item):
+    // `index` es SIEMPRE el índice real en LIBRAEDITOR_EMOJIS (el data-index del item):
     // el clic lo pasa directamente y el teclado lo resuelve con _resolveMenuFullIndex.
-    if (index >= 0 && index < WYSIWYG_EMOJIS.length) {
-      this.insertEmoji(WYSIWYG_EMOJIS[index]);
+    if (index >= 0 && index < LIBRAEDITOR_EMOJIS.length) {
+      this.insertEmoji(LIBRAEDITOR_EMOJIS[index]);
     }
   };
 
@@ -11632,23 +11632,23 @@
    */
   LibraEditor.prototype.getBlockTypeIcon = function(type) {
     var icons = {
-      'paragraph': WYSIWYG_ICONS.paragraph,
-      'heading1': WYSIWYG_ICONS.heading1,
-      'heading2': WYSIWYG_ICONS.heading2,
-      'heading3': WYSIWYG_ICONS.heading3,
-      'quote': WYSIWYG_ICONS.quote,
-      'code': WYSIWYG_ICONS.code,
-      'bulletList': WYSIWYG_ICONS.bulletList,
-      'numberList': WYSIWYG_ICONS.numberList,
-      'table': WYSIWYG_ICONS.table,
-      'image': WYSIWYG_ICONS.image,
-      'divider': WYSIWYG_ICONS.divider,
-      'pageBreak': WYSIWYG_ICONS.pageBreak,
-      'callout': WYSIWYG_ICONS.callout,
-      'toggle': WYSIWYG_ICONS.toggle,
-      'toc': WYSIWYG_ICONS.toc
+      'paragraph': LIBRAEDITOR_ICONS.paragraph,
+      'heading1': LIBRAEDITOR_ICONS.heading1,
+      'heading2': LIBRAEDITOR_ICONS.heading2,
+      'heading3': LIBRAEDITOR_ICONS.heading3,
+      'quote': LIBRAEDITOR_ICONS.quote,
+      'code': LIBRAEDITOR_ICONS.code,
+      'bulletList': LIBRAEDITOR_ICONS.bulletList,
+      'numberList': LIBRAEDITOR_ICONS.numberList,
+      'table': LIBRAEDITOR_ICONS.table,
+      'image': LIBRAEDITOR_ICONS.image,
+      'divider': LIBRAEDITOR_ICONS.divider,
+      'pageBreak': LIBRAEDITOR_ICONS.pageBreak,
+      'callout': LIBRAEDITOR_ICONS.callout,
+      'toggle': LIBRAEDITOR_ICONS.toggle,
+      'toc': LIBRAEDITOR_ICONS.toc
     };
-    return icons[type] || WYSIWYG_ICONS.paragraph;
+    return icons[type] || LIBRAEDITOR_ICONS.paragraph;
   };
 
   /**
@@ -11700,28 +11700,28 @@
       {
         action: 'changeType',
         label: changeTypeLabel,
-        icon: WYSIWYG_ICONS.gear,
+        icon: LIBRAEDITOR_ICONS.gear,
         submenu: true
       },
       {
         action: 'insertAbove',
         label: this.t('blockMenu.insertAbove'),
-        icon: WYSIWYG_ICONS.arrowUp
+        icon: LIBRAEDITOR_ICONS.arrowUp
       },
       {
         action: 'insertBelow',
         label: this.t('blockMenu.insertBelow'),
-        icon: WYSIWYG_ICONS.arrowDown
+        icon: LIBRAEDITOR_ICONS.arrowDown
       },
       {
         action: 'duplicate',
         label: this.t('blockMenu.duplicate'),
-        icon: WYSIWYG_ICONS.duplicate
+        icon: LIBRAEDITOR_ICONS.duplicate
       },
       {
         action: 'delete',
         label: deleteLabel,
-        icon: WYSIWYG_ICONS.trash,
+        icon: LIBRAEDITOR_ICONS.trash,
         danger: true
       }
     ];
@@ -11826,16 +11826,16 @@
     };
 
     var types = [
-      { type: 'paragraph', icon: WYSIWYG_ICONS.paragraph },
-      { type: 'heading1', icon: WYSIWYG_ICONS.heading1 },
-      { type: 'heading2', icon: WYSIWYG_ICONS.heading2 },
-      { type: 'heading3', icon: WYSIWYG_ICONS.heading3 },
-      { type: 'quote', icon: WYSIWYG_ICONS.quote },
-      { type: 'code', icon: WYSIWYG_ICONS.code },
-      { type: 'bulletList', icon: WYSIWYG_ICONS.bulletList },
-      { type: 'numberList', icon: WYSIWYG_ICONS.numberList },
-      { type: 'checklist', icon: WYSIWYG_ICONS.checklist },
-      { type: 'divider', icon: WYSIWYG_ICONS.divider }
+      { type: 'paragraph', icon: LIBRAEDITOR_ICONS.paragraph },
+      { type: 'heading1', icon: LIBRAEDITOR_ICONS.heading1 },
+      { type: 'heading2', icon: LIBRAEDITOR_ICONS.heading2 },
+      { type: 'heading3', icon: LIBRAEDITOR_ICONS.heading3 },
+      { type: 'quote', icon: LIBRAEDITOR_ICONS.quote },
+      { type: 'code', icon: LIBRAEDITOR_ICONS.code },
+      { type: 'bulletList', icon: LIBRAEDITOR_ICONS.bulletList },
+      { type: 'numberList', icon: LIBRAEDITOR_ICONS.numberList },
+      { type: 'checklist', icon: LIBRAEDITOR_ICONS.checklist },
+      { type: 'divider', icon: LIBRAEDITOR_ICONS.divider }
     ];
 
     types.forEach(function(typeInfo) {
@@ -14541,14 +14541,14 @@
       { name: 'strikethrough', action: 'strikethrough', label: 'S', titleKey: 'tooltips.strikethrough' },
       { name: 'case', action: 'caseMenu', label: 'Aa', titleKey: 'tooltips.toggleCase', type: 'caseMenu' },
       { action: 'separator', type: 'separator' },
-      { name: 'link', action: 'link', label: WYSIWYG_ICONS.link, titleKey: 'tooltips.insertLink' },
-      { name: 'forecolor', action: 'color', label: WYSIWYG_ICONS.palette, titleKey: 'tooltips.color', type: 'colorPicker' },
+      { name: 'link', action: 'link', label: LIBRAEDITOR_ICONS.link, titleKey: 'tooltips.insertLink' },
+      { name: 'forecolor', action: 'color', label: LIBRAEDITOR_ICONS.palette, titleKey: 'tooltips.color', type: 'colorPicker' },
       { action: 'separator', type: 'separator' },
-      { name: 'subscript', action: 'subscript', label: WYSIWYG_ICONS.subscript, titleKey: 'tooltips.subscript' },
-      { name: 'superscript', action: 'superscript', label: WYSIWYG_ICONS.superscript, titleKey: 'tooltips.superscript' },
-      { name: 'removeformat', action: 'removeFormat', label: WYSIWYG_ICONS.removeFormat, titleKey: 'tooltips.removeFormat' },
+      { name: 'subscript', action: 'subscript', label: LIBRAEDITOR_ICONS.subscript, titleKey: 'tooltips.subscript' },
+      { name: 'superscript', action: 'superscript', label: LIBRAEDITOR_ICONS.superscript, titleKey: 'tooltips.superscript' },
+      { name: 'removeformat', action: 'removeFormat', label: LIBRAEDITOR_ICONS.removeFormat, titleKey: 'tooltips.removeFormat' },
       { action: 'separator', type: 'separator' },
-      { name: 'font', action: 'font', label: WYSIWYG_ICONS.font, titleKey: 'tooltips.font', type: 'fontMenu' }
+      { name: 'font', action: 'font', label: LIBRAEDITOR_ICONS.font, titleKey: 'tooltips.font', type: 'fontMenu' }
     ];
     tools.push({ name: 'fontsize', action: 'fontSize', type: 'fontSizeStepper' });
 
@@ -14557,7 +14557,7 @@
     // NO hay toolbar (editor sin barra: el menú flotante es su única UI).
     if (!this.showToolbar) {
       tools.push({ action: 'separator', type: 'separator' });
-      tools.push({ name: 'align', action: 'alignMenu', label: WYSIWYG_ICONS.alignLeft, titleKey: 'tooltips.alignLeft', type: 'alignMenu' });
+      tools.push({ name: 'align', action: 'alignMenu', label: LIBRAEDITOR_ICONS.alignLeft, titleKey: 'tooltips.alignLeft', type: 'alignMenu' });
     }
 
     // Acciones CUSTOM con placement 'floating'|'both': se anclan por su nombre
@@ -14935,7 +14935,7 @@
     // Botón para remover color de texto
     var removeTextBtn = document.createElement('button');
     removeTextBtn.className = 'libraeditor-color-button libraeditor-color-remove';
-    removeTextBtn.innerHTML = WYSIWYG_ICONS.close;
+    removeTextBtn.innerHTML = LIBRAEDITOR_ICONS.close;
     removeTextBtn.title = self.t('colors.removeTextColor');
     removeTextBtn.onclick = function(e) {
       e.preventDefault();
@@ -14986,7 +14986,7 @@
     // Botón para remover color de fondo
     var removeBgBtn = document.createElement('button');
     removeBgBtn.className = 'libraeditor-color-button libraeditor-color-remove';
-    removeBgBtn.innerHTML = WYSIWYG_ICONS.close;
+    removeBgBtn.innerHTML = LIBRAEDITOR_ICONS.close;
     removeBgBtn.title = self.t('colors.removeBackgroundColor');
     removeBgBtn.onclick = function(e) {
       e.preventDefault();
@@ -15398,7 +15398,7 @@
   var INDENT_STEP_PX = 40; // px de sangría por nivel
   var INDENT_MAX = 10;     // niveles máximos de sangría de párrafo
 
-  // Nombre del icono (en WYSIWYG_ICONS) por valor de alineación. Lo usa el botón
+  // Nombre del icono (en LIBRAEDITOR_ICONS) por valor de alineación. Lo usa el botón
   // único de alineación (dropdown) para pintar el icono del valor ACTUAL del
   // bloque, de modo que se identifique de un vistazo.
   var ALIGN_ICONS = {
@@ -15946,7 +15946,7 @@
   LibraEditor.prototype._alignButtonInnerHTML = function(align) {
     // Solo el icono del valor actual (sin flecha lateral): el botón ocupa el
     // ancho de un botón normal. Que abre un menú se indica vía aria-haspopup.
-    return WYSIWYG_ICONS[ALIGN_ICONS[align]] || WYSIWYG_ICONS.alignLeft;
+    return LIBRAEDITOR_ICONS[ALIGN_ICONS[align]] || LIBRAEDITOR_ICONS.alignLeft;
   };
 
   /**
@@ -16069,12 +16069,12 @@
     var v_is_image = !!(v_target_block && v_target_block.type === 'image');
 
     var options = [
-      { align: 'left',    label: this.t('tooltips.alignLeft'),   icon: WYSIWYG_ICONS.alignLeft },
-      { align: 'center',  label: this.t('tooltips.alignCenter'), icon: WYSIWYG_ICONS.alignCenter },
-      { align: 'right',   label: this.t('tooltips.alignRight'),  icon: WYSIWYG_ICONS.alignRight }
+      { align: 'left',    label: this.t('tooltips.alignLeft'),   icon: LIBRAEDITOR_ICONS.alignLeft },
+      { align: 'center',  label: this.t('tooltips.alignCenter'), icon: LIBRAEDITOR_ICONS.alignCenter },
+      { align: 'right',   label: this.t('tooltips.alignRight'),  icon: LIBRAEDITOR_ICONS.alignRight }
     ];
     if (!v_is_image) {
-      options.push({ align: 'justify', label: this.t('tooltips.justify'), icon: WYSIWYG_ICONS.alignJustify });
+      options.push({ align: 'justify', label: this.t('tooltips.justify'), icon: LIBRAEDITOR_ICONS.alignJustify });
     }
 
     var v_align_click_handler = null;
@@ -16384,7 +16384,7 @@
       item.setAttribute('aria-checked', v_active ? 'true' : 'false');
       // Etiqueta + check a la derecha para el valor activo.
       item.innerHTML = '<span>' + v + '</span>' +
-        (v_active ? '<span class="libraeditor-menu-check">' + (WYSIWYG_ICONS.check || '✓') + '</span>' : '');
+        (v_active ? '<span class="libraeditor-menu-check">' + (LIBRAEDITOR_ICONS.check || '✓') + '</span>' : '');
       item.onclick = function(e) {
         e.preventDefault(); e.stopPropagation();
         // Quitar el line-height previo del bloque para no anidar spans.
@@ -16446,7 +16446,7 @@
     var closeX = document.createElement('button');
     closeX.type = 'button';
     closeX.className = 'libraeditor-code-close';
-    closeX.innerHTML = WYSIWYG_ICONS.close || '×';
+    closeX.innerHTML = LIBRAEDITOR_ICONS.close || '×';
     closeX.setAttribute('aria-label', self.t('modals.cancel'));
     header.appendChild(title);
     header.appendChild(closeX);
@@ -16540,10 +16540,10 @@
       b.onclick = onClick;
       return b;
     };
-    var themeBtn = mkTool(WYSIWYG_ICONS.contrast, 'tooltips.codeTheme', function() { v_dark = !v_dark; applyDark(); });
+    var themeBtn = mkTool(LIBRAEDITOR_ICONS.contrast, 'tooltips.codeTheme', function() { v_dark = !v_dark; applyDark(); });
     var fontDecBtn = mkTool('A<span class="libraeditor-code-sub">−</span>', 'tooltips.codeFontDec', function() { v_font = Math.max(10, v_font - 1); applyFont(); });
     var fontIncBtn = mkTool('A<span class="libraeditor-code-sup">+</span>', 'tooltips.codeFontInc', function() { v_font = Math.min(24, v_font + 1); applyFont(); });
-    var wrapBtn = mkTool(WYSIWYG_ICONS.wordWrap, 'tooltips.codeWrap', function() { v_wrap = !v_wrap; applyWrap(); });
+    var wrapBtn = mkTool(LIBRAEDITOR_ICONS.wordWrap, 'tooltips.codeWrap', function() { v_wrap = !v_wrap; applyWrap(); });
 
     tools.appendChild(themeBtn);
     tools.appendChild(fontDecBtn);
@@ -16763,7 +16763,7 @@
     // Crear el botón
     this.summaryButton = document.createElement('button');
     this.summaryButton.className = 'libraeditor-summary-button';
-    this.summaryButton.innerHTML = WYSIWYG_ICONS.summaryPanel;
+    this.summaryButton.innerHTML = LIBRAEDITOR_ICONS.summaryPanel;
     this.summaryButton.title = this.t('tooltips.summary');
 
     // Evento hover para mostrar tooltip con índice rápido
@@ -17009,7 +17009,7 @@
     header.innerHTML = '<span class="libraeditor-outline-title">' + this.t('summary.title') + '</span>';
     var closeBtn = document.createElement('button');
     closeBtn.className = 'libraeditor-outline-close';
-    closeBtn.innerHTML = WYSIWYG_ICONS.close;
+    closeBtn.innerHTML = LIBRAEDITOR_ICONS.close;
     closeBtn.title = this.t('summary.close');
     closeBtn.setAttribute('aria-label', this.t('summary.close'));
     closeBtn.onclick = function(e) { e.preventDefault(); self.closeOutlinePanel(); };
@@ -17081,7 +17081,7 @@
     // Botón cerrar
     var closeBtn = document.createElement('button');
     closeBtn.className = 'libraeditor-summary-close';
-    closeBtn.innerHTML = WYSIWYG_ICONS.close;
+    closeBtn.innerHTML = LIBRAEDITOR_ICONS.close;
     closeBtn.addEventListener('click', function() {
       overlay.remove();
     });
@@ -18485,7 +18485,7 @@
     this.isFullscreen = true;
 
     if (this.fullscreenButton) {
-      this.fullscreenButton.innerHTML = WYSIWYG_ICONS.fullscreenExit;
+      this.fullscreenButton.innerHTML = LIBRAEDITOR_ICONS.fullscreenExit;
       this.fullscreenButton.title = this.t('tooltips.fullscreenExit');
       this.fullscreenButton.setAttribute('aria-label', this.t('tooltips.fullscreenExit'));
       this.fullscreenButton.setAttribute('aria-pressed', 'true');
@@ -18518,7 +18518,7 @@
     this._fsPlaceholder = null;
 
     if (this.fullscreenButton) {
-      this.fullscreenButton.innerHTML = WYSIWYG_ICONS.fullscreen;
+      this.fullscreenButton.innerHTML = LIBRAEDITOR_ICONS.fullscreen;
       this.fullscreenButton.title = this.t('tooltips.fullscreen');
       this.fullscreenButton.setAttribute('aria-label', this.t('tooltips.fullscreen'));
       this.fullscreenButton.setAttribute('aria-pressed', 'false');
@@ -18627,7 +18627,7 @@
     dialog.innerHTML =
       '<div class="libraeditor-fr-header">' +
         '<span class="libraeditor-fr-title">' + t('title') + '</span>' +
-        '<button class="libraeditor-fr-close" aria-label="' + t('close') + '" title="' + t('close') + '">' + WYSIWYG_ICONS.close + '</button>' +
+        '<button class="libraeditor-fr-close" aria-label="' + t('close') + '" title="' + t('close') + '">' + LIBRAEDITOR_ICONS.close + '</button>' +
       '</div>' +
       '<div class="libraeditor-fr-row">' +
         '<input type="text" class="libraeditor-fr-find-input" placeholder="' + t('findPlaceholder') + '" aria-label="' + t('findPlaceholder') + '">' +
@@ -18641,8 +18641,8 @@
         '<label><input type="checkbox" class="libraeditor-fr-whole"> ' + t('wholeWord') + '</label>' +
       '</div>' +
       '<div class="libraeditor-fr-actions">' +
-        '<button class="libraeditor-fr-btn libraeditor-fr-prev" title="' + t('findPrev') + '" aria-label="' + t('findPrev') + '">' + WYSIWYG_ICONS.arrowUp + '</button>' +
-        '<button class="libraeditor-fr-btn libraeditor-fr-next" title="' + t('findNext') + '" aria-label="' + t('findNext') + '">' + WYSIWYG_ICONS.arrowDown + '</button>' +
+        '<button class="libraeditor-fr-btn libraeditor-fr-prev" title="' + t('findPrev') + '" aria-label="' + t('findPrev') + '">' + LIBRAEDITOR_ICONS.arrowUp + '</button>' +
+        '<button class="libraeditor-fr-btn libraeditor-fr-next" title="' + t('findNext') + '" aria-label="' + t('findNext') + '">' + LIBRAEDITOR_ICONS.arrowDown + '</button>' +
         '<button class="libraeditor-fr-btn libraeditor-fr-replace">' + t('replace') + '</button>' +
         '<button class="libraeditor-fr-btn libraeditor-fr-replace-all">' + t('replaceAll') + '</button>' +
       '</div>';
@@ -19512,7 +19512,7 @@
     var editBtn = document.createElement('button');
     editBtn.className = 'libraeditor-video-edit-btn';
     editBtn.type = 'button';
-    editBtn.innerHTML = WYSIWYG_ICONS.gear;
+    editBtn.innerHTML = LIBRAEDITOR_ICONS.gear;
     editBtn.title = self.t('tooltips.editDimensions');
     editBtn.onmousedown = function(e) { e.preventDefault(); };
     editBtn.onclick = function(e) {
@@ -19562,7 +19562,7 @@
     play.className = 'libraeditor-video-play';
     play.setAttribute('aria-label', self.t('misc.playVideo'));
     play.title = self.t('misc.playVideo');
-    play.innerHTML = WYSIWYG_ICONS.play;
+    play.innerHTML = LIBRAEDITOR_ICONS.play;
     play.onmousedown = function(e) { e.preventDefault(); };
     play.onclick = function(e) {
       e.preventDefault(); e.stopPropagation();
@@ -19629,7 +19629,7 @@
       restore.className = 'libraeditor-video-restore';
       restore.title = self.t('misc.closeVideo');
       restore.setAttribute('aria-label', self.t('misc.closeVideo'));
-      restore.innerHTML = WYSIWYG_ICONS.close;
+      restore.innerHTML = LIBRAEDITOR_ICONS.close;
       restore.onmousedown = function(e) { e.preventDefault(); };
       restore.onclick = function(e) {
         e.preventDefault(); e.stopPropagation();
@@ -22491,7 +22491,7 @@
 
   /**
    * Resuelve el `icon` de una acción custom a HTML: string que empieza por '<'
-   * → SVG/HTML tal cual; clave de WYSIWYG_ICONS → ese SVG; otro texto → etiqueta
+   * → SVG/HTML tal cual; clave de LIBRAEDITOR_ICONS → ese SVG; otro texto → etiqueta
    * escapada. Sin icono → tooltip escapado como etiqueta.
    * @param {string} v_icon
    * @param {string} v_fallback
@@ -22500,7 +22500,7 @@
   LibraEditor.prototype._resolveActionIcon = function(v_icon, v_fallback) {
     if (typeof v_icon === 'string' && v_icon) {
       if (v_icon.charAt(0) === '<') return v_icon;
-      if (WYSIWYG_ICONS[v_icon]) return WYSIWYG_ICONS[v_icon];
+      if (LIBRAEDITOR_ICONS[v_icon]) return LIBRAEDITOR_ICONS[v_icon];
       return '<span class="libraeditor-action-label">' + escapeHtml(v_icon) + '</span>';
     }
     return '<span class="libraeditor-action-label">' + escapeHtml(v_fallback || '?') + '</span>';
@@ -22727,6 +22727,23 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
   }
+
+  // Datos estáticos del componente, colgados del constructor para que el
+  // consumidor pueda AMPLIARLOS sin tocar este fichero: añadir un icono propio,
+  // sobrescribir uno estándar o registrar un idioma nuevo.
+  //
+  // Son los objetos VIVOS que usa el editor (no copias): mutarlos afecta a las
+  // instancias que se creen DESPUÉS. Todas las lecturas internas ocurren en
+  // tiempo de llamada —ninguna estructura de módulo captura el SVG: los mapas
+  // TOOLBAR_FORMAT_TOOLS y ALIGN_ICONS guardan el NOMBRE del icono, no su
+  // contenido—, así que basta con definirlos antes de instanciar. Una toolbar
+  // ya pintada no se repinta sola.
+  //
+  //   LibraEditor.icons.miIcono = '<svg …></svg>';   // usable como icon: 'miIcono'
+  //   LibraEditor.translations.fr = { … };           // new LibraEditor({ lang: 'fr' })
+  LibraEditor.icons = LIBRAEDITOR_ICONS;
+  LibraEditor.translations = LIBRAEDITOR_TRANSLATIONS;
+  LibraEditor.emojis = LIBRAEDITOR_EMOJIS;
 
   // Exportar el constructor. UMD-lite + SSR-safe:
   //  - CommonJS/bundlers (React, Next, Vite, webpack): module.exports

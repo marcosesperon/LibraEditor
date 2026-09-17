@@ -292,7 +292,7 @@ new LibraEditor({
 
 > Si el nombre de la acción aparece en el string `toolbar` (p. ej. `'undo redo \| bold miAccion'`), **manda el string** y `position` se ignora. Varias acciones con la misma ancla y `group:'new'` comparten ese grupo nuevo; el orden del array decide el orden entre ellas.
 
-**Otras claves**: `placement` (`'toolbar'` por defecto, `'floating'`, `'both'`), `icon` (SVG en crudo, clave de `WYSIWYG_ICONS` o texto), `requiresSelection`, `isEnabled(ctx)` e `isActive(ctx)` (fondo resaltado), reevaluados al cambiar foco o selección.
+**Otras claves**: `placement` (`'toolbar'` por defecto, `'floating'`, `'both'`), `icon` (SVG en crudo, clave de `LIBRAEDITOR_ICONS` o texto), `requiresSelection`, `isEnabled(ctx)` e `isActive(ctx)` (fondo resaltado), reevaluados al cambiar foco o selección.
 
 **El `ctx` del callback** extiende el payload de `onChange`:
 
@@ -1084,6 +1084,58 @@ var editor = new LibraEditor({
 | `findReplace` | Diálogo de buscar y reemplazar |
 | `counter` | Barra del contador de palabras/caracteres |
 | `tableProperties` | Modal de propiedades de la tabla |
+
+## Datos estáticos del componente (`icons` / `translations` / `emojis`)
+
+El constructor expone los tres conjuntos de datos que usa el editor, para poder
+**ampliarlos sin tocar el fichero fuente**:
+
+| Propiedad | Contenido |
+|---|---|
+| `LibraEditor.icons` | Iconos SVG indexados por nombre (`bold`, `table`, `palette`…) |
+| `LibraEditor.translations` | Traducciones por código de idioma (`es`, `en`) |
+| `LibraEditor.emojis` | Datos del selector de emojis (`:`) |
+
+Son los objetos **vivos** que usa el editor, no copias, así que se amplían
+escribiendo en ellos directamente:
+
+```javascript
+// Añadir un icono propio y usarlo en una acción custom
+LibraEditor.icons.rayo =
+  '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" ' +
+  'stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>';
+
+var editor = new LibraEditor({
+  target: '#editor',
+  actions: [
+    { name: 'rapido', icon: 'rayo', tooltip: 'Acción rápida', onClick: function (ctx) { /* … */ } }
+  ]
+});
+```
+
+```javascript
+// Registrar un idioma nuevo: queda disponible para la opción `lang`
+LibraEditor.translations.fr = {
+  blockTypes: { paragraph: 'Paragraphe', heading1: 'Titre 1' },
+  tooltips: { bold: 'Gras', italic: 'Italique' }
+};
+
+var editor = new LibraEditor({ target: '#editor', lang: 'fr' });
+```
+
+Sobrescribir una clave existente de `icons` cambia también el icono de una
+acción **estándar** (por ejemplo `LibraEditor.icons.bold = '…'`).
+
+> **Importante:** hay que definirlos **antes de instanciar** el editor. Todas las
+> lecturas internas ocurren en tiempo de llamada, pero una toolbar que ya está
+> pintada no se repinta sola. Si necesitas cambiar un icono en caliente, fuerza
+> la reconstrucción con `registerAction()`.
+>
+> Un idioma registrado puede ser **parcial**: `t()` resuelve clave a clave y cae
+> al español en las que falten. Ojo con la asimetría respecto a pasar un objeto
+> suelto en `lang`, que sí se mergea sobre el español al construir (ver
+> [Internacionalización](#internacionalización-i18n)); el resultado visible es
+> el mismo, pero el mecanismo no.
 
 ## Herramientas Avanzadas
 

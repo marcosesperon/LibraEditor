@@ -1,6 +1,6 @@
 {
   "name": "libraeditor",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Editor WYSIWYG de bloques al estilo Notion en ECMAScript 5 puro, sin dependencias. Incluye wrapper de React opcional.",
   "keywords": [
     "wysiwyg",

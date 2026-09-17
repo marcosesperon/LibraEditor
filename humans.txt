@@ -10,6 +10,6 @@ Standards: HTML5, CSS3, ES2020+
 
 /* COMPONENTS */
 Name: LibraEditor
-Version: 2.0.0
+Version: 2.1.0
 License: MIT
 Repository: https://github.com/marcosesperon/LibraEditor
