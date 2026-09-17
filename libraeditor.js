@@ -903,7 +903,7 @@
    * @param {Array} options.blocks - Contenido inicial de bloques
    * @param {Function} options.onChange - Callback cuando cambia el contenido
    */
-  function meWYSE(options) {
+  function LibraEditor(options) {
     this.options = options || {};
     // Toolbar: true (todos los ítems), string/array (config declarativa estilo
     // TinyMCE) o false/ausente (sin toolbar). Ver DEFAULT_TOOLBAR / _buildToolbarItem.
@@ -998,7 +998,7 @@
     // hasDraft()/restoreDraft()) para no pisar options.blocks.
     this.autosave = this.options.autosave === true;
     this.autosaveKey = (typeof this.options.autosaveKey === 'string' && this.options.autosaveKey)
-      ? this.options.autosaveKey : 'mewyse-draft';
+      ? this.options.autosaveKey : 'libraeditor-draft';
 
     // onChangeDebounce (ms): agrupa las llamadas a onChange mientras se teclea.
     // 0 (default) = comportamiento clásico (onChange síncrono en cada cambio).
@@ -1057,7 +1057,7 @@
     // NOTA: this.blocks se asigna más abajo tras sanitizar (necesita this.currentBlockId inicializado)
 
     // ID único de instancia (útil para identificar elementos del editor en el DOM)
-    this.instanceId = 'mewyse-' + Math.random().toString(36).substr(2, 9);
+    this.instanceId = 'libraeditor-' + Math.random().toString(36).substr(2, 9);
     this.toolbar = null;
     this.draggedBlockId = null; // ID del bloque siendo arrastrado (reorder)
     this._draggedImage = null;  // estado del drag de imagen interna
@@ -1116,7 +1116,7 @@
 
     // Variables para el sistema de etiquetas (#tags)
     // Cada tag: { id, name, color }. `color` es opcional — si se omite se
-    // aplica el color genérico del tema (ver CSS de .mewyse-tag).
+    // aplica el color genérico del tema (ver CSS de .libraeditor-tag).
     this.tags = this.options.tags || [];
     this.tagMenu = null;
     // Merge tags / variables ({{campo}}). Cada uno: { id, name, label? }.
@@ -1177,7 +1177,7 @@
     var v_auto_theme = this.options.theme === 'auto';
     if (v_auto_theme) {
       // Resolver 'auto' a un valor real de clase (nunca dejar 'auto', que
-      // generaría una clase inexistente `mewyse-editor-auto`). Si el sistema está
+      // generaría una clase inexistente `libraeditor-editor-auto`). Si el sistema está
       // en oscuro → 'dark'; si no → null (claro).
       var v_sys_dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       this.options.theme = v_sys_dark ? 'dark' : null;
@@ -1215,7 +1215,7 @@
    * @param {HTMLElement} reference - Elemento de referencia
    * @param {Object} options - Opciones de posicionamiento
    */
-  meWYSE.prototype.anchorMenu = function(menu, reference, options) {
+  LibraEditor.prototype.anchorMenu = function(menu, reference, options) {
     options = options || {};
     var offsetY = options.offsetY || 5;
     var offsetX = options.offsetX || 0;
@@ -1332,7 +1332,7 @@
    * @param {Object} source - Objeto a mezclar
    * @returns {Object} - Objeto combinado
    */
-  meWYSE.prototype.mergeDeep = function(target, source) {
+  LibraEditor.prototype.mergeDeep = function(target, source) {
     var output = {};
     var key;
     for (key in target) {
@@ -1358,7 +1358,7 @@
    * @param {Object} replacements - Valores a reemplazar (ej: {count: 5})
    * @returns {string} - Texto traducido
    */
-  meWYSE.prototype.t = function(key, replacements) {
+  LibraEditor.prototype.t = function(key, replacements) {
     var keys = key.split('.');
     var value = this.translations;
     var i, j, r;
@@ -1391,7 +1391,7 @@
   /**
    * Inicializa el editor según el modo
    */
-  meWYSE.prototype.init = function() {
+  LibraEditor.prototype.init = function() {
     // Idempotencia: no reinicializar (duplicaría listeners globales)
     if (this._initialized) return;
     this._initialized = true;
@@ -1487,7 +1487,7 @@
       // aquí (focusin burbujea) en vez de con un listener por bloque, para que
       // funcione en todas las rutas de render y tipos de bloque enfocables.
       if (!self.readOnly && self.floatingHandle && target.closest) {
-        var v_blkEl = target.closest('.mewyse-block');
+        var v_blkEl = target.closest('.libraeditor-block');
         if (v_blkEl) {
           // Cancelar cualquier ocultado diferido pendiente: el foco se asentó
           // en un bloque, así que el handle debe permanecer visible.
@@ -1499,7 +1499,7 @@
 
       // Reflejar el tipo del bloque enfocado en el dropdown de la toolbar
       if (self._blockTypeButton && target.closest) {
-        var v_typeBlkEl = target.closest('.mewyse-block');
+        var v_typeBlkEl = target.closest('.libraeditor-block');
         if (v_typeBlkEl) {
           var v_typeId = parseInt(v_typeBlkEl.getAttribute('data-block-id'), 10);
           var v_typeBlock = !isNaN(v_typeId) ? self.getBlock(v_typeId) : null;
@@ -1571,11 +1571,11 @@
     // Añadir listener para deseleccionar imagen/vídeo al hacer clic fuera
     this.container.addEventListener('click', function(e) {
       // Si se hace clic fuera de una imagen seleccionada, deseleccionarla
-      if (self.selectedImage && !e.target.classList.contains('mewyse-image')) {
+      if (self.selectedImage && !e.target.classList.contains('libraeditor-image')) {
         self.deselectImage();
       }
       // Igual para el vídeo: deseleccionar si el clic no fue dentro de su wrapper
-      if (self.selectedVideo && (!e.target.closest || !e.target.closest('.mewyse-video-wrapper'))) {
+      if (self.selectedVideo && (!e.target.closest || !e.target.closest('.libraeditor-video-wrapper'))) {
         self.deselectVideo();
       }
     });
@@ -1610,7 +1610,7 @@
       if (self.selectedTableCells.length > 0) {
         var clickedCell = e.target.closest('td, th');
         // No limpiar si el clic fue en la toolbar de tabla (p.ej. botón combinar)
-        var clickedToolbar = e.target.closest('.mewyse-table-toolbar');
+        var clickedToolbar = e.target.closest('.libraeditor-table-toolbar');
         if (!clickedCell && !clickedToolbar) {
           self.clearTableCellSelection();
         }
@@ -1625,7 +1625,7 @@
   /**
    * Enfoca el primer bloque del editor
    */
-  meWYSE.prototype.focusFirstBlock = function() {
+  LibraEditor.prototype.focusFirstBlock = function() {
     // Solo enfocar el primer bloque si el documento no tiene ningún elemento enfocado
     if (document.activeElement === document.body || document.activeElement === null) {
       if (this.blocks.length > 0) {
@@ -1648,7 +1648,7 @@
    * @param {number} blockId - ID del bloque
    * @returns {HTMLElement|null}
    */
-  meWYSE.prototype.getBlockElementById = function(blockId) {
+  LibraEditor.prototype.getBlockElementById = function(blockId) {
     return this.container.querySelector('[data-block-id="' + blockId + '"]');
   };
 
@@ -1668,7 +1668,7 @@
    * @param {number} blockId
    * @returns {boolean} true si se parcheó; false si hay que hacer render() completo
    */
-  meWYSE.prototype._patch_block = function(blockId) {
+  LibraEditor.prototype._patch_block = function(blockId) {
     var v_block = this.getBlock(blockId);
     if (!v_block) return false;
     // Bloques de lista → fuera (agrupación no 1:1). Ver doc arriba.
@@ -1680,7 +1680,7 @@
     if (!v_old || !v_old.parentNode) return false;
     // Salvaguarda: si por lo que sea el elemento cuelga de un grupo de lista,
     // no parchear (dejar el reagrupado al render completo).
-    if (v_old.closest && v_old.closest('.mewyse-list-group')) return false;
+    if (v_old.closest && v_old.closest('.libraeditor-list-group')) return false;
     var v_new = this.createBlockElement(v_block);
     v_old.parentNode.replaceChild(v_new, v_old);
     return true;
@@ -1689,12 +1689,12 @@
   /**
    * Devuelve el nodo DOM de PRIMER NIVEL (hijo directo del container) que
    * contiene a `el`: para un bloque suelto es su propio elemento; para un ítem
-   * de lista es el `.mewyse-list-group` (`<ul>/<ol>`) que lo envuelve. Sirve al
+   * de lista es el `.libraeditor-list-group` (`<ul>/<ol>`) que lo envuelve. Sirve al
    * render incremental para insertar/quitar al nivel correcto del container.
    * @param {HTMLElement} el
    * @returns {HTMLElement|null} hijo directo del container, o null
    */
-  meWYSE.prototype._top_level_block_node = function(el) {
+  LibraEditor.prototype._top_level_block_node = function(el) {
     if (!el || !this.container) return null;
     var v_node = el;
     while (v_node.parentNode && v_node.parentNode !== this.container) {
@@ -1704,7 +1704,7 @@
   };
 
   /**
-   * Render INCREMENTAL de UN grupo de lista: reconstruye SOLO el `.mewyse-list-group`
+   * Render INCREMENTAL de UN grupo de lista: reconstruye SOLO el `.libraeditor-list-group`
    * (con su anidación) que contiene a `blockId`, sin tocar el resto del documento.
    * Útil cuando cambia la anidación de un ítem (indentar/desindentar), donde el DOM
    * del grupo se reestructura pero los demás bloques quedan intactos.
@@ -1713,7 +1713,7 @@
    * @param {number} blockId
    * @returns {boolean}
    */
-  meWYSE.prototype._patch_list_group = function(blockId) {
+  LibraEditor.prototype._patch_list_group = function(blockId) {
     var v_block = this.getBlock(blockId);
     if (!v_block || !this._isListBlockType(v_block.type)) return false;
     var v_index = this.getBlockIndex(blockId);
@@ -1724,7 +1724,7 @@
     // Wrapper DOM antiguo: el nodo de primer nivel que contiene al ítem.
     var v_old = this._top_level_block_node(this.getBlockElementById(blockId));
     if (!v_old || !v_old.parentNode || !v_old.classList ||
-        !v_old.classList.contains('mewyse-list-group')) {
+        !v_old.classList.contains('libraeditor-list-group')) {
       return false;
     }
     var v_built = this._buildNestedListWrapper(this.blocks, v_start);
@@ -1737,7 +1737,7 @@
    * @param {HTMLElement} blockElement - Elemento del bloque
    * @returns {HTMLElement|null}
    */
-  meWYSE.prototype.getEditableElement = function(blockElement) {
+  LibraEditor.prototype.getEditableElement = function(blockElement) {
     if (!blockElement) return null;
 
     // Si el bloque mismo es editable, devolverlo
@@ -1754,7 +1754,7 @@
    * Enfoca un nuevo bloque recien creado
    * @param {HTMLElement} blockElement - Elemento del bloque
    */
-  meWYSE.prototype.focusNewBlock = function(blockElement) {
+  LibraEditor.prototype.focusNewBlock = function(blockElement) {
     if (!blockElement) return;
     // El handler de Enter hace su propio focus síncrono (necesario para no
     // perder el teclado virtual en móvil) y nos pide saltarnos esta versión
@@ -1810,7 +1810,7 @@
    * @param {*} v
    * @returns {string|null}
    */
-  meWYSE.prototype._normalizeCssSize = function(v) {
+  LibraEditor.prototype._normalizeCssSize = function(v) {
     if (typeof v === 'number' && isFinite(v)) return v + 'px';
     if (typeof v === 'string' && v.trim() !== '') return v.trim();
     return null;
@@ -1822,7 +1822,7 @@
    * @param {string} type
    * @returns {boolean}
    */
-  meWYSE.prototype._isBlockDisabled = function(type) {
+  LibraEditor.prototype._isBlockDisabled = function(type) {
     return !!(this._disabledBlocks && this._disabledBlocks[type]);
   };
 
@@ -1832,7 +1832,7 @@
    * Solo escribe las propiedades cuyas opciones se hayan definido, para no pisar
    * el comportamiento por defecto cuando el consumidor no configura nada.
    */
-  meWYSE.prototype._applyHeightStyles = function() {
+  LibraEditor.prototype._applyHeightStyles = function() {
     if (!this.container) return;
     var s = this.container.style;
 
@@ -1853,7 +1853,7 @@
   /**
    * Inicializa el DOM para el editor
    */
-  meWYSE.prototype.initDomEditor = function() {
+  LibraEditor.prototype.initDomEditor = function() {
     // Idempotencia: evita duplicar los listeners globales de document
     if (this._dom_initialized) return;
     this._dom_initialized = true;
@@ -1870,7 +1870,7 @@
       this._initialHTML = (this.originalTarget.innerHTML || '').trim();
 
       // Guarda anti auto-ingesta: si el host ya contiene el DOM renderizado por
-      // una instancia previa de meWYSE (p. ej. doble montaje de React StrictMode
+      // una instancia previa de LibraEditor (p. ej. doble montaje de React StrictMode
       // que re-ejecuta el constructor sobre el mismo nodo), su innerHTML serían
       // nuestros propios bloques (div[contenteditable][data-block-id], sin tags de
       // bloque reconocibles). Reingerirlos los aplanaría a un único párrafo y
@@ -1878,7 +1878,7 @@
       // del editor (nunca presentes en HTML de usuario ni en la salida de getHTML)
       // y lo ignoramos.
       if (this._initialHTML && this.originalTarget.querySelector(
-            '[data-block-id], .mewyse-editor, .mewyse-editor-wrapper')) {
+            '[data-block-id], .libraeditor-editor, .libraeditor-editor-wrapper')) {
         this._initialHTML = '';
       }
 
@@ -1909,12 +1909,12 @@
     // se omite aunque se haya pasado `toolbar: true`.
     if (this.showToolbar && !this.readOnly) {
       var editorWrapper = document.createElement('div');
-      editorWrapper.className = 'mewyse-editor-wrapper';
+      editorWrapper.className = 'libraeditor-editor-wrapper';
       if (this.options.theme) {
-        editorWrapper.classList.add('mewyse-editor-' + this.options.theme);
+        editorWrapper.classList.add('libraeditor-editor-' + this.options.theme);
       }
       if (this.rtl) {
-        editorWrapper.classList.add('mewyse-rtl');
+        editorWrapper.classList.add('libraeditor-rtl');
         editorWrapper.setAttribute('dir', 'rtl');
       }
       this.editorWrapper = editorWrapper;
@@ -1925,14 +1925,14 @@
 
       // Crear contenedor del editor
       this.container = document.createElement('div');
-      this.container.className = 'mewyse-editor mewyse-minimal ' + this.instanceId;
+      this.container.className = 'libraeditor-editor libraeditor-minimal ' + this.instanceId;
       this.container.setAttribute('role', 'textbox');
       this.container.setAttribute('aria-multiline', 'true');
       if (this.options.theme) {
-        this.container.classList.add('mewyse-editor-' + this.options.theme);
+        this.container.classList.add('libraeditor-editor-' + this.options.theme);
       }
       if (this.rtl) {
-        this.container.classList.add('mewyse-rtl');
+        this.container.classList.add('libraeditor-rtl');
         this.container.setAttribute('dir', 'rtl');
       }
       editorWrapper.appendChild(this.container);
@@ -1948,14 +1948,14 @@
     } else {
       // Sin toolbar: comportamiento original
       this.container = document.createElement('div');
-      this.container.className = 'mewyse-editor mewyse-minimal ' + this.instanceId;
+      this.container.className = 'libraeditor-editor libraeditor-minimal ' + this.instanceId;
       this.container.setAttribute('role', 'textbox');
       this.container.setAttribute('aria-multiline', 'true');
       if (this.options.theme) {
-        this.container.classList.add('mewyse-editor-' + this.options.theme);
+        this.container.classList.add('libraeditor-editor-' + this.options.theme);
       }
       if (this.rtl) {
-        this.container.classList.add('mewyse-rtl');
+        this.container.classList.add('libraeditor-rtl');
         this.container.setAttribute('dir', 'rtl');
       }
       this.target.parentNode.insertBefore(this.container, this.target.nextSibling);
@@ -1972,26 +1972,26 @@
     // (ej. ocultar placeholders, atenuar cursor, etc.).
     if (this.readOnly) {
       if (this.container) {
-        this.container.classList.add('mewyse-readonly');
+        this.container.classList.add('libraeditor-readonly');
         this.container.setAttribute('aria-readonly', 'true');
       }
       if (this.editorWrapper) {
-        this.editorWrapper.classList.add('mewyse-readonly');
+        this.editorWrapper.classList.add('libraeditor-readonly');
       }
     }
 
-    // Activar los estilos de contenido por defecto (mewyse.css los define
-    // bajo el marker `.mewyse-editor-styled`). Cuando `contentStyles: false`
+    // Activar los estilos de contenido por defecto (libraeditor.css los define
+    // bajo el marker `.libraeditor-editor-styled`). Cuando `contentStyles: false`
     // no se aplica el marker — la página consumidora controla los estilos.
     if (this.options.contentStyles !== false) {
-      if (this.container) this.container.classList.add('mewyse-editor-styled');
-      if (this.editorWrapper) this.editorWrapper.classList.add('mewyse-editor-styled');
+      if (this.container) this.container.classList.add('libraeditor-editor-styled');
+      if (this.editorWrapper) this.editorWrapper.classList.add('libraeditor-editor-styled');
     }
 
     // Ajuste de texto: envolver contenido largo dentro del mismo bloque
     // (comportamiento, independiente de contentStyles). Activo salvo wordWrap:false.
     if (this.wordWrap && this.container) {
-      this.container.classList.add('mewyse-word-wrap');
+      this.container.classList.add('libraeditor-word-wrap');
     }
 
     // Altura configurable (minHeight/maxHeight/autoExpand): estilos inline que
@@ -2040,7 +2040,7 @@
    * pasa por `_stripNonNativeStyles` y reescribe el clipboard. El texto plano
    * (selection.toString()) se mantiene tal cual.
    */
-  meWYSE.prototype._attachCopyHandler = function() {
+  LibraEditor.prototype._attachCopyHandler = function() {
     var self = this;
     if (!this.container) return;
     this.container.addEventListener('copy', function(e) {
@@ -2074,7 +2074,7 @@
    * Habilita drag & drop de archivos de imagen sobre el container del editor.
    * No interfiere con el drag de bloques (distintos tipos en dataTransfer).
    */
-  meWYSE.prototype._attachImageDropHandlers = function() {
+  LibraEditor.prototype._attachImageDropHandlers = function() {
     var self = this;
     if (!this.container) return;
 
@@ -2093,7 +2093,7 @@
       // Aceptar tanto archivos OS como imágenes internas arrastradas
       if (hasImageFile(e.dataTransfer) || self._draggedImage) {
         e.preventDefault();
-        self.container.classList.add('mewyse-image-drop-target');
+        self.container.classList.add('libraeditor-image-drop-target');
       }
     };
     this._imageDragOverHandler = function(e) {
@@ -2108,7 +2108,7 @@
     this._imageDragLeaveHandler = function(e) {
       // Solo quitar la clase si el leave es fuera del container (no a un hijo)
       if (e.target === self.container) {
-        self.container.classList.remove('mewyse-image-drop-target');
+        self.container.classList.remove('libraeditor-image-drop-target');
       }
     };
     this._imageDropHandler = function(e) {
@@ -2123,7 +2123,7 @@
 
         e.preventDefault();
         e.stopPropagation();
-        self.container.classList.remove('mewyse-image-drop-target');
+        self.container.classList.remove('libraeditor-image-drop-target');
         self._dropImageIntoBlock(targetBlockEl);
         return;
       }
@@ -2137,7 +2137,7 @@
       // perdiendo el contenido), aunque luego ninguno resulte ser imagen.
       e.preventDefault();
       e.stopPropagation();
-      self.container.classList.remove('mewyse-image-drop-target');
+      self.container.classList.remove('libraeditor-image-drop-target');
 
       var files = e.dataTransfer.files;
       if (!files || files.length === 0) return;
@@ -2184,16 +2184,16 @@
   /**
    * Crea el handle flotante que se posiciona junto al bloque activo
    */
-  meWYSE.prototype.createFloatingHandle = function() {
+  LibraEditor.prototype.createFloatingHandle = function() {
     var self = this;
 
     // Crear el contenedor del handle flotante
     this.floatingHandle = document.createElement('div');
-    this.floatingHandle.className = 'mewyse-floating-handle';
+    this.floatingHandle.className = 'libraeditor-floating-handle';
 
     // Crear el boton handle
     var handle = document.createElement('button');
-    handle.className = 'mewyse-handle';
+    handle.className = 'libraeditor-handle';
     handle.innerHTML = WYSIWYG_ICONS.dragHandle;
     handle.title = this.t('tooltips.dragToReorder');
     handle.setAttribute('aria-label', this.t('tooltips.dragToReorder'));
@@ -2225,7 +2225,7 @@
       e.stopPropagation();
       self.draggedBlockId = null;
       // Limpiar todos los indicadores de drag-over
-      var allBlocks = self.container.querySelectorAll('.mewyse-block');
+      var allBlocks = self.container.querySelectorAll('.libraeditor-block');
       for (var i = 0; i < allBlocks.length; i++) {
         allBlocks[i].classList.remove('dragging');
         allBlocks[i].classList.remove('drag-over');
@@ -2251,8 +2251,8 @@
       if (!v_block || v_block.type !== 'divider') return;
       var relatedTarget = e.relatedTarget;
       var goingToBlock = relatedTarget && (
-        relatedTarget.classList.contains('mewyse-block') ||
-        (relatedTarget.closest && relatedTarget.closest('.mewyse-block'))
+        relatedTarget.classList.contains('libraeditor-block') ||
+        (relatedTarget.closest && relatedTarget.closest('.libraeditor-block'))
       );
       if (!goingToBlock) {
         self.floatingHandleHideTimeout = setTimeout(function() {
@@ -2276,7 +2276,7 @@
    * @param {HTMLElement} blockElement - Elemento del bloque
    * @param {number} blockId - ID del bloque
    */
-  meWYSE.prototype.positionFloatingHandle = function(blockElement, blockId) {
+  LibraEditor.prototype.positionFloatingHandle = function(blockElement, blockId) {
     if (!this.floatingHandle || !blockElement) return;
 
     this.currentFloatingBlockId = blockId;
@@ -2303,7 +2303,7 @@
     //
     // El handle vive como hijo absolute-positioned del wrapper (con
     // position: relative). Lo colocamos en el padding-left ampliado del
-    // editor (var --mewyse-padding-handle desde mewyse.css) — siempre DENTRO
+    // editor (var --libraeditor-padding-handle desde libraeditor.css) — siempre DENTRO
     // del wrapper, para que un parent con `overflow: hidden` no lo recorte.
     //
     // Vertical: centro de la primera línea (paddingTop + borderTop + lineHeight/2)
@@ -2328,7 +2328,7 @@
    * UI del editor). Evita el parpadeo cuando el foco pasa fugazmente por `body`
    * al reposicionar el caret o cambiar de bloque con el ratón.
    */
-  meWYSE.prototype._scheduleHandleHideCheck = function() {
+  LibraEditor.prototype._scheduleHandleHideCheck = function() {
     var self = this;
     if (this._handleHideTimer) clearTimeout(this._handleHideTimer);
     this._handleHideTimer = setTimeout(function() {
@@ -2345,7 +2345,7 @@
     }, 120);
   };
 
-  meWYSE.prototype.hideFloatingHandle = function() {
+  LibraEditor.prototype.hideFloatingHandle = function() {
     // Limpiar timeout pendiente
     if (this.floatingHandleHideTimeout) {
       clearTimeout(this.floatingHandleHideTimeout);
@@ -2362,7 +2362,7 @@
    * @param {boolean|string|Array} spec
    * @returns {Array<Array<Array<string>>>} filas → grupos → nombres
    */
-  meWYSE.prototype._normalizeToolbarSpec = function(spec) {
+  LibraEditor.prototype._normalizeToolbarSpec = function(spec) {
     var v_src;
     if (spec === true || spec == null) v_src = [DEFAULT_TOOLBAR];
     else if (typeof spec === 'string') v_src = [spec];
@@ -2388,11 +2388,11 @@
    * @param {Object} o - { icon, title, className, dropdown, disabled, onmousedown, onclick }
    * @returns {HTMLButtonElement}
    */
-  meWYSE.prototype._makeToolbarButton = function(o) {
+  LibraEditor.prototype._makeToolbarButton = function(o) {
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'mewyse-toolbar-button' +
-      (o.dropdown ? ' mewyse-toolbar-dropdown' : '') +
+    btn.className = 'libraeditor-toolbar-button' +
+      (o.dropdown ? ' libraeditor-toolbar-dropdown' : '') +
       (o.className ? ' ' + o.className : '');
     btn.innerHTML = o.icon;
     if (o.title) { btn.title = o.title; btn.setAttribute('aria-label', o.title); }
@@ -2406,7 +2406,7 @@
    * Construye un botón de formato inline (bold/italic/.../subscript/superscript)
    * a partir de TOOLBAR_FORMAT_TOOLS.
    */
-  meWYSE.prototype._buildFormatButton = function(name) {
+  LibraEditor.prototype._buildFormatButton = function(name) {
     var self = this;
     var cfg = TOOLBAR_FORMAT_TOOLS[name];
     if (!cfg) return null;
@@ -2446,7 +2446,7 @@
    * @param {string} name
    * @returns {?HTMLElement}
    */
-  meWYSE.prototype._buildToolbarItem = function(name) {
+  LibraEditor.prototype._buildToolbarItem = function(name) {
     var self = this;
     // Acción CUSTOM registrada (opción `actions` / registerAction): botón genérico
     // con su icono/tooltip que despacha por _runAction. Tiene prioridad sobre el
@@ -2471,7 +2471,7 @@
       case 'blocktype':
         var v_bt = this._makeToolbarButton({
           icon: this.t('misc.text') + ' <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>',
-          title: this.t('tooltips.changeBlockType'), dropdown: true, className: 'mewyse-toolbar-dropdown-wide',
+          title: this.t('tooltips.changeBlockType'), dropdown: true, className: 'libraeditor-toolbar-dropdown-wide',
           onclick: function(e) { e.preventDefault(); e.stopPropagation(); self._runAction('blocktype', { source: 'toolbar', event: e, button: v_bt }); }
         });
         v_bt.setAttribute('aria-expanded', 'false');
@@ -2676,22 +2676,22 @@
    * Construye el stepper de tamaño de fuente [−] [valor] [+] (ítem `fontsize`).
    * @returns {HTMLElement}
    */
-  meWYSE.prototype._buildFontSizeStepper = function() {
+  LibraEditor.prototype._buildFontSizeStepper = function() {
     var self = this;
     var v_stepper = document.createElement('div');
-    v_stepper.className = 'mewyse-font-size-stepper';
+    v_stepper.className = 'libraeditor-font-size-stepper';
 
     var v_dec = this._makeToolbarButton({
-      icon: WYSIWYG_ICONS.minus, title: this.t('tooltips.fontSizeDecrease'), className: 'mewyse-font-size-step',
+      icon: WYSIWYG_ICONS.minus, title: this.t('tooltips.fontSizeDecrease'), className: 'libraeditor-font-size-step',
       onmousedown: function(e) { e.preventDefault(); },
       onclick: function(e) { e.preventDefault(); self._stepFontSize(-1); }
     });
     var v_val = document.createElement('span');
-    v_val.className = 'mewyse-font-size-value';
+    v_val.className = 'libraeditor-font-size-value';
     v_val.textContent = '—';
     this._fontSizeDisplay = v_val;
     var v_inc = this._makeToolbarButton({
-      icon: WYSIWYG_ICONS.plus, title: this.t('tooltips.fontSizeIncrease'), className: 'mewyse-font-size-step',
+      icon: WYSIWYG_ICONS.plus, title: this.t('tooltips.fontSizeIncrease'), className: 'libraeditor-font-size-step',
       onmousedown: function(e) { e.preventDefault(); },
       onclick: function(e) { e.preventDefault(); self._stepFontSize(1); }
     });
@@ -2705,10 +2705,10 @@
   /**
    * Crea la barra de herramientas
    */
-  meWYSE.prototype.createToolbar = function() {
+  LibraEditor.prototype.createToolbar = function() {
     var self = this;
     var toolbar = document.createElement('div');
-    toolbar.className = 'mewyse-toolbar';
+    toolbar.className = 'libraeditor-toolbar';
 
     // En modo 'scroll' montamos una zona desplazable (track) + zona fija a la derecha
     // con los botones de mover bloque. Los grupos se añaden al `host`, que en modo
@@ -2720,25 +2720,25 @@
     var scrollPrev = null;
     var scrollNext = null;
     if (scrollMode) {
-      toolbar.classList.add('mewyse-toolbar-mode-scroll');
+      toolbar.classList.add('libraeditor-toolbar-mode-scroll');
 
       scrollArea = document.createElement('div');
-      scrollArea.className = 'mewyse-toolbar-scroll-area';
+      scrollArea.className = 'libraeditor-toolbar-scroll-area';
       if (this.rtl) scrollArea.setAttribute('dir', 'rtl');
 
       var fadeStart = document.createElement('div');
-      fadeStart.className = 'mewyse-toolbar-fade mewyse-toolbar-fade-start';
+      fadeStart.className = 'libraeditor-toolbar-fade libraeditor-toolbar-fade-start';
       fadeStart.setAttribute('aria-hidden', 'true');
       scrollArea.appendChild(fadeStart);
 
       var fadeEnd = document.createElement('div');
-      fadeEnd.className = 'mewyse-toolbar-fade mewyse-toolbar-fade-end';
+      fadeEnd.className = 'libraeditor-toolbar-fade libraeditor-toolbar-fade-end';
       fadeEnd.setAttribute('aria-hidden', 'true');
       scrollArea.appendChild(fadeEnd);
 
       scrollPrev = document.createElement('button');
       scrollPrev.type = 'button';
-      scrollPrev.className = 'mewyse-toolbar-scroll-arrow mewyse-toolbar-scroll-arrow-prev';
+      scrollPrev.className = 'libraeditor-toolbar-scroll-arrow libraeditor-toolbar-scroll-arrow-prev';
       scrollPrev.innerHTML = WYSIWYG_ICONS.arrowLeft || WYSIWYG_ICONS.chevronDown;
       scrollPrev.title = this.t('tooltips.scrollPrev');
       scrollPrev.setAttribute('aria-label', this.t('tooltips.scrollPrev'));
@@ -2747,7 +2747,7 @@
 
       scrollNext = document.createElement('button');
       scrollNext.type = 'button';
-      scrollNext.className = 'mewyse-toolbar-scroll-arrow mewyse-toolbar-scroll-arrow-next';
+      scrollNext.className = 'libraeditor-toolbar-scroll-arrow libraeditor-toolbar-scroll-arrow-next';
       scrollNext.innerHTML = WYSIWYG_ICONS.arrowRight || WYSIWYG_ICONS.chevronDown;
       scrollNext.title = this.t('tooltips.scrollNext');
       scrollNext.setAttribute('aria-label', this.t('tooltips.scrollNext'));
@@ -2755,7 +2755,7 @@
       scrollArea.appendChild(scrollNext);
 
       scrollTrack = document.createElement('div');
-      scrollTrack.className = 'mewyse-toolbar-scroll-track';
+      scrollTrack.className = 'libraeditor-toolbar-scroll-track';
       scrollArea.appendChild(scrollTrack);
 
       toolbar.appendChild(scrollArea);
@@ -2795,14 +2795,14 @@
       if (r > 0 && !scrollMode) {
         // Salto de fila (solo en modo wrap; en scroll todo va en una sola fila).
         var v_break = document.createElement('div');
-        v_break.className = 'mewyse-toolbar-row-break';
+        v_break.className = 'libraeditor-toolbar-row-break';
         host.appendChild(v_break);
       }
       var v_groups = v_rows[r];
       var v_first_in_row = true;
       for (var gi = 0; gi < v_groups.length; gi++) {
         var v_group_el = document.createElement('div');
-        v_group_el.className = 'mewyse-toolbar-group';
+        v_group_el.className = 'libraeditor-toolbar-group';
         var v_names = v_groups[gi];
         for (var ni = 0; ni < v_names.length; ni++) {
           var v_name = v_names[ni];
@@ -2829,7 +2829,7 @@
         if (v_group_el.children.length > 0) {
           if (!v_first_in_row) {
             var v_sep = document.createElement('div');
-            v_sep.className = 'mewyse-toolbar-separator';
+            v_sep.className = 'libraeditor-toolbar-separator';
             host.appendChild(v_sep);
           }
           host.appendChild(v_group_el);
@@ -2851,7 +2851,7 @@
         if (!v_pin_el) continue;
         if (!v_fixed_end) {
           v_fixed_end = document.createElement('div');
-          v_fixed_end.className = 'mewyse-toolbar-fixed-end';
+          v_fixed_end.className = 'libraeditor-toolbar-fixed-end';
         }
         v_fixed_end.appendChild(v_pin_el);
       }
@@ -2895,7 +2895,7 @@
    * editor, todos quedan inactivos (queryCommandState se refiere al editable
    * enfocado).
    */
-  meWYSE.prototype._updateFormatButtonStates = function() {
+  LibraEditor.prototype._updateFormatButtonStates = function() {
     if (!this._formatStateButtons || !this._formatStateButtons.length) return;
     var v_focused = this.container && this.container.contains(document.activeElement);
     for (var i = 0; i < this._formatStateButtons.length; i++) {
@@ -2915,7 +2915,7 @@
    * toolbar). Deshabilita tanto el propio botón como los `<button>` internos
    * (p. ej. los pasos [−]/[+] del stepper de tamaño de fuente).
    */
-  meWYSE.prototype._updateSelectionTools = function() {
+  LibraEditor.prototype._updateSelectionTools = function() {
     if (this._selectionToolsMode !== 'toolbar') return;
     if (!this._selectionToolEls || !this._selectionToolEls.length) return;
     var v_enabled = this._hasUsableSelection();
@@ -2926,7 +2926,7 @@
       var v_inner = v_el.querySelectorAll ? v_el.querySelectorAll('button') : [];
       for (var j = 0; j < v_inner.length; j++) v_inner[j].disabled = !v_enabled;
       // Clase para atenuar contenedores que no son <button> (p. ej. el stepper).
-      if (v_el.classList) v_el.classList.toggle('mewyse-tool-disabled', !v_enabled);
+      if (v_el.classList) v_el.classList.toggle('libraeditor-tool-disabled', !v_enabled);
     }
   };
 
@@ -2935,7 +2935,7 @@
    * habilitar las herramientas de selección (mismo criterio que el menú flotante).
    * @returns {boolean}
    */
-  meWYSE.prototype._hasUsableSelection = function() {
+  LibraEditor.prototype._hasUsableSelection = function() {
     var sel = window.getSelection();
     if (!sel || !sel.rangeCount || sel.isCollapsed || sel.toString().trim() === '') return false;
     var range = sel.getRangeAt(0);
@@ -2951,7 +2951,7 @@
   /**
    * Cambia el tipo del bloque actual (donde está el cursor)
    */
-  meWYSE.prototype.changeCurrentBlockType = function(type) {
+  LibraEditor.prototype.changeCurrentBlockType = function(type) {
     var activeElement = document.activeElement;
     var blockElement = activeElement;
 
@@ -2969,7 +2969,7 @@
   /**
    * Inserta un nuevo bloque de tipo tabla
    */
-  meWYSE.prototype.insertTableBlock = function() {
+  LibraEditor.prototype.insertTableBlock = function() {
     var activeElement = document.activeElement;
     var blockElement = activeElement;
 
@@ -2992,7 +2992,7 @@
   /**
    * Inserta un bloque de salto de página tras el bloque con foco (o al final).
    */
-  meWYSE.prototype.insertPageBreak = function() {
+  LibraEditor.prototype.insertPageBreak = function() {
     var v_active = this.lastFocusedElement || document.activeElement;
     var v_blockEl = v_active;
     while (v_blockEl && (!v_blockEl.hasAttribute || !v_blockEl.hasAttribute('data-block-id'))) {
@@ -3009,7 +3009,7 @@
   /**
    * Inserta un nuevo bloque de tipo imagen
    */
-  meWYSE.prototype.insertImageBlock = function() {
+  LibraEditor.prototype.insertImageBlock = function() {
     var self = this;
 
     // Usar el último elemento enfocado que guardamos antes de hacer clic en el botón
@@ -3096,7 +3096,7 @@
    * Devuelve el input file persistente del editor (lazy). Se reusa entre clicks
    * para evitar acumulación en el DOM y problemas de compatibilidad con display:none.
    */
-  meWYSE.prototype._getFileInput = function() {
+  LibraEditor.prototype._getFileInput = function() {
     if (this._fileInput && this._fileInput.parentNode) return this._fileInput;
     var input = document.createElement('input');
     input.type = 'file';
@@ -3116,21 +3116,21 @@
   /**
    * Inserta una imagen dentro de una celda de tabla
    */
-  meWYSE.prototype.insertImageInTableCell = function(file, tableCell) {
+  LibraEditor.prototype.insertImageInTableCell = function(file, tableCell) {
     var self = this;
 
     // Crear el overlay del modal
     var modalOverlay = document.createElement('div');
-    modalOverlay.className = 'mewyse-modal-overlay';
+    modalOverlay.className = 'libraeditor-modal-overlay';
 
     var modalContainer = document.createElement('div');
-    modalContainer.className = 'mewyse-modal-container';
+    modalContainer.className = 'libraeditor-modal-container';
     self._applyMenuTheme(modalContainer); // dark mode si el editor está en oscuro
 
     // Modal title
     var modalTitle = document.createElement('h3');
     modalTitle.textContent = self.t('modals.configureImageDimensions');
-    modalTitle.className = 'mewyse-modal-title';
+    modalTitle.className = 'libraeditor-modal-title';
     modalContainer.appendChild(modalTitle);
 
     // Leer imagen para obtener dimensiones originales
@@ -3144,7 +3144,7 @@
 
         // Vista previa
         var previewContainer = document.createElement('div');
-        previewContainer.className = 'mewyse-modal-preview';
+        previewContainer.className = 'libraeditor-modal-preview';
         var previewImg = document.createElement('img');
         previewImg.src = e.target.result;
         previewImg.style.maxWidth = '100%';
@@ -3154,36 +3154,36 @@
 
         // Información del archivo
         var fileInfo = document.createElement('p');
-        fileInfo.className = 'mewyse-modal-info';
+        fileInfo.className = 'libraeditor-modal-info';
         fileInfo.textContent = self.t('modals.originalDimensions', { width: originalWidth, height: originalHeight });
         modalContainer.appendChild(fileInfo);
 
         // Inputs de ancho/alto
         var inputsContainer = document.createElement('div');
-        inputsContainer.className = 'mewyse-modal-inputs';
+        inputsContainer.className = 'libraeditor-modal-inputs';
 
         var widthGroup = document.createElement('div');
-        widthGroup.className = 'mewyse-modal-input-group';
+        widthGroup.className = 'libraeditor-modal-input-group';
         var widthLabel = document.createElement('label');
         widthLabel.textContent = self.t('modals.width');
         var widthInput = document.createElement('input');
         widthInput.type = 'number';
         widthInput.value = originalWidth;
         widthInput.min = '1';
-        widthInput.className = 'mewyse-modal-input';
+        widthInput.className = 'libraeditor-modal-input';
         widthGroup.appendChild(widthLabel);
         widthGroup.appendChild(widthInput);
         inputsContainer.appendChild(widthGroup);
 
         var heightGroup = document.createElement('div');
-        heightGroup.className = 'mewyse-modal-input-group';
+        heightGroup.className = 'libraeditor-modal-input-group';
         var heightLabel = document.createElement('label');
         heightLabel.textContent = self.t('modals.height');
         var heightInput = document.createElement('input');
         heightInput.type = 'number';
         heightInput.value = originalHeight;
         heightInput.min = '1';
-        heightInput.className = 'mewyse-modal-input';
+        heightInput.className = 'libraeditor-modal-input';
         heightGroup.appendChild(heightLabel);
         heightGroup.appendChild(heightInput);
         inputsContainer.appendChild(heightGroup);
@@ -3192,13 +3192,13 @@
 
         // Checkbox mantener proporciones
         var proportionsContainer = document.createElement('div');
-        proportionsContainer.className = 'mewyse-modal-checkbox-group';
+        proportionsContainer.className = 'libraeditor-modal-checkbox-group';
         var proportionsCheckbox = document.createElement('input');
         proportionsCheckbox.type = 'checkbox';
         proportionsCheckbox.checked = true;
-        proportionsCheckbox.id = 'mewyse-maintain-proportions-table';
+        proportionsCheckbox.id = 'libraeditor-maintain-proportions-table';
         var proportionsLabel = document.createElement('label');
-        proportionsLabel.setAttribute('for', 'mewyse-maintain-proportions-table');
+        proportionsLabel.setAttribute('for', 'libraeditor-maintain-proportions-table');
         proportionsLabel.textContent = self.t('modals.keepProportions');
         proportionsContainer.appendChild(proportionsCheckbox);
         proportionsContainer.appendChild(proportionsLabel);
@@ -3219,18 +3219,18 @@
 
         // Botones
         var buttonsContainer = document.createElement('div');
-        buttonsContainer.className = 'mewyse-modal-buttons';
+        buttonsContainer.className = 'libraeditor-modal-buttons';
 
         var cancelButton = document.createElement('button');
         cancelButton.textContent = self.t('modals.cancel');
-        cancelButton.className = 'mewyse-modal-button mewyse-modal-button-cancel';
+        cancelButton.className = 'libraeditor-modal-button libraeditor-modal-button-cancel';
         cancelButton.onclick = function() {
           document.body.removeChild(modalOverlay);
         };
 
         var insertButton = document.createElement('button');
         insertButton.textContent = self.t('modals.insert');
-        insertButton.className = 'mewyse-modal-button mewyse-modal-button-primary';
+        insertButton.className = 'libraeditor-modal-button libraeditor-modal-button-primary';
         insertButton.onclick = function() {
           var width = parseInt(widthInput.value);
           var height = parseInt(heightInput.value);
@@ -3240,17 +3240,17 @@
 
           // Crear wrapper de imagen
           var imageWrapper = document.createElement('div');
-          imageWrapper.className = 'mewyse-image-wrapper';
+          imageWrapper.className = 'libraeditor-image-wrapper';
 
           // Crear contenedor de imagen (para controles)
           var imageContainer = document.createElement('div');
-          imageContainer.className = 'mewyse-image-container';
+          imageContainer.className = 'libraeditor-image-container';
 
           // Crear elemento de imagen
           var imgElement = document.createElement('img');
           imgElement.src = e.target.result;
           imgElement.alt = file.name;
-          imgElement.className = 'mewyse-image';
+          imgElement.className = 'libraeditor-image';
           imgElement.style.width = width + 'px';
           imgElement.style.height = height + 'px';
           imgElement.setAttribute('data-original-width', originalWidth);
@@ -3261,7 +3261,7 @@
 
           // Crear botón de edición
           var editButton = document.createElement('button');
-          editButton.className = 'mewyse-image-edit-btn';
+          editButton.className = 'libraeditor-image-edit-btn';
           editButton.innerHTML = WYSIWYG_ICONS.gear;
           editButton.title = self.t('tooltips.editDimensions');
           editButton.onclick = function(e) {
@@ -3279,7 +3279,7 @@
           // (arrastrar hacia fuera agranda en ambas).
           var v_make_cell_resize_handle = function(v_corner_class, v_sign) {
             var handle = document.createElement('div');
-            handle.className = 'mewyse-image-resize-handle ' + v_corner_class;
+            handle.className = 'libraeditor-image-resize-handle ' + v_corner_class;
             handle.title = self.t('tooltips.dragToResize');
 
             var isResizing = false;
@@ -3309,7 +3309,7 @@
 
               isResizing = false;
               document.body.style.cursor = '';
-              imageContainer.classList.remove('mewyse-image-resizing');
+              imageContainer.classList.remove('libraeditor-image-resizing');
               document.body.style.userSelect = '';
 
               // Remover event listeners
@@ -3319,7 +3319,7 @@
               // Actualizar el contenido de la tabla
               var tableElement = tableCell.closest('table');
               if (tableElement) {
-                var tableWrapper = tableElement.closest('.mewyse-table-wrapper');
+                var tableWrapper = tableElement.closest('.libraeditor-table-wrapper');
                 if (tableWrapper) {
                   var blockElement = tableWrapper.closest('[data-block-id]');
                   if (blockElement) {
@@ -3344,7 +3344,7 @@
               startWidth = parseInt(imgElement.style.width);
 
               document.body.style.cursor = 'nwse-resize';
-              imageContainer.classList.add('mewyse-image-resizing');
+              imageContainer.classList.add('libraeditor-image-resizing');
               document.body.style.userSelect = 'none';
 
               // Registrar los listeners SOLO durante el arrastre (se quitan en
@@ -3358,8 +3358,8 @@
           };
 
           // Handle inferior-derecho (existente) + superior-izquierdo (nuevo).
-          imageContainer.appendChild(v_make_cell_resize_handle('mewyse-image-resize-handle-se', 1));
-          imageContainer.appendChild(v_make_cell_resize_handle('mewyse-image-resize-handle-nw', -1));
+          imageContainer.appendChild(v_make_cell_resize_handle('libraeditor-image-resize-handle-se', 1));
+          imageContainer.appendChild(v_make_cell_resize_handle('libraeditor-image-resize-handle-nw', -1));
 
           // Añadir contenedor al wrapper
           imageWrapper.appendChild(imageContainer);
@@ -3384,7 +3384,7 @@
           var tableElement = tableCell.closest('table');
           if (tableElement) {
             // Buscar el bloque de la tabla
-            var tableWrapper = tableElement.closest('.mewyse-table-wrapper');
+            var tableWrapper = tableElement.closest('.libraeditor-table-wrapper');
             if (tableWrapper) {
               var blockElement = tableWrapper.closest('[data-block-id]');
               if (blockElement) {
@@ -3424,7 +3424,7 @@
   /**
    * Editar dimensiones de una imagen existente en una celda de tabla
    */
-  meWYSE.prototype.editImageInTableCell = function(imgElement, tableCell) {
+  LibraEditor.prototype.editImageInTableCell = function(imgElement, tableCell) {
     var self = this;
 
     // Obtener dimensiones actuales
@@ -3436,21 +3436,21 @@
 
     // Crear el overlay del modal
     var modalOverlay = document.createElement('div');
-    modalOverlay.className = 'mewyse-modal-overlay';
+    modalOverlay.className = 'libraeditor-modal-overlay';
 
     var modalContainer = document.createElement('div');
-    modalContainer.className = 'mewyse-modal-container';
+    modalContainer.className = 'libraeditor-modal-container';
     self._applyMenuTheme(modalContainer); // dark mode si el editor está en oscuro
 
     // Modal title
     var modalTitle = document.createElement('h3');
     modalTitle.textContent = self.t('modals.editImageDimensions');
-    modalTitle.className = 'mewyse-modal-title';
+    modalTitle.className = 'libraeditor-modal-title';
     modalContainer.appendChild(modalTitle);
 
     // Vista previa
     var previewContainer = document.createElement('div');
-    previewContainer.className = 'mewyse-modal-preview';
+    previewContainer.className = 'libraeditor-modal-preview';
     var previewImg = document.createElement('img');
     previewImg.src = imgElement.src;
     previewImg.style.maxWidth = '100%';
@@ -3460,36 +3460,36 @@
 
     // Información del archivo
     var fileInfo = document.createElement('p');
-    fileInfo.className = 'mewyse-modal-info';
+    fileInfo.className = 'libraeditor-modal-info';
     fileInfo.textContent = self.t('modals.originalDimensions', { width: originalWidth, height: originalHeight });
     modalContainer.appendChild(fileInfo);
 
     // Inputs de ancho/alto
     var inputsContainer = document.createElement('div');
-    inputsContainer.className = 'mewyse-modal-inputs';
+    inputsContainer.className = 'libraeditor-modal-inputs';
 
     var widthGroup = document.createElement('div');
-    widthGroup.className = 'mewyse-modal-input-group';
+    widthGroup.className = 'libraeditor-modal-input-group';
     var widthLabel = document.createElement('label');
     widthLabel.textContent = self.t('modals.width');
     var widthInput = document.createElement('input');
     widthInput.type = 'number';
     widthInput.value = currentWidth;
     widthInput.min = '1';
-    widthInput.className = 'mewyse-modal-input';
+    widthInput.className = 'libraeditor-modal-input';
     widthGroup.appendChild(widthLabel);
     widthGroup.appendChild(widthInput);
     inputsContainer.appendChild(widthGroup);
 
     var heightGroup = document.createElement('div');
-    heightGroup.className = 'mewyse-modal-input-group';
+    heightGroup.className = 'libraeditor-modal-input-group';
     var heightLabel = document.createElement('label');
     heightLabel.textContent = self.t('modals.height');
     var heightInput = document.createElement('input');
     heightInput.type = 'number';
     heightInput.value = currentHeight;
     heightInput.min = '1';
-    heightInput.className = 'mewyse-modal-input';
+    heightInput.className = 'libraeditor-modal-input';
     heightGroup.appendChild(heightLabel);
     heightGroup.appendChild(heightInput);
     inputsContainer.appendChild(heightGroup);
@@ -3498,13 +3498,13 @@
 
     // Checkbox mantener proporciones
     var proportionsContainer = document.createElement('div');
-    proportionsContainer.className = 'mewyse-modal-checkbox-group';
+    proportionsContainer.className = 'libraeditor-modal-checkbox-group';
     var proportionsCheckbox = document.createElement('input');
     proportionsCheckbox.type = 'checkbox';
     proportionsCheckbox.checked = true;
-    proportionsCheckbox.id = 'mewyse-maintain-proportions-edit-table';
+    proportionsCheckbox.id = 'libraeditor-maintain-proportions-edit-table';
     var proportionsLabel = document.createElement('label');
-    proportionsLabel.setAttribute('for', 'mewyse-maintain-proportions-edit-table');
+    proportionsLabel.setAttribute('for', 'libraeditor-maintain-proportions-edit-table');
     proportionsLabel.textContent = self.t('modals.keepProportions');
     proportionsContainer.appendChild(proportionsCheckbox);
     proportionsContainer.appendChild(proportionsLabel);
@@ -3525,18 +3525,18 @@
 
     // Botones
     var buttonsContainer = document.createElement('div');
-    buttonsContainer.className = 'mewyse-modal-buttons';
+    buttonsContainer.className = 'libraeditor-modal-buttons';
 
     var cancelButton = document.createElement('button');
     cancelButton.textContent = self.t('modals.cancel');
-    cancelButton.className = 'mewyse-modal-button mewyse-modal-button-cancel';
+    cancelButton.className = 'libraeditor-modal-button libraeditor-modal-button-cancel';
     cancelButton.onclick = function() {
       document.body.removeChild(modalOverlay);
     };
 
     var saveButton = document.createElement('button');
     saveButton.textContent = self.t('modals.save');
-    saveButton.className = 'mewyse-modal-button mewyse-modal-button-primary';
+    saveButton.className = 'libraeditor-modal-button libraeditor-modal-button-primary';
     saveButton.onclick = function() {
       var width = parseInt(widthInput.value);
       var height = parseInt(heightInput.value);
@@ -3548,7 +3548,7 @@
       // Encontrar el elemento table y actualizar el bloque
       var tableElement = tableCell.closest('table');
       if (tableElement) {
-        var tableWrapper = tableElement.closest('.mewyse-table-wrapper');
+        var tableWrapper = tableElement.closest('.libraeditor-table-wrapper');
         if (tableWrapper) {
           var blockElement = tableWrapper.closest('[data-block-id]');
           if (blockElement) {
@@ -3590,7 +3590,7 @@
    * @param {HTMLImageElement} img
    * @param {Object} meta - { source: 'cell'|'block', blockId?, tableCell? }
    */
-  meWYSE.prototype._attachImageDragHandlers = function(img, meta) {
+  LibraEditor.prototype._attachImageDragHandlers = function(img, meta) {
     var self = this;
     img.setAttribute('draggable', 'true');
 
@@ -3613,27 +3613,27 @@
       };
 
       // Marcar visualmente la imagen como siendo arrastrada
-      img.classList.add('mewyse-image-dragging');
+      img.classList.add('libraeditor-image-dragging');
 
       // Usar un tipo custom para distinguir de files OS; el valor es irrelevante
       try {
         e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('application/x-mewyse-image', '1');
+        e.dataTransfer.setData('application/x-libraeditor-image', '1');
         // Algunos navegadores (Firefox) requieren setData('text/plain') también
-        e.dataTransfer.setData('text/plain', 'mewyse-image');
+        e.dataTransfer.setData('text/plain', 'libraeditor-image');
       } catch (err) {}
     });
 
     img.addEventListener('dragend', function() {
-      img.classList.remove('mewyse-image-dragging');
+      img.classList.remove('libraeditor-image-dragging');
       // Limpiar el estado tras un pequeño delay para que los drop handlers
       // puedan leerlo primero
       setTimeout(function() {
         self._draggedImage = null;
         // Quitar cualquier marcador visual de drop-target restante
-        var targets = document.querySelectorAll('.mewyse-image-drop-target-cell');
+        var targets = document.querySelectorAll('.libraeditor-image-drop-target-cell');
         for (var i = 0; i < targets.length; i++) {
-          targets[i].classList.remove('mewyse-image-drop-target-cell');
+          targets[i].classList.remove('libraeditor-image-drop-target-cell');
         }
       }, 50);
     });
@@ -3643,7 +3643,7 @@
    * Procesa el drop de una imagen arrastrada en una celda de tabla.
    * Mueve la imagen: elimina del origen (celda o bloque) y la inserta en la celda destino.
    */
-  meWYSE.prototype._dropImageIntoCell = function(destCell, destBlockId) {
+  LibraEditor.prototype._dropImageIntoCell = function(destCell, destBlockId) {
     var drag = this._draggedImage;
     if (!drag) return;
 
@@ -3705,7 +3705,7 @@
    * Procesa el drop de una imagen arrastrada en un bloque (fuera de celda).
    * Crea un nuevo bloque imagen en la posición del bloque destino y elimina origen.
    */
-  meWYSE.prototype._dropImageIntoBlock = function(destBlockElement) {
+  LibraEditor.prototype._dropImageIntoBlock = function(destBlockElement) {
     var drag = this._draggedImage;
     if (!drag) return;
 
@@ -3770,10 +3770,10 @@
   /**
    * Helper: obtiene el blockId de la tabla que contiene una celda.
    */
-  meWYSE.prototype._getBlockIdForCell = function(cell) {
+  LibraEditor.prototype._getBlockIdForCell = function(cell) {
     var tableEl = cell.closest('table');
     if (!tableEl) return null;
-    var wrapper = tableEl.closest('.mewyse-table-wrapper');
+    var wrapper = tableEl.closest('.libraeditor-table-wrapper');
     if (!wrapper) return null;
     var blockEl = wrapper.closest('[data-block-id]');
     if (!blockEl) return null;
@@ -3785,21 +3785,21 @@
    * Helper: crea la estructura de imagen en una celda a partir de un snapshot.
    * Reusa la lógica de insertImageInTableCell pero sin modal (para drop directo).
    */
-  meWYSE.prototype._createImageInCellFromSnapshot = function(tableCell, snapshot) {
+  LibraEditor.prototype._createImageInCellFromSnapshot = function(tableCell, snapshot) {
     var self = this;
 
     // Limpiar contenido previo de la celda
     tableCell.innerHTML = '';
 
     var imageWrapper = document.createElement('div');
-    imageWrapper.className = 'mewyse-image-wrapper';
+    imageWrapper.className = 'libraeditor-image-wrapper';
     var imageContainer = document.createElement('div');
-    imageContainer.className = 'mewyse-image-container';
+    imageContainer.className = 'libraeditor-image-container';
 
     var imgElement = document.createElement('img');
     imgElement.src = snapshot.src;
     imgElement.alt = snapshot.alt || 'image';
-    imgElement.className = 'mewyse-image';
+    imgElement.className = 'libraeditor-image';
     imgElement.style.width = snapshot.width + 'px';
     imgElement.style.height = snapshot.height + 'px';
     imgElement.setAttribute('data-original-width', snapshot.width);
@@ -3811,7 +3811,7 @@
 
     // Botón edit
     var editButton = document.createElement('button');
-    editButton.className = 'mewyse-image-edit-btn';
+    editButton.className = 'libraeditor-image-edit-btn';
     editButton.innerHTML = WYSIWYG_ICONS.gear;
     editButton.title = self.t('tooltips.editDimensions');
     editButton.onclick = function(e) {
@@ -3834,11 +3834,11 @@
     tableCell.appendChild(imageWrapper);
   };
 
-  meWYSE.prototype.selectImage = function(imgElement, blockId, isInTable, tableCell) {
+  LibraEditor.prototype.selectImage = function(imgElement, blockId, isInTable, tableCell) {
     var self = this;
 
     // Deseleccionar cualquier imagen previamente seleccionada
-    var previousSelected = this.container.querySelector('.mewyse-image.selected');
+    var previousSelected = this.container.querySelector('.libraeditor-image.selected');
     if (previousSelected) {
       previousSelected.classList.remove('selected');
       previousSelected.style.outline = '';
@@ -3905,7 +3905,7 @@
   /**
    * Deselecciona la imagen actual
    */
-  meWYSE.prototype.deselectImage = function() {
+  LibraEditor.prototype.deselectImage = function() {
     if (this.selectedImage) {
       this.selectedImage.element.classList.remove('selected');
       this.selectedImage.element.style.outline = '';
@@ -3922,7 +3922,7 @@
   /**
    * Elimina la imagen seleccionada
    */
-  meWYSE.prototype.deleteSelectedImage = function() {
+  LibraEditor.prototype.deleteSelectedImage = function() {
     if (!this.selectedImage) return;
 
     var self = this;
@@ -3950,7 +3950,7 @@
       // Actualizar el bloque de la tabla
       var tableElement = tableCell.closest('table');
       if (tableElement) {
-        var tableWrapper = tableElement.closest('.mewyse-table-wrapper');
+        var tableWrapper = tableElement.closest('.libraeditor-table-wrapper');
         if (tableWrapper) {
           var blockElement = tableWrapper.closest('[data-block-id]');
           if (blockElement) {
@@ -3994,7 +3994,7 @@
   /**
    * Crea un nuevo bloque después de la imagen seleccionada
    */
-  meWYSE.prototype.createBlockAfterImage = function() {
+  LibraEditor.prototype.createBlockAfterImage = function() {
     if (!this.selectedImage) return;
 
     if (this.selectedImage.isInTable) {
@@ -4045,7 +4045,7 @@
    * @param {number} startIndex - índice del primer bloque de la lista
    * @returns {Array<number>} niveles efectivos (índice relativo a startIndex)
    */
-  meWYSE.prototype._normalizeListLevels = function(blocks, startIndex) {
+  LibraEditor.prototype._normalizeListLevels = function(blocks, startIndex) {
     var type = blocks[startIndex].type;
     var levels = [];
     var prevEff = -1; // -1 fuerza a 0 el primer ítem
@@ -4068,7 +4068,7 @@
    * @param {Function} classAttrFn - función que devuelve ' class="..."' por bloque
    * @returns {Object} { html, consumed }
    */
-  meWYSE.prototype._buildNestedListHTML = function(blocks, startIndex, classAttrFn, inlineFn) {
+  LibraEditor.prototype._buildNestedListHTML = function(blocks, startIndex, classAttrFn, inlineFn) {
     var startType = blocks[startIndex].type;
     var tag = startType === 'numberList' ? 'ol' : 'ul';
     var listClass = startType === 'checklist' ? ' class="checklist"' : '';
@@ -4144,7 +4144,7 @@
    * anterior + 1. Mantiene el modelo coherente con lo que se renderiza/exporta.
    * Los niveles 0 se eliminan de la propiedad (para no ensuciar el JSON).
    */
-  meWYSE.prototype._normalizeListModel = function() {
+  LibraEditor.prototype._normalizeListModel = function() {
     var blocks = this.blocks;
     var i = 0;
     while (i < blocks.length) {
@@ -4171,7 +4171,7 @@
    * @param {string} type
    * @returns {boolean}
    */
-  meWYSE.prototype._isListBlockType = function(type) {
+  LibraEditor.prototype._isListBlockType = function(type) {
     return type === 'bulletList' || type === 'numberList' || type === 'checklist';
   };
 
@@ -4182,7 +4182,7 @@
    * @param {number} blockId
    * @returns {boolean}
    */
-  meWYSE.prototype._canIndent = function(blockId) {
+  LibraEditor.prototype._canIndent = function(blockId) {
     var block = this.getBlock(blockId);
     if (!block) return false;
     // Bloque de texto: sangría de párrafo (margin-inline-start), tope INDENT_MAX.
@@ -4207,7 +4207,7 @@
    * @param {number} blockId
    * @returns {boolean}
    */
-  meWYSE.prototype._canOutdent = function(blockId) {
+  LibraEditor.prototype._canOutdent = function(blockId) {
     var block = this.getBlock(blockId);
     if (!block) return false;
     if (INDENTABLE_TEXT_BLOCK_TYPES[block.type]) return (block.indent || 0) > 0;
@@ -4222,7 +4222,7 @@
    * @param {HTMLElement} element
    * @returns {boolean}
    */
-  meWYSE.prototype._isCaretAtStart = function(element) {
+  LibraEditor.prototype._isCaretAtStart = function(element) {
     if (!element) return false;
     var sel = window.getSelection();
     if (!sel || !sel.rangeCount || !sel.isCollapsed) return false;
@@ -4240,7 +4240,7 @@
    * @param {number} blockId
    * @param {number} delta - +1 para indent, -1 para outdent
    */
-  meWYSE.prototype.indentBlock = function(blockId, delta) {
+  LibraEditor.prototype.indentBlock = function(blockId, delta) {
     var block = this.getBlock(blockId);
     if (!block) return;
 
@@ -4307,7 +4307,7 @@
    * @param {number} startIndex - índice desde donde empezar
    * @returns {Object} { wrapper: HTMLElement, consumed: number }
    */
-  meWYSE.prototype._buildNestedListWrapper = function(blocks, startIndex) {
+  LibraEditor.prototype._buildNestedListWrapper = function(blocks, startIndex) {
     var self = this;
     var startType = blocks[startIndex].type;
 
@@ -4315,13 +4315,13 @@
       var el;
       if (type === 'bulletList') {
         el = document.createElement('ul');
-        el.className = 'mewyse-list-group';
+        el.className = 'libraeditor-list-group';
       } else if (type === 'numberList') {
         el = document.createElement('ol');
-        el.className = 'mewyse-list-group';
+        el.className = 'libraeditor-list-group';
       } else { // checklist
         el = document.createElement('ul');
-        el.className = 'mewyse-list-group mewyse-checklist-group';
+        el.className = 'libraeditor-list-group libraeditor-checklist-group';
       }
       return el;
     };
@@ -4373,7 +4373,7 @@
    * @param {Object} margin
    * @returns {?{v:number, h:number}}
    */
-  meWYSE.prototype._resolveImageMargin = function(margin) {
+  LibraEditor.prototype._resolveImageMargin = function(margin) {
     if (!margin || typeof margin !== 'object') return null;
     var v_all = (typeof margin.all === 'number') ? margin.all : null;
     var v = (typeof margin.vertical === 'number') ? margin.vertical : v_all;
@@ -4390,7 +4390,7 @@
    * @param {HTMLImageElement} node
    * @returns {?Object}
    */
-  meWYSE.prototype._imageAdvancedFromNode = function(node) {
+  LibraEditor.prototype._imageAdvancedFromNode = function(node) {
     if (!node || !node.style) return null;
     var s = node.style;
     var adv = {};
@@ -4441,10 +4441,10 @@
   /**
    * Aplica estilos avanzados (border/margin/alignment) al <img> y wrapper.
    * @param {HTMLImageElement} img
-   * @param {HTMLElement} wrapper - .mewyse-image-wrapper
+   * @param {HTMLElement} wrapper - .libraeditor-image-wrapper
    * @param {Object} advanced - { border, margin, alignment } o null/undefined
    */
-  meWYSE.prototype._applyImageAdvancedStyles = function(img, wrapper, advanced) {
+  LibraEditor.prototype._applyImageAdvancedStyles = function(img, wrapper, advanced) {
     if (!advanced) return;
     if (advanced.border && advanced.border.width) {
       var b = advanced.border;
@@ -4479,7 +4479,7 @@
    * @param {Object} initial - valores iniciales { border, margin, alignment }
    * @returns {Object} { panel: HTMLElement, getValues: Function, toggle: Function }
    */
-  meWYSE.prototype._createImageAdvancedPanel = function(initial) {
+  LibraEditor.prototype._createImageAdvancedPanel = function(initial) {
     var self = this;
     initial = initial || {};
     var iBorder = initial.border || {};
@@ -4489,27 +4489,27 @@
     // Toggle button (colapsable)
     var toggleBtn = document.createElement('button');
     toggleBtn.type = 'button';
-    toggleBtn.className = 'mewyse-modal-advanced-toggle';
+    toggleBtn.className = 'libraeditor-modal-advanced-toggle';
     toggleBtn.innerHTML = '<span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span> ' + self.t('modals.advancedOptions');
 
     var panel = document.createElement('div');
-    panel.className = 'mewyse-modal-advanced-panel';
+    panel.className = 'libraeditor-modal-advanced-panel';
     panel.style.display = 'none';
 
     // --- Borde: width / style / color ---
     var borderGroup = document.createElement('div');
-    borderGroup.className = 'mewyse-modal-advanced-row';
+    borderGroup.className = 'libraeditor-modal-advanced-row';
     var borderLabel = document.createElement('label');
     borderLabel.textContent = self.t('modals.imageBorder');
     var borderWidthInput = document.createElement('input');
     borderWidthInput.type = 'number';
     borderWidthInput.min = '0';
-    borderWidthInput.className = 'mewyse-modal-input';
+    borderWidthInput.className = 'libraeditor-modal-input';
     borderWidthInput.placeholder = '0';
     borderWidthInput.value = iBorder.width || '';
     borderWidthInput.style.width = '70px';
     var borderStyleSelect = document.createElement('select');
-    borderStyleSelect.className = 'mewyse-modal-input';
+    borderStyleSelect.className = 'libraeditor-modal-input';
     ['solid', 'dashed', 'dotted', 'double'].forEach(function(s) {
       var opt = document.createElement('option');
       opt.value = s;
@@ -4519,12 +4519,12 @@
     });
     var borderColorInput = document.createElement('input');
     borderColorInput.type = 'color';
-    borderColorInput.className = 'mewyse-modal-input mewyse-modal-color';
+    borderColorInput.className = 'libraeditor-modal-input libraeditor-modal-color';
     borderColorInput.value = iBorder.color || '#000000';
     borderColorInput.dataset.userSet = iBorder.color ? 'true' : 'false';
     borderColorInput.oninput = function() { borderColorInput.dataset.userSet = 'true'; };
     var borderRow = document.createElement('div');
-    borderRow.className = 'mewyse-modal-advanced-inline';
+    borderRow.className = 'libraeditor-modal-advanced-inline';
     borderRow.appendChild(borderWidthInput);
     borderRow.appendChild(borderStyleSelect);
     borderRow.appendChild(borderColorInput);
@@ -4540,13 +4540,13 @@
       : (typeof iMargin.all === 'number' ? iMargin.all : '');
 
     var marginGroup = document.createElement('div');
-    marginGroup.className = 'mewyse-modal-advanced-row';
+    marginGroup.className = 'libraeditor-modal-advanced-row';
     var marginLabel = document.createElement('label');
     marginLabel.textContent = self.t('modals.imageMarginVertical');
     var marginVInput = document.createElement('input');
     marginVInput.type = 'number';
     marginVInput.min = '0';
-    marginVInput.className = 'mewyse-modal-input';
+    marginVInput.className = 'libraeditor-modal-input';
     marginVInput.placeholder = '0';
     marginVInput.value = v_margin_v;
     marginVInput.style.width = '70px';
@@ -4556,12 +4556,12 @@
     var marginHInput = document.createElement('input');
     marginHInput.type = 'number';
     marginHInput.min = '0';
-    marginHInput.className = 'mewyse-modal-input';
+    marginHInput.className = 'libraeditor-modal-input';
     marginHInput.placeholder = '0';
     marginHInput.value = v_margin_h;
     marginHInput.style.width = '70px';
     var marginRow = document.createElement('div');
-    marginRow.className = 'mewyse-modal-advanced-inline';
+    marginRow.className = 'libraeditor-modal-advanced-inline';
     marginRow.appendChild(marginVInput);
     marginRow.appendChild(marginHLabel);
     marginRow.appendChild(marginHInput);
@@ -4571,11 +4571,11 @@
 
     // --- Alineación ---
     var alignGroup = document.createElement('div');
-    alignGroup.className = 'mewyse-modal-advanced-row';
+    alignGroup.className = 'libraeditor-modal-advanced-row';
     var alignLabel = document.createElement('label');
     alignLabel.textContent = self.t('modals.imageAlignment');
     var alignSelect = document.createElement('select');
-    alignSelect.className = 'mewyse-modal-input';
+    alignSelect.className = 'libraeditor-modal-input';
     ['', 'left', 'center', 'right'].forEach(function(a) {
       var opt = document.createElement('option');
       opt.value = a;
@@ -4627,22 +4627,22 @@
   /**
    * Muestra el modal para editar las dimensiones de la imagen
    */
-  meWYSE.prototype.showImageDimensionsModal = function(file, insertIndex, replaceBlockId) {
+  LibraEditor.prototype.showImageDimensionsModal = function(file, insertIndex, replaceBlockId) {
     var self = this;
 
     // Crear el overlay del modal
     var modalOverlay = document.createElement('div');
-    modalOverlay.className = 'mewyse-modal-overlay';
+    modalOverlay.className = 'libraeditor-modal-overlay';
 
     // Crear el contenedor del modal
     var modalContainer = document.createElement('div');
-    modalContainer.className = 'mewyse-modal-container';
+    modalContainer.className = 'libraeditor-modal-container';
     self._applyMenuTheme(modalContainer); // dark mode si el editor está en oscuro
 
     // Título
     var modalTitle = document.createElement('h3');
     modalTitle.textContent = self.t('modals.configureImageDimensions');
-    modalTitle.className = 'mewyse-modal-title';
+    modalTitle.className = 'libraeditor-modal-title';
     modalContainer.appendChild(modalTitle);
 
     // Leer la imagen para obtener sus dimensiones originales
@@ -4656,7 +4656,7 @@
 
         // Crear preview de la imagen
         var previewContainer = document.createElement('div');
-        previewContainer.className = 'mewyse-modal-preview';
+        previewContainer.className = 'libraeditor-modal-preview';
         var previewImg = document.createElement('img');
         previewImg.src = e.target.result;
         previewImg.style.maxWidth = '100%';
@@ -4666,38 +4666,38 @@
 
         // Información del archivo
         var fileInfo = document.createElement('p');
-        fileInfo.className = 'mewyse-modal-info';
+        fileInfo.className = 'libraeditor-modal-info';
         fileInfo.textContent = self.t('modals.originalDimensions', { width: originalWidth, height: originalHeight });
         modalContainer.appendChild(fileInfo);
 
         // Contenedor de inputs
         var inputsContainer = document.createElement('div');
-        inputsContainer.className = 'mewyse-modal-inputs';
+        inputsContainer.className = 'libraeditor-modal-inputs';
 
         // Input ancho
         var widthGroup = document.createElement('div');
-        widthGroup.className = 'mewyse-modal-input-group';
+        widthGroup.className = 'libraeditor-modal-input-group';
         var widthLabel = document.createElement('label');
         widthLabel.textContent = self.t('modals.width');
         var widthInput = document.createElement('input');
         widthInput.type = 'number';
         widthInput.value = originalWidth;
         widthInput.min = '1';
-        widthInput.className = 'mewyse-modal-input';
+        widthInput.className = 'libraeditor-modal-input';
         widthGroup.appendChild(widthLabel);
         widthGroup.appendChild(widthInput);
         inputsContainer.appendChild(widthGroup);
 
         // Input alto
         var heightGroup = document.createElement('div');
-        heightGroup.className = 'mewyse-modal-input-group';
+        heightGroup.className = 'libraeditor-modal-input-group';
         var heightLabel = document.createElement('label');
         heightLabel.textContent = self.t('modals.height');
         var heightInput = document.createElement('input');
         heightInput.type = 'number';
         heightInput.value = originalHeight;
         heightInput.min = '1';
-        heightInput.className = 'mewyse-modal-input';
+        heightInput.className = 'libraeditor-modal-input';
         heightGroup.appendChild(heightLabel);
         heightGroup.appendChild(heightInput);
         inputsContainer.appendChild(heightGroup);
@@ -4706,13 +4706,13 @@
 
         // Checkbox para mantener proporciones
         var proportionsContainer = document.createElement('div');
-        proportionsContainer.className = 'mewyse-modal-checkbox-group';
+        proportionsContainer.className = 'libraeditor-modal-checkbox-group';
         var proportionsCheckbox = document.createElement('input');
         proportionsCheckbox.type = 'checkbox';
         proportionsCheckbox.checked = true;
-        proportionsCheckbox.id = 'mewyse-maintain-proportions';
+        proportionsCheckbox.id = 'libraeditor-maintain-proportions';
         var proportionsLabel = document.createElement('label');
-        proportionsLabel.setAttribute('for', 'mewyse-maintain-proportions');
+        proportionsLabel.setAttribute('for', 'libraeditor-maintain-proportions');
         proportionsLabel.textContent = self.t('modals.keepProportions');
         proportionsContainer.appendChild(proportionsCheckbox);
         proportionsContainer.appendChild(proportionsLabel);
@@ -4744,18 +4744,18 @@
 
         // Botones
         var buttonsContainer = document.createElement('div');
-        buttonsContainer.className = 'mewyse-modal-buttons';
+        buttonsContainer.className = 'libraeditor-modal-buttons';
 
         var cancelButton = document.createElement('button');
         cancelButton.textContent = self.t('modals.cancel');
-        cancelButton.className = 'mewyse-modal-button mewyse-modal-button-cancel';
+        cancelButton.className = 'libraeditor-modal-button libraeditor-modal-button-cancel';
         cancelButton.onclick = function() {
           document.body.removeChild(modalOverlay);
         };
 
         var insertButton = document.createElement('button');
         insertButton.textContent = self.t('modals.insert');
-        insertButton.className = 'mewyse-modal-button mewyse-modal-button-primary';
+        insertButton.className = 'libraeditor-modal-button libraeditor-modal-button-primary';
         insertButton.onclick = function() {
           // Solo se pasan dimensiones si el usuario tocó los campos; si no, null
           // → createImageBlock NO las guarda y la imagen queda a tamaño natural.
@@ -4794,7 +4794,7 @@
    *
    * @param {Object} advanced - Opciones avanzadas opcionales: { border, margin, alignment }
    */
-  meWYSE.prototype.createImageBlock = function(file, dataUrl, width, height, insertIndex, advanced, replaceBlockId) {
+  LibraEditor.prototype.createImageBlock = function(file, dataUrl, width, height, insertIndex, advanced, replaceBlockId) {
     var self = this;
 
     var doCreate = function(finalBlob, finalWidth, finalHeight) {
@@ -4865,7 +4865,7 @@
       // Mantener el foco DENTRO del editor: seleccionar la imagen recién
       // insertada (la selección la enfoca y muestra el handle).
       var v_newEl = self.getBlockElementById(v_targetId);
-      var v_newImg = v_newEl ? v_newEl.querySelector('img.mewyse-image') : null;
+      var v_newImg = v_newEl ? v_newEl.querySelector('img.libraeditor-image') : null;
       if (v_newImg) self.selectImage(v_newImg, v_targetId, false);
     };
 
@@ -4888,7 +4888,7 @@
   /**
    * Edita las dimensiones de una imagen existente
    */
-  meWYSE.prototype.editImageDimensions = function(blockId, imgElement) {
+  LibraEditor.prototype.editImageDimensions = function(blockId, imgElement) {
     var self = this;
     var block = this.getBlock(blockId);
 
@@ -4909,22 +4909,22 @@
 
     // Crear el overlay del modal
     var modalOverlay = document.createElement('div');
-    modalOverlay.className = 'mewyse-modal-overlay';
+    modalOverlay.className = 'libraeditor-modal-overlay';
 
     // Crear el contenedor del modal
     var modalContainer = document.createElement('div');
-    modalContainer.className = 'mewyse-modal-container';
+    modalContainer.className = 'libraeditor-modal-container';
     self._applyMenuTheme(modalContainer); // dark mode si el editor está en oscuro
 
     // Título
     var modalTitle = document.createElement('h3');
     modalTitle.textContent = self.t('modals.editImageDimensions');
-    modalTitle.className = 'mewyse-modal-title';
+    modalTitle.className = 'libraeditor-modal-title';
     modalContainer.appendChild(modalTitle);
 
     // Preview de la imagen
     var previewContainer = document.createElement('div');
-    previewContainer.className = 'mewyse-modal-preview';
+    previewContainer.className = 'libraeditor-modal-preview';
     var previewImg = document.createElement('img');
     previewImg.src = block.content.blob;
     previewImg.style.maxWidth = '100%';
@@ -4934,32 +4934,32 @@
 
     // Contenedor de inputs
     var inputsContainer = document.createElement('div');
-    inputsContainer.className = 'mewyse-modal-inputs';
+    inputsContainer.className = 'libraeditor-modal-inputs';
 
     // Input ancho
     var widthGroup = document.createElement('div');
-    widthGroup.className = 'mewyse-modal-input-group';
+    widthGroup.className = 'libraeditor-modal-input-group';
     var widthLabel = document.createElement('label');
     widthLabel.textContent = self.t('modals.width');
     var widthInput = document.createElement('input');
     widthInput.type = 'number';
     widthInput.value = currentWidth;
     widthInput.min = '1';
-    widthInput.className = 'mewyse-modal-input';
+    widthInput.className = 'libraeditor-modal-input';
     widthGroup.appendChild(widthLabel);
     widthGroup.appendChild(widthInput);
     inputsContainer.appendChild(widthGroup);
 
     // Input alto
     var heightGroup = document.createElement('div');
-    heightGroup.className = 'mewyse-modal-input-group';
+    heightGroup.className = 'libraeditor-modal-input-group';
     var heightLabel = document.createElement('label');
     heightLabel.textContent = self.t('modals.height');
     var heightInput = document.createElement('input');
     heightInput.type = 'number';
     heightInput.value = currentHeight;
     heightInput.min = '1';
-    heightInput.className = 'mewyse-modal-input';
+    heightInput.className = 'libraeditor-modal-input';
     heightGroup.appendChild(heightLabel);
     heightGroup.appendChild(heightInput);
     inputsContainer.appendChild(heightGroup);
@@ -4968,13 +4968,13 @@
 
     // Checkbox para mantener proporciones
     var proportionsContainer = document.createElement('div');
-    proportionsContainer.className = 'mewyse-modal-checkbox-group';
+    proportionsContainer.className = 'libraeditor-modal-checkbox-group';
     var proportionsCheckbox = document.createElement('input');
     proportionsCheckbox.type = 'checkbox';
     proportionsCheckbox.checked = true;
-    proportionsCheckbox.id = 'mewyse-maintain-proportions-edit';
+    proportionsCheckbox.id = 'libraeditor-maintain-proportions-edit';
     var proportionsLabel = document.createElement('label');
-    proportionsLabel.setAttribute('for', 'mewyse-maintain-proportions-edit');
+    proportionsLabel.setAttribute('for', 'libraeditor-maintain-proportions-edit');
     proportionsLabel.textContent = self.t('modals.keepProportions');
     proportionsContainer.appendChild(proportionsCheckbox);
     proportionsContainer.appendChild(proportionsLabel);
@@ -5003,7 +5003,7 @@
 
     // Botones
     var buttonsContainer = document.createElement('div');
-    buttonsContainer.className = 'mewyse-modal-buttons';
+    buttonsContainer.className = 'libraeditor-modal-buttons';
 
     // Al cerrar el modal, devolver el foco a la imagen dejándola seleccionada
     // (para que el estado de foco sea coherente y el onBlur salte cuando toque).
@@ -5016,14 +5016,14 @@
 
     var cancelButton = document.createElement('button');
     cancelButton.textContent = self.t('modals.cancel');
-    cancelButton.className = 'mewyse-modal-button mewyse-modal-button-cancel';
+    cancelButton.className = 'libraeditor-modal-button libraeditor-modal-button-cancel';
     cancelButton.onclick = function() {
       closeAndReselect();
     };
 
     var saveButton = document.createElement('button');
     saveButton.textContent = self.t('modals.save');
-    saveButton.className = 'mewyse-modal-button mewyse-modal-button-primary';
+    saveButton.className = 'libraeditor-modal-button libraeditor-modal-button-primary';
     saveButton.onclick = function() {
       // Solo se aplican dimensiones si el usuario tocó los campos. Si no y el
       // bloque no tenía (imagen a tamaño natural), se mantiene sin dimensiones.
@@ -5061,12 +5061,12 @@
       // una celda de tabla (v_cell), el bloque es la tabla → render() completo.
       var v_img_patched = !v_cell && self._patch_block(blockId);
       if (v_img_patched) {
-        var v_img_now = self.container.querySelector('[data-block-id="' + blockId + '"] .mewyse-image');
+        var v_img_now = self.container.querySelector('[data-block-id="' + blockId + '"] .libraeditor-image');
         if (v_img_now) self.selectImage(v_img_now, blockId, false, null);
       } else {
         self.render();
         setTimeout(function() {
-          var v_new_img = self.container.querySelector('[data-block-id="' + blockId + '"] .mewyse-image');
+          var v_new_img = self.container.querySelector('[data-block-id="' + blockId + '"] .libraeditor-image');
           if (v_new_img) self.selectImage(v_new_img, v_cell ? null : blockId, !!v_cell, v_cell || null);
         }, 0);
       }
@@ -5095,7 +5095,7 @@
    * para reflejar el tipo del bloque enfocado. No hace nada si no hay toolbar.
    * @param {string} blockType - tipo del bloque (paragraph/heading1/...)
    */
-  meWYSE.prototype._updateBlockTypeDropdown = function(blockType) {
+  LibraEditor.prototype._updateBlockTypeDropdown = function(blockType) {
     if (!this._blockTypeButton) return;
     // Para 'paragraph' se usa la etiqueta genérica "Texto" (coherente con el
     // estado inicial del dropdown); el resto usan su nombre de tipo.
@@ -5106,7 +5106,7 @@
       ' <span class="dropdown-arrow">' + WYSIWYG_ICONS.chevronDown + '</span>';
   };
 
-  meWYSE.prototype.showToolbarBlockTypeMenu = function(buttonElement) {
+  LibraEditor.prototype.showToolbarBlockTypeMenu = function(buttonElement) {
     var self = this;
 
     // Cerrar menú existente si está abierto
@@ -5181,7 +5181,7 @@
     }
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-type-menu mewyse-toolbar-menu';
+    menu.className = 'libraeditor-type-menu libraeditor-toolbar-menu';
     menu.setAttribute('role', 'listbox');
 
     // Solo tipos de TEXTO convertibles entre sí. Tabla/imagen/separador (y demás
@@ -5202,7 +5202,7 @@
 
     blockTypes.forEach(function(blockType) {
       var item = document.createElement('div');
-      item.className = 'mewyse-type-menu-item';
+      item.className = 'libraeditor-type-menu-item';
       item.setAttribute('role', 'option');
       item.innerHTML = '<span class="icon">' + blockType.icon + '</span>' + self.t('blockTypes.' + blockType.type);
       item.onclick = function(e) {
@@ -5217,16 +5217,16 @@
     // Estilos custom (styleFormats) — se añaden después de los types estándar
     if (this.styleFormats && this.styleFormats.length > 0) {
       var sep = document.createElement('div');
-      sep.className = 'mewyse-type-menu-separator';
+      sep.className = 'libraeditor-type-menu-separator';
       menu.appendChild(sep);
 
       this.styleFormats.forEach(function(sf) {
         var item = document.createElement('div');
-        item.className = 'mewyse-type-menu-item';
+        item.className = 'libraeditor-type-menu-item';
         item.setAttribute('role', 'option');
         // Preview: aplicar la clase al span del label para que el usuario vea el estilo
         item.innerHTML = '<span class="icon">' + (WYSIWYG_ICONS[sf.block] || WYSIWYG_ICONS.paragraph) +
-                        '</span><span class="mewyse-style-preview ' + sf.className + '">' + sf.title + '</span>';
+                        '</span><span class="libraeditor-style-preview ' + sf.className + '">' + sf.title + '</span>';
         item.onclick = function(e) {
           e.preventDefault();
           e.stopPropagation();
@@ -5257,7 +5257,7 @@
   /**
    * Cambia el tipo de bloque desde la toolbar y restaura el foco
    */
-  meWYSE.prototype.changeBlockTypeFromToolbar = function(type, customClass) {
+  LibraEditor.prototype.changeBlockTypeFromToolbar = function(type, customClass) {
     var self = this;
 
     // El cambio de tipo re-renderiza el bloque (blur transitorio del editable):
@@ -5396,7 +5396,7 @@
    * @param {number} blockId - ID del bloque de tabla
    * @param {number} cursorOffset - Posición del cursor
    */
-  meWYSE.prototype.changeTableCellBlockType = function(tableCell, currentElement, newType, blockId, cursorOffset) {
+  LibraEditor.prototype.changeTableCellBlockType = function(tableCell, currentElement, newType, blockId, cursorOffset) {
     // Mapeo de tipos de bloque a elementos HTML
     var typeToElement = {
       'paragraph': 'p',
@@ -5510,7 +5510,7 @@
   /**
    * Cierra el menú desplegable de la toolbar
    */
-  meWYSE.prototype.closeToolbarMenu = function() {
+  LibraEditor.prototype.closeToolbarMenu = function() {
     if (this.activeToolbarMenu) {
       document.body.removeChild(this.activeToolbarMenu);
       this.activeToolbarMenu = null;
@@ -5535,7 +5535,7 @@
    * Renderiza todos los bloques
    * @param {number} focusBlockId - ID del bloque que debe recibir el foco (opcional)
    */
-  meWYSE.prototype.render = function(focusBlockId) {
+  LibraEditor.prototype.render = function(focusBlockId) {
     var self = this;
 
     // Ocultar la toolbar de tabla: tras un render las referencias DOM (tabla)
@@ -5621,13 +5621,13 @@
             var listWrapper;
             if (newBlock.type === 'bulletList') {
               listWrapper = document.createElement('ul');
-              listWrapper.className = 'mewyse-list-group';
+              listWrapper.className = 'libraeditor-list-group';
             } else if (newBlock.type === 'numberList') {
               listWrapper = document.createElement('ol');
-              listWrapper.className = 'mewyse-list-group';
+              listWrapper.className = 'libraeditor-list-group';
             } else {
               listWrapper = document.createElement('ul');
-              listWrapper.className = 'mewyse-list-group mewyse-checklist-group';
+              listWrapper.className = 'libraeditor-list-group libraeditor-checklist-group';
             }
             listWrapper.appendChild(newBlockElement);
 
@@ -5815,7 +5815,7 @@
    * @param {Object} block - Datos del bloque
    * @returns {HTMLElement}
    */
-  meWYSE.prototype.createBlockElement = function(block) {
+  LibraEditor.prototype.createBlockElement = function(block) {
     var self = this;
     var element;
 
@@ -5861,7 +5861,7 @@
         // re-pinta. Usamos mousedown+preventDefault para no perder el foco/caret.
         if (self.codeHighlight) {
           var v_lang_select = document.createElement('select');
-          v_lang_select.className = 'mewyse-code-lang';
+          v_lang_select.className = 'libraeditor-code-lang';
           v_lang_select.setAttribute('contenteditable', 'false');
           v_lang_select.setAttribute('aria-label', self.t('tooltips.codeLanguage'));
           for (var v_lang_key in CODE_LANGUAGES) {
@@ -5888,7 +5888,7 @@
         code.contentEditable = true;
         // Marca para que el listener de input lea textContent (no innerHTML) y así
         // los <span> del resaltado nunca entren al modelo (que queda en texto plano).
-        code.setAttribute('data-mewyse-code', '1');
+        code.setAttribute('data-libraeditor-code', '1');
         var v_code_text = block.content || '';
         if (self.codeHighlight && window.hljs) {
           // Resaltado inicial (el markup queda "congelado" mientras se edita y se
@@ -5945,7 +5945,7 @@
           self.triggerChange();
         };
         var contentSpan = document.createElement('span');
-        contentSpan.className = 'mewyse-checklist-content';
+        contentSpan.className = 'libraeditor-checklist-content';
         contentSpan.contentEditable = true;
         contentSpan.innerHTML = block.content || '';
         contentSpan.setAttribute('data-placeholder', self.t('placeholders.task'));
@@ -5981,12 +5981,12 @@
 
       case 'pageBreak':
         // Bloque estructural no editable (como divider). El marcador visual solo
-        // se ve en el editor; el export emite un <div class="mewyse-page-break">.
+        // se ve en el editor; el export emite un <div class="libraeditor-page-break">.
         element = document.createElement('div');
-        element.className = 'mewyse-page-break';
+        element.className = 'libraeditor-page-break';
         element.contentEditable = false;
         var v_pbLabel = document.createElement('span');
-        v_pbLabel.className = 'mewyse-page-break-label';
+        v_pbLabel.className = 'libraeditor-page-break-label';
         v_pbLabel.textContent = self.t('blockTypes.pageBreak');
         element.appendChild(v_pbLabel);
         break;
@@ -5996,9 +5996,9 @@
         // el selector de variante) + contenido editable.
         var v_variant = CALLOUT_VARIANTS[block.calloutVariant] ? block.calloutVariant : 'info';
         element = document.createElement('div');
-        element.className = 'mewyse-callout mewyse-callout-' + v_variant;
+        element.className = 'libraeditor-callout libraeditor-callout-' + v_variant;
         var v_coBtn = document.createElement('button');
-        v_coBtn.className = 'mewyse-callout-variant';
+        v_coBtn.className = 'libraeditor-callout-variant';
         v_coBtn.setAttribute('contenteditable', 'false');
         v_coBtn.setAttribute('type', 'button');
         v_coBtn.title = self.t('callout.variant');
@@ -6009,7 +6009,7 @@
           self.showCalloutVariantMenu(block.id, v_coBtn);
         };
         var v_coContent = document.createElement('div');
-        v_coContent.className = 'mewyse-callout-content';
+        v_coContent.className = 'libraeditor-callout-content';
         v_coContent.contentEditable = true;
         v_coContent.innerHTML = block.content || '';
         v_coContent.setAttribute('data-placeholder', self.t('placeholders.slashCommand'));
@@ -6021,18 +6021,18 @@
       case 'toggle':
         // Desplegable ligero: cabecera con triángulo (no editable) + título
         // editable, y cuerpo editable (inline/multilínea, sin sub-bloques). El
-        // colapso lo controla la clase mewyse-toggle-collapsed. En vez de
+        // colapso lo controla la clase libraeditor-toggle-collapsed. En vez de
         // <details> nativo (cuyo click de summary pelea con la edición) usamos un
         // div con caret propio; el export sí emite <details>/<summary>.
         var v_tg_collapsed = block.collapsed === true;
         element = document.createElement('div');
-        element.className = 'mewyse-toggle' + (v_tg_collapsed ? ' mewyse-toggle-collapsed' : '');
+        element.className = 'libraeditor-toggle' + (v_tg_collapsed ? ' libraeditor-toggle-collapsed' : '');
 
         var v_tg_head = document.createElement('div');
-        v_tg_head.className = 'mewyse-toggle-head';
+        v_tg_head.className = 'libraeditor-toggle-head';
 
         var v_tg_caret = document.createElement('button');
-        v_tg_caret.className = 'mewyse-toggle-caret';
+        v_tg_caret.className = 'libraeditor-toggle-caret';
         v_tg_caret.setAttribute('contenteditable', 'false');
         v_tg_caret.setAttribute('type', 'button');
         v_tg_caret.setAttribute('aria-label', self.t('toggle.toggle'));
@@ -6044,9 +6044,9 @@
         };
 
         var v_tg_title = document.createElement('div');
-        v_tg_title.className = 'mewyse-toggle-title';
+        v_tg_title.className = 'libraeditor-toggle-title';
         v_tg_title.contentEditable = true;
-        v_tg_title.setAttribute('data-mewyse-field', 'toggleTitle');
+        v_tg_title.setAttribute('data-libraeditor-field', 'toggleTitle');
         v_tg_title.innerHTML = block.toggleTitle || '';
         v_tg_title.setAttribute('data-placeholder', self.t('placeholders.toggleTitle'));
 
@@ -6054,7 +6054,7 @@
         v_tg_head.appendChild(v_tg_title);
 
         var v_tg_body = document.createElement('div');
-        v_tg_body.className = 'mewyse-toggle-body';
+        v_tg_body.className = 'libraeditor-toggle-body';
         v_tg_body.contentEditable = true;
         v_tg_body.innerHTML = block.content || '';
         v_tg_body.setAttribute('data-placeholder', self.t('placeholders.toggleBody'));
@@ -6083,11 +6083,11 @@
           // crudo (no ha pasado por el sanitizer de contenido) — solo se muestra,
           // escapado, el tipo del bloque. El dato íntegro sigue en getJSON.
           element = document.createElement('div');
-          element.className = 'mewyse-unknown-block';
+          element.className = 'libraeditor-unknown-block';
           element.setAttribute('contenteditable', 'false');
           element.setAttribute('title', self.t('misc.unknownBlock'));
           var v_unknown_label = document.createElement('span');
-          v_unknown_label.className = 'mewyse-unknown-block-label';
+          v_unknown_label.className = 'libraeditor-unknown-block-label';
           v_unknown_label.textContent = self.t('misc.unknownBlock') + ' (' + String(block.type) + ')';
           element.appendChild(v_unknown_label);
         } else {
@@ -6101,7 +6101,7 @@
     }
 
     // Añadir clase y atributos comunes
-    element.classList.add('mewyse-block');
+    element.classList.add('libraeditor-block');
     element.setAttribute('data-block-id', block.id);
     element.setAttribute('data-block-type', block.type);
 
@@ -6136,7 +6136,7 @@
    * @param {HTMLElement} element
    * @param {number} blockId
    */
-  meWYSE.prototype.attachDragDropEvents = function(element, blockId) {
+  LibraEditor.prototype.attachDragDropEvents = function(element, blockId) {
     var self = this;
 
     // Helper para comprobar si hay un bloque siendo arrastrado (compatible con null/undefined)
@@ -6198,7 +6198,7 @@
    * @param {HTMLElement} element
    * @param {number} blockId
    */
-  meWYSE.prototype.attachFloatingHandleEvents = function(element, blockId) {
+  LibraEditor.prototype.attachFloatingHandleEvents = function(element, blockId) {
     var self = this;
 
     // En modo readOnly el floating handle no se crea (ver `init`). Sin handle
@@ -6237,17 +6237,17 @@
    * @param {Object} block - Datos del bloque
    * @returns {HTMLElement}
    */
-  meWYSE.prototype.createTableElement = function(block) {
+  LibraEditor.prototype.createTableElement = function(block) {
     var self = this;
 
     // Crear wrapper para la tabla
     var tableWrapper = document.createElement('div');
-    tableWrapper.className = 'mewyse-table-wrapper';
+    tableWrapper.className = 'libraeditor-table-wrapper';
 
     var table = document.createElement('table');
     // Solo aplicar inline el tableStyle personalizado (desde "Propiedades de la tabla").
     // Sin tableStyle: sin style inline — los defaults visuales vienen del CSS inyectado
-    // (.mewyse-block-content table { width:100%; border-collapse:collapse }).
+    // (.libraeditor-block-content table { width:100%; border-collapse:collapse }).
     if (typeof block.tableStyle === 'string' && block.tableStyle) {
       table.setAttribute('style', block.tableStyle);
     }
@@ -6263,19 +6263,19 @@
       for (var c = 0; c < cells.length; c++) {
         var cell = cells[c];
 
-        // Verificar si la celda contiene una imagen (con o sin la clase mewyse-image)
+        // Verificar si la celda contiene una imagen (con o sin la clase libraeditor-image)
         var imgInCell = cell.querySelector('img');
         if (imgInCell) {
           // Asegurar que tenga la clase para que los selectores funcionen
-          if (!imgInCell.classList.contains('mewyse-image')) {
-            imgInCell.classList.add('mewyse-image');
+          if (!imgInCell.classList.contains('libraeditor-image')) {
+            imgInCell.classList.add('libraeditor-image');
           }
           // Si la imagen está dentro de un <p> (HTML legacy), envolverla en el wrapper estándar
-          if (!imgInCell.closest('.mewyse-image-wrapper')) {
+          if (!imgInCell.closest('.libraeditor-image-wrapper')) {
             var wrapper = document.createElement('div');
-            wrapper.className = 'mewyse-image-wrapper';
+            wrapper.className = 'libraeditor-image-wrapper';
             var container = document.createElement('div');
-            container.className = 'mewyse-image-container';
+            container.className = 'libraeditor-image-container';
             imgInCell.parentNode.replaceChild(wrapper, imgInCell);
             container.appendChild(imgInCell);
             wrapper.appendChild(container);
@@ -6358,24 +6358,24 @@
    * @param {Object} block - Datos del bloque
    * @returns {HTMLElement}
    */
-  meWYSE.prototype.createImageElement = function(block) {
+  LibraEditor.prototype.createImageElement = function(block) {
     var self = this;
 
     var imageWrapper = document.createElement('div');
-    imageWrapper.className = 'mewyse-image-wrapper';
+    imageWrapper.className = 'libraeditor-image-wrapper';
 
     var imageContainer = document.createElement('div');
-    imageContainer.className = 'mewyse-image-container';
+    imageContainer.className = 'libraeditor-image-container';
 
     var img = document.createElement('img');
-    img.className = 'mewyse-image';
+    img.className = 'libraeditor-image';
 
     if (typeof block.content === 'object' && block.content.blob) {
       img.src = block.content.blob;
       img.alt = block.content.fileName || 'Imagen';
       // Dimensiones OPCIONALES: solo se aplican al style/atributos si el bloque
       // las tiene. Sin ellas, la imagen se muestra a su tamaño natural (el CSS
-      // .mewyse-image ya la limita con max-width:100%).
+      // .libraeditor-image ya la limita con max-width:100%).
       if (typeof block.content.width === 'number' && block.content.width > 0) {
         img.style.width = block.content.width + 'px';
         img.setAttribute('data-original-width', block.content.width);
@@ -6393,7 +6393,7 @@
 
     // Botón para editar dimensiones
     var editImageBtn = document.createElement('button');
-    editImageBtn.className = 'mewyse-image-edit-btn';
+    editImageBtn.className = 'libraeditor-image-edit-btn';
     editImageBtn.innerHTML = WYSIWYG_ICONS.gear;
     editImageBtn.title = self.t('tooltips.editDimensions');
     editImageBtn.onclick = function(e) {
@@ -6424,7 +6424,7 @@
     // su esquina superior-izquierda queda anclada; solo cambia el tamaño.
     var v_make_resize_handle = function(v_corner_class, v_sign) {
       var handle = document.createElement('div');
-      handle.className = 'mewyse-image-resize-handle ' + v_corner_class;
+      handle.className = 'libraeditor-image-resize-handle ' + v_corner_class;
       handle.title = self.t('tooltips.dragToResize');
 
       var isResizing = false;
@@ -6449,7 +6449,7 @@
         if (!isResizing) return;
         isResizing = false;
         document.body.style.cursor = '';
-        imageContainer.classList.remove('mewyse-image-resizing');
+        imageContainer.classList.remove('libraeditor-image-resizing');
         document.body.style.userSelect = '';
 
         // Remover los listeners de este arrastre (se re-añaden en el próximo mousedown)
@@ -6478,7 +6478,7 @@
         aspectRatio = v_get_aspect_ratio();
         startWidth = parseInt(img.style.width) || img.offsetWidth || 200;
         document.body.style.cursor = 'nwse-resize';
-        imageContainer.classList.add('mewyse-image-resizing');
+        imageContainer.classList.add('libraeditor-image-resizing');
         document.body.style.userSelect = 'none';
         // Registrar los listeners SOLO durante el arrastre: así funciona en cada
         // uso (no solo el primero) y no quedan listeners colgando en document.
@@ -6490,8 +6490,8 @@
     };
 
     // Handle inferior-derecho (existente) + superior-izquierdo (nuevo).
-    imageContainer.appendChild(v_make_resize_handle('mewyse-image-resize-handle-se', 1));
-    imageContainer.appendChild(v_make_resize_handle('mewyse-image-resize-handle-nw', -1));
+    imageContainer.appendChild(v_make_resize_handle('libraeditor-image-resize-handle-se', 1));
+    imageContainer.appendChild(v_make_resize_handle('libraeditor-image-resize-handle-nw', -1));
     imageWrapper.appendChild(imageContainer);
 
     img.onclick = function(e) {
@@ -6513,7 +6513,7 @@
    * @param {HTMLElement} element
    * @param {number} blockId
    */
-  meWYSE.prototype.attachBlockEvents = function(element, blockId) {
+  LibraEditor.prototype.attachBlockEvents = function(element, blockId) {
     var self = this;
 
     // En modo readOnly, el editor solo visualiza: no registramos listeners
@@ -6526,7 +6526,7 @@
     element.addEventListener('input', function(e) {
       // En bloques de código el modelo se mantiene en TEXTO PLANO: leemos
       // textContent para que los <span> del resaltado de sintaxis no se persistan.
-      if (element.getAttribute('data-mewyse-code') === '1') {
+      if (element.getAttribute('data-libraeditor-code') === '1') {
         self.updateBlockContent(blockId, element.textContent || '');
       } else {
         self.updateBlockContent(blockId, element.innerHTML);
@@ -6564,7 +6564,7 @@
    * @param {number} v_block_id
    * @param {boolean} v_is_title - true = campo título; false = cuerpo (content)
    */
-  meWYSE.prototype._attachToggleEditable = function(v_editable, v_block_id, v_is_title) {
+  LibraEditor.prototype._attachToggleEditable = function(v_editable, v_block_id, v_is_title) {
     if (this.readOnly) return;
     var self = this;
 
@@ -6597,7 +6597,7 @@
         var v_block = self.getBlock(v_block_id);
         if (v_block && v_block.collapsed) self.toggleCollapse(v_block_id);
         var v_block_el = self.getBlockElementById(v_block_id);
-        var v_body = v_block_el ? v_block_el.querySelector('.mewyse-toggle-body') : null;
+        var v_body = v_block_el ? v_block_el.querySelector('.libraeditor-toggle-body') : null;
         if (v_body) v_body.focus();
       }
       // En el cuerpo, Enter usa el comportamiento nativo del contenteditable
@@ -6626,7 +6626,7 @@
    * @param {string} field
    * @param {*} value
    */
-  meWYSE.prototype.updateBlockField = function(blockId, field, value) {
+  LibraEditor.prototype.updateBlockField = function(blockId, field, value) {
     var block = this.getBlock(blockId);
     if (!block) return;
     block[field] = value;
@@ -6638,14 +6638,14 @@
    * no perder el foco/caret del usuario.
    * @param {number} blockId
    */
-  meWYSE.prototype.toggleCollapse = function(blockId) {
+  LibraEditor.prototype.toggleCollapse = function(blockId) {
     var block = this.getBlock(blockId);
     if (!block || block.type !== 'toggle') return;
     block.collapsed = !block.collapsed;
     var v_el = this.getBlockElementById(blockId);
     if (v_el) {
-      if (block.collapsed) v_el.classList.add('mewyse-toggle-collapsed');
-      else v_el.classList.remove('mewyse-toggle-collapsed');
+      if (block.collapsed) v_el.classList.add('libraeditor-toggle-collapsed');
+      else v_el.classList.remove('libraeditor-toggle-collapsed');
     }
     this.triggerChange();
   };
@@ -6656,7 +6656,7 @@
    * @param {number} blockId
    * @param {HTMLElement} element
    */
-  meWYSE.prototype.handlePaste = function(e, blockId, element) {
+  LibraEditor.prototype.handlePaste = function(e, blockId, element) {
     e.preventDefault();
     var self = this;
 
@@ -6732,7 +6732,7 @@
    * @param {string} text
    * @returns {boolean}
    */
-  meWYSE.prototype.containsHTMLTags = function(text) {
+  LibraEditor.prototype.containsHTMLTags = function(text) {
     // Detectar etiquetas HTML comunes
     var htmlPattern = /<\s*(p|div|span|h[1-6]|ul|ol|li|table|tr|td|th|br|hr|blockquote|pre|code|a|strong|b|em|i|u|s|img)[\s>\/]/i;
     return htmlPattern.test(text);
@@ -6743,7 +6743,7 @@
    * @param {HTMLElement} element
    * @returns {string}
    */
-  meWYSE.prototype.sanitizeHTML = function(element) {
+  LibraEditor.prototype.sanitizeHTML = function(element) {
     var self = this;
 
     // Lista de etiquetas permitidas para formato inline
@@ -6754,12 +6754,12 @@
       'A': ['href', 'title', 'target', 'rel']
     };
 
-    // Atributos data-* específicos de cada átomo meWYSE
+    // Atributos data-* específicos de cada átomo LibraEditor
     var ATOMIC_DATA_ATTRS = {
-      'mewyse-tag':      ['data-tag-id', 'data-tag-name', 'data-tag-color'],
-      'mewyse-mention':  ['data-mention-id', 'data-mention-name'],
-      'mewyse-emoji':    ['data-emoji'],
-      'mewyse-mergetag': ['data-merge-name']
+      'libraeditor-tag':      ['data-tag-id', 'data-tag-name', 'data-tag-color'],
+      'libraeditor-mention':  ['data-mention-id', 'data-mention-name'],
+      'libraeditor-emoji':    ['data-emoji'],
+      'libraeditor-mergetag': ['data-merge-name']
     };
 
     function escAttr(v) {
@@ -6784,15 +6784,15 @@
           return '<br>';
         }
 
-        // SPAN atómico de meWYSE (mewyse-tag / mewyse-mention / mewyse-emoji):
+        // SPAN atómico de LibraEditor (libraeditor-tag / libraeditor-mention / libraeditor-emoji):
         // se preserva con su clase, sus data-* y se re-aplican los atributos
         // estructurales (contenteditable=false, style del color del tag).
         if (tagName === 'SPAN' && node.classList) {
           var atomicClass = null;
-          if (node.classList.contains('mewyse-tag')) atomicClass = 'mewyse-tag';
-          else if (node.classList.contains('mewyse-mention')) atomicClass = 'mewyse-mention';
-          else if (node.classList.contains('mewyse-emoji')) atomicClass = 'mewyse-emoji';
-          else if (node.classList.contains('mewyse-mergetag')) atomicClass = 'mewyse-mergetag';
+          if (node.classList.contains('libraeditor-tag')) atomicClass = 'libraeditor-tag';
+          else if (node.classList.contains('libraeditor-mention')) atomicClass = 'libraeditor-mention';
+          else if (node.classList.contains('libraeditor-emoji')) atomicClass = 'libraeditor-emoji';
+          else if (node.classList.contains('libraeditor-mergetag')) atomicClass = 'libraeditor-mergetag';
           if (atomicClass) {
             var atomAttrs = ' class="' + atomicClass + '"';
             var keepData = ATOMIC_DATA_ATTRS[atomicClass] || [];
@@ -6805,7 +6805,7 @@
             // Para tag, derivar el style inline del color (con contraste).
             // El data-tag-color viene de HTML pegado: se pasa por _sanitizeStyle
             // para descartar inyecciones CSS (p.ej. "red;position:fixed;inset:0").
-            if (atomicClass === 'mewyse-tag') {
+            if (atomicClass === 'libraeditor-tag') {
               var tagColor = node.getAttribute('data-tag-color');
               if (tagColor && self._pickContrastColor) {
                 var fg = self._pickContrastColor(tagColor);
@@ -6898,7 +6898,7 @@
    * @param {string} html - HTML a convertir
    * @returns {Array} array de bloques sin ids (los asigna _sanitizeBlocks o el caller)
    */
-  meWYSE.prototype._htmlToBlocks = function(html) {
+  LibraEditor.prototype._htmlToBlocks = function(html) {
     var self = this;
     var parser, doc;
     try {
@@ -6918,11 +6918,11 @@
     var v_pre_imgs = doc.querySelectorAll('img');
     for (var vpi = 0; vpi < v_pre_imgs.length; vpi++) {
       var v_pimg = v_pre_imgs[vpi];
-      v_pimg.__mewyse_adv = this._imageAdvancedFromNode(v_pimg);
+      v_pimg.__libraeditor_adv = this._imageAdvancedFromNode(v_pimg);
       var v_psw = parseInt(v_pimg.style.width, 10);
       var v_psh = parseInt(v_pimg.style.height, 10);
-      if (!isNaN(v_psw) && v_psw > 0) v_pimg.__mewyse_sw = v_psw;
-      if (!isNaN(v_psh) && v_psh > 0) v_pimg.__mewyse_sh = v_psh;
+      if (!isNaN(v_psw) && v_psw > 0) v_pimg.__libraeditor_sw = v_psw;
+      if (!isNaN(v_psh) && v_psh > 0) v_pimg.__libraeditor_sh = v_psh;
     }
 
     // Preprocesar: limpiar elementos de Word/Google Docs
@@ -7047,12 +7047,12 @@
         var imgSrc = node.getAttribute('src');
         if (imgSrc && self._isSafeImageUrl(imgSrc)) {
           // Dimensiones: atributo width/height y, como fallback, del `style`
-          // inline (leído antes de la limpieza, en node.__mewyse_sw/sh). TinyMCE y
+          // inline (leído antes de la limpieza, en node.__libraeditor_sw/sh). TinyMCE y
           // otros suelen fijar el tamaño con style:width/height.
           var imgW = parseInt(node.getAttribute('width'), 10);
           var imgH = parseInt(node.getAttribute('height'), 10);
-          if ((isNaN(imgW) || imgW < 1) && node.__mewyse_sw) imgW = node.__mewyse_sw;
-          if ((isNaN(imgH) || imgH < 1) && node.__mewyse_sh) imgH = node.__mewyse_sh;
+          if ((isNaN(imgW) || imgW < 1) && node.__libraeditor_sw) imgW = node.__libraeditor_sw;
+          if ((isNaN(imgH) || imgH < 1) && node.__libraeditor_sh) imgH = node.__libraeditor_sh;
           var v_img_content = {
             blob: imgSrc,
             fileName: node.getAttribute('alt') || 'image'
@@ -7063,8 +7063,8 @@
           if (!isNaN(imgW) && imgW >= 1) v_img_content.width = imgW;
           if (!isNaN(imgH) && imgH >= 1) v_img_content.height = imgH;
           // Opciones avanzadas (border/margin/alignment) del style inline, leídas
-          // antes de la limpieza (node.__mewyse_adv).
-          if (node.__mewyse_adv) v_img_content.advanced = node.__mewyse_adv;
+          // antes de la limpieza (node.__libraeditor_adv).
+          if (node.__libraeditor_adv) v_img_content.advanced = node.__libraeditor_adv;
           blocksToInsert.push({ type: 'image', content: v_img_content });
         }
         return;
@@ -7102,26 +7102,26 @@
         return;
       }
 
-      // Bloques estructurales propios de meWYSE (los emite getHTML como
+      // Bloques estructurales propios de LibraEditor (los emite getHTML como
       // div/nav/details). Se detectan AQUI, antes del manejo genérico de DIV
       // (que los aplanaría a un párrafo vacío y perdería el bloque). Es lo que
       // permite el round-trip por el modal de Código fuente / loadFromHTML.
       if (tagName === 'DIV') {
         var v_div_cls = ' ' + (node.className || '') + ' ';
         // Salto de página → bloque pageBreak (contenido derivado, vacío)
-        if (v_div_cls.indexOf(' mewyse-page-break ') !== -1) {
+        if (v_div_cls.indexOf(' libraeditor-page-break ') !== -1) {
           blocksToInsert.push({ type: 'pageBreak', content: '' });
           return;
         }
         // Callout (aviso) → variante + contenido inline
-        if (v_div_cls.indexOf(' mewyse-callout ') !== -1) {
+        if (v_div_cls.indexOf(' libraeditor-callout ') !== -1) {
           var v_variant = 'info';
           var v_variant_match = (node.className || '')
-            .match(/mewyse-callout-(info|warning|success|danger)/);
+            .match(/libraeditor-callout-(info|warning|success|danger)/);
           if (v_variant_match) v_variant = v_variant_match[1];
-          // Contenido: el .mewyse-callout-content si viene del DOM del editor
+          // Contenido: el .libraeditor-callout-content si viene del DOM del editor
           // (evita arrastrar el botón de variante); si no (export), el div.
-          var v_callout_node = node.querySelector('.mewyse-callout-content') || node;
+          var v_callout_node = node.querySelector('.libraeditor-callout-content') || node;
           blocksToInsert.push({
             type: 'callout',
             content: self.sanitizeHTML(v_callout_node).trim(),
@@ -7133,7 +7133,7 @@
 
       // Índice (tabla de contenidos) → bloque toc (contenido derivado, vacío)
       if (tagName === 'NAV' &&
-          (' ' + (node.className || '') + ' ').indexOf(' mewyse-toc ') !== -1) {
+          (' ' + (node.className || '') + ' ').indexOf(' libraeditor-toc ') !== -1) {
         blocksToInsert.push({ type: 'toc', content: '' });
         return;
       }
@@ -7274,7 +7274,7 @@
    * @param {number} currentBlockId
    * @param {HTMLElement} element
    */
-  meWYSE.prototype.processPastedHTML = function(html, currentBlockId, element) {
+  LibraEditor.prototype.processPastedHTML = function(html, currentBlockId, element) {
     this.pushHistory(true);
 
     var blocksToInsert = this._htmlToBlocks(html);
@@ -7326,7 +7326,7 @@
    * Limpia el documento de elementos específicos de Word/Google Docs
    * @param {Document} doc
    */
-  meWYSE.prototype.cleanPastedDocument = function(doc) {
+  LibraEditor.prototype.cleanPastedDocument = function(doc) {
     // 1. Eliminar elementos de Word/Office completamente (+ XML, style, meta, script, link)
     var junkSelector = 'o\\:p, v\\:*, w\\:*, m\\:*, xml, style, meta, link, script, title, head > *';
     var junkNodes;
@@ -7355,19 +7355,19 @@
     for (var j = 0; j < allElements.length; j++) {
       var el = allElements[j];
 
-      // Si es un átomo meWYSE (mewyse-tag / mewyse-mention / mewyse-emoji) o un
+      // Si es un átomo LibraEditor (libraeditor-tag / libraeditor-mention / libraeditor-emoji) o un
       // bloque estructural propio (page-break / callout / toc / callout-content),
       // saltarse el cleanup completo. Es contenido legítimo del editor — quitarles
       // la class los rompería y perderían su semántica (además, la detección de
       // estos bloques en _htmlToBlocks se apoya justo en esa class).
       if (el.classList && (
-          el.classList.contains('mewyse-tag') ||
-          el.classList.contains('mewyse-mention') ||
-          el.classList.contains('mewyse-emoji') ||
-          el.classList.contains('mewyse-page-break') ||
-          el.classList.contains('mewyse-callout') ||
-          el.classList.contains('mewyse-callout-content') ||
-          el.classList.contains('mewyse-toc'))) {
+          el.classList.contains('libraeditor-tag') ||
+          el.classList.contains('libraeditor-mention') ||
+          el.classList.contains('libraeditor-emoji') ||
+          el.classList.contains('libraeditor-page-break') ||
+          el.classList.contains('libraeditor-callout') ||
+          el.classList.contains('libraeditor-callout-content') ||
+          el.classList.contains('libraeditor-toc'))) {
         continue;
       }
 
@@ -7402,18 +7402,18 @@
       if (!v_tagAllowed['height']) el.removeAttribute('height');
 
       // Eliminar atributos MS Office (mso-*), datos internos, xmlns, namespaces.
-      // Preservar atributos meWYSE: data-mention-*, data-tag-*, data-block-*.
+      // Preservar atributos LibraEditor: data-mention-*, data-tag-*, data-block-*.
       var attrs = el.attributes;
       var attrsToRemove = [];
       for (var k = 0; k < attrs.length; k++) {
         var attrName = attrs[k].name;
-        var isMewyseDataAttr = attrName.indexOf('data-mention-') === 0 ||
+        var isLibraEditorDataAttr = attrName.indexOf('data-mention-') === 0 ||
                                attrName.indexOf('data-tag-') === 0 ||
                                attrName.indexOf('data-block-') === 0 ||
                                attrName === 'data-name' ||
                                attrName === 'data-type';
         if (attrName.indexOf('mso-') === 0 ||
-            (attrName.indexOf('data-') === 0 && !isMewyseDataAttr) ||
+            (attrName.indexOf('data-') === 0 && !isLibraEditorDataAttr) ||
             attrName.indexOf('xmlns') === 0 || attrName.indexOf('o:') === 0 ||
             attrName.indexOf('v:') === 0 || attrName.indexOf('w:') === 0 ||
             attrName.indexOf('m:') === 0 || attrName === 'bgcolor' ||
@@ -7465,17 +7465,17 @@
     }
 
     // 6. Desenvolver SPANs/FONTs vacíos o que solo contienen formato (no aportan nada).
-    // Excepción: spans atómicos de meWYSE (mewyse-tag / mewyse-mention /
-    // mewyse-emoji) son contenido semántico — NO desenvolverlos.
+    // Excepción: spans atómicos de LibraEditor (libraeditor-tag / libraeditor-mention /
+    // libraeditor-emoji) son contenido semántico — NO desenvolverlos.
     var unwrapTags = ['SPAN', 'FONT'];
     for (var ut = 0; ut < unwrapTags.length; ut++) {
       var toUnwrap = doc.querySelectorAll(unwrapTags[ut].toLowerCase());
       for (var m = toUnwrap.length - 1; m >= 0; m--) {
         var elUnwrap = toUnwrap[m];
         if (elUnwrap.classList && (
-            elUnwrap.classList.contains('mewyse-tag') ||
-            elUnwrap.classList.contains('mewyse-mention') ||
-            elUnwrap.classList.contains('mewyse-emoji'))) {
+            elUnwrap.classList.contains('libraeditor-tag') ||
+            elUnwrap.classList.contains('libraeditor-mention') ||
+            elUnwrap.classList.contains('libraeditor-emoji'))) {
           continue;
         }
         // NO desenvolver spans con estilos de formato intencionales que el usuario
@@ -7508,13 +7508,13 @@
     var emptyCandidates = doc.querySelectorAll('div');
     for (var ec = emptyCandidates.length - 1; ec >= 0; ec--) {
       var candidate = emptyCandidates[ec];
-      // No eliminar bloques estructurales propios de meWYSE aunque estén vacíos:
-      // el salto de página es un <div class="mewyse-page-break"></div> vacío por
+      // No eliminar bloques estructurales propios de LibraEditor aunque estén vacíos:
+      // el salto de página es un <div class="libraeditor-page-break"></div> vacío por
       // diseño; también protegemos callout/toc por robustez.
       if (candidate.classList && (
-          candidate.classList.contains('mewyse-page-break') ||
-          candidate.classList.contains('mewyse-callout') ||
-          candidate.classList.contains('mewyse-toc'))) {
+          candidate.classList.contains('libraeditor-page-break') ||
+          candidate.classList.contains('libraeditor-callout') ||
+          candidate.classList.contains('libraeditor-toc'))) {
         continue;
       }
       var txt = (candidate.textContent || '').replace(/\s/g, '');
@@ -7529,7 +7529,7 @@
    * verdaderos <ul>/<ol>. Word suele exportar listas como <p class="MsoListParagraph">
    * con un bullet "·" o "o" al principio del texto.
    */
-  meWYSE.prototype._convertWordListsToReal = function(doc) {
+  LibraEditor.prototype._convertWordListsToReal = function(doc) {
     var paragraphs = doc.querySelectorAll('p');
     // Patrones típicos de Word/Excel al inicio del texto de una "lista"
     var bulletPattern = /^[\s\u00A0]*[·•●○◦o\u25CF\u25E6\u2022\u2043\u2219\u25AA\u25AB]\s+/;
@@ -7584,7 +7584,7 @@
    * @param {HTMLElement} table
    * @returns {string}
    */
-  meWYSE.prototype.cleanTableHTML = function(table) {
+  LibraEditor.prototype.cleanTableHTML = function(table) {
     // Crear una copia limpia de la tabla
     var cleanTable = document.createElement('tbody');
     var rows = table.querySelectorAll('tr');
@@ -7615,7 +7615,7 @@
           var v_alt = imgInCell.getAttribute('alt') || '';
           var v_w = parseInt(imgInCell.getAttribute('width'), 10);
           var v_h = parseInt(imgInCell.getAttribute('height'), 10);
-          var v_img = '<img class="mewyse-image" src="' + escape_attr(v_src) + '"';
+          var v_img = '<img class="libraeditor-image" src="' + escape_attr(v_src) + '"';
           if (v_alt) v_img += ' alt="' + escape_attr(v_alt) + '"';
           if (!isNaN(v_w) && v_w > 0) v_img += ' width="' + v_w + '"';
           if (!isNaN(v_h) && v_h > 0) v_img += ' height="' + v_h + '"';
@@ -7641,7 +7641,7 @@
    * @param {number} currentBlockId
    * @param {HTMLElement} element
    */
-  meWYSE.prototype.processPastedPlainText = function(text, currentBlockId, element) {
+  LibraEditor.prototype.processPastedPlainText = function(text, currentBlockId, element) {
     this.pushHistory(true);
     var lines = text.split(/\r?\n/);
 
@@ -7727,7 +7727,7 @@
    * @param {string} type
    * @param {string} content
    */
-  meWYSE.prototype.insertBlockAt = function(index, type, content) {
+  LibraEditor.prototype.insertBlockAt = function(index, type, content) {
     // Normalizar el índice a un rango válido [0, length] para que un índice
     // negativo o fuera de rango no inserte en una posición inesperada.
     index = Math.max(0, Math.min(index, this.blocks.length));
@@ -7759,7 +7759,7 @@
    * @param {HTMLElement} cell
    * @param {number} blockId
    */
-  meWYSE.prototype.attachTableCellEvents = function(cell, blockId) {
+  LibraEditor.prototype.attachTableCellEvents = function(cell, blockId) {
     var self = this;
 
     // Event listener para input - actualizar el contenido de toda la tabla
@@ -7829,8 +7829,8 @@
       tdCell.addEventListener('mousedown', function(e) {
         // Solo si no es click en controles y es botón izquierdo
         if (e.button !== 0) return;
-        if (e.target.classList.contains('mewyse-table-row-control') ||
-            e.target.classList.contains('mewyse-table-col-control')) {
+        if (e.target.classList.contains('libraeditor-table-row-control') ||
+            e.target.classList.contains('libraeditor-table-col-control')) {
           return;
         }
         // Guardar la celda donde se hizo clic para posible inicio de selección
@@ -7845,13 +7845,13 @@
         e.preventDefault();
         e.stopPropagation();
         try { e.dataTransfer.dropEffect = 'move'; } catch (err) {}
-        tdCell.classList.add('mewyse-image-drop-target-cell');
+        tdCell.classList.add('libraeditor-image-drop-target-cell');
       });
 
       tdCell.addEventListener('dragleave', function(e) {
         // Solo quitar la clase si se sale de la celda (no de un hijo)
         if (e.target === tdCell || !tdCell.contains(e.relatedTarget)) {
-          tdCell.classList.remove('mewyse-image-drop-target-cell');
+          tdCell.classList.remove('libraeditor-image-drop-target-cell');
         }
       });
 
@@ -7859,7 +7859,7 @@
         if (!self._draggedImage) return;
         e.preventDefault();
         e.stopPropagation();
-        tdCell.classList.remove('mewyse-image-drop-target-cell');
+        tdCell.classList.remove('libraeditor-image-drop-target-cell');
         self._dropImageIntoCell(tdCell, blockId);
       });
     }
@@ -7870,7 +7870,7 @@
    * @param {HTMLElement} table
    * @param {number} blockId
    */
-  meWYSE.prototype.addTableSelectionEvents = function(table, blockId) {
+  LibraEditor.prototype.addTableSelectionEvents = function(table, blockId) {
     var self = this;
 
     if (table._hasSelectionEvents) return;
@@ -7924,7 +7924,7 @@
    * @param {HTMLElement} cell - Celda td o th
    * @param {number} blockId
    */
-  meWYSE.prototype.startTableCellSelection = function(cell, blockId) {
+  LibraEditor.prototype.startTableCellSelection = function(cell, blockId) {
     // Evitar iniciar múltiples veces
     if (this.isSelectingTableCells) return;
 
@@ -7938,18 +7938,18 @@
     this.currentSelectionBlockId = blockId;
 
     // Seleccionar la celda inicial inmediatamente
-    cell.classList.add('mewyse-cell-selected');
+    cell.classList.add('libraeditor-cell-selected');
     this.selectedTableCells.push(cell);
 
     // Prevenir selección de texto durante el arrastre
-    table.classList.add('mewyse-table-selecting');
+    table.classList.add('libraeditor-table-selecting');
   };
 
   /**
    * Expande la selección de celdas mientras se arrastra
    * @param {HTMLElement} cell - Celda actual bajo el cursor
    */
-  meWYSE.prototype.expandTableCellSelection = function(cell) {
+  LibraEditor.prototype.expandTableCellSelection = function(cell) {
     if (!this.isSelectingTableCells || !this.tableCellSelectionStart) return;
 
     var table = cell.closest('table');
@@ -7973,7 +7973,7 @@
 
     // Limpiar selección visual anterior
     this.selectedTableCells.forEach(function(c) {
-      c.classList.remove('mewyse-cell-selected');
+      c.classList.remove('libraeditor-cell-selected');
     });
     this.selectedTableCells = [];
 
@@ -7982,7 +7982,7 @@
 
     // Seleccionar las celdas
     for (var i = 0; i < cellsInRange.length; i++) {
-      cellsInRange[i].classList.add('mewyse-cell-selected');
+      cellsInRange[i].classList.add('libraeditor-cell-selected');
       this.selectedTableCells.push(cellsInRange[i]);
     }
   };
@@ -7991,12 +7991,12 @@
    * Finaliza la selección de celdas
    * @param {number} blockId
    */
-  meWYSE.prototype.endTableCellSelection = function(blockId) {
+  LibraEditor.prototype.endTableCellSelection = function(blockId) {
     this.isSelectingTableCells = false;
 
     // Quitar clase de selección de la tabla
     if (this.currentSelectionTable) {
-      this.currentSelectionTable.classList.remove('mewyse-table-selecting');
+      this.currentSelectionTable.classList.remove('libraeditor-table-selecting');
     }
 
     // La selección de rango de celdas ya no abre un popup: se refleja en la
@@ -8010,7 +8010,7 @@
    * @param {HTMLElement} cell
    * @returns {Object|null}
    */
-  meWYSE.prototype.getTableCellCoords = function(cell, matrix) {
+  LibraEditor.prototype.getTableCellCoords = function(cell, matrix) {
     var row = cell.closest('tr');
     if (!row) return null;
 
@@ -8038,7 +8038,7 @@
    * @param {HTMLElement} table
    * @returns {Array}
    */
-  meWYSE.prototype.buildTableMatrix = function(table) {
+  LibraEditor.prototype.buildTableMatrix = function(table) {
     var rows = table.querySelectorAll('tr');
     var matrix = [];
     var maxCols = 0;
@@ -8089,7 +8089,7 @@
    * @param {number} maxCol
    * @returns {Array}
    */
-  meWYSE.prototype.getCellsInRange = function(table, minRow, maxRow, minCol, maxCol, matrix) {
+  LibraEditor.prototype.getCellsInRange = function(table, minRow, maxRow, minCol, maxCol, matrix) {
     if (!matrix) matrix = this.buildTableMatrix(table);
     var cells = [];
     var seen = [];
@@ -8113,7 +8113,7 @@
    * @param {Array} matrix
    * @returns {number}
    */
-  meWYSE.prototype._logicalColCount = function(matrix) {
+  LibraEditor.prototype._logicalColCount = function(matrix) {
     var v_cols = 0;
     for (var r = 0; r < matrix.length; r++) {
       if (matrix[r] && matrix[r].length > v_cols) v_cols = matrix[r].length;
@@ -8131,7 +8131,7 @@
    * @param {HTMLElement} templateCell - celda de referencia (opcional)
    * @returns {HTMLElement}
    */
-  meWYSE.prototype._createEmptyTableCell = function(blockId, tagName, templateCell) {
+  LibraEditor.prototype._createEmptyTableCell = function(blockId, tagName, templateCell) {
     var v_cell = document.createElement(tagName || 'td');
     v_cell.style.border = (templateCell && templateCell.style.border) ? templateCell.style.border : '1px solid #ddd';
     v_cell.style.padding = '0';
@@ -8156,7 +8156,7 @@
    * @param {number} insertCol - posición lógica de inserción
    * @param {number} blockId
    */
-  meWYSE.prototype._insertTableColumnAt = function(table, insertCol, blockId) {
+  LibraEditor.prototype._insertTableColumnAt = function(table, insertCol, blockId) {
     var matrix = this.buildTableMatrix(table);
     var rows = table.querySelectorAll('tr');
     var v_expanded = []; // celdas ya expandidas (evita doble incremento en rowspans)
@@ -8196,7 +8196,7 @@
    * @param {number} delCol
    * @param {number} blockId
    */
-  meWYSE.prototype._deleteTableColumnAt = function(table, delCol, blockId) {
+  LibraEditor.prototype._deleteTableColumnAt = function(table, delCol, blockId) {
     var matrix = this.buildTableMatrix(table);
     var v_processed = [];
 
@@ -8230,7 +8230,7 @@
    * @param {number} blockId
    * @returns {HTMLElement|null}
    */
-  meWYSE.prototype._insertTableRowAt = function(table, insertRow, blockId) {
+  LibraEditor.prototype._insertTableRowAt = function(table, insertRow, blockId) {
     var matrix = this.buildTableMatrix(table);
     var rows = table.querySelectorAll('tr');
     var v_colCount = this._logicalColCount(matrix);
@@ -8277,7 +8277,7 @@
    * @param {number} delRow
    * @param {number} blockId
    */
-  meWYSE.prototype._deleteTableRowAt = function(table, delRow, blockId) {
+  LibraEditor.prototype._deleteTableRowAt = function(table, delRow, blockId) {
     var matrix = this.buildTableMatrix(table);
     var rows = table.querySelectorAll('tr');
     var row = rows[delRow];
@@ -8326,14 +8326,14 @@
   /**
    * Limpia la selección de celdas de tabla
    */
-  meWYSE.prototype.clearTableCellSelection = function() {
+  LibraEditor.prototype.clearTableCellSelection = function() {
     // Quitar clase de selección de la tabla
     if (this.currentSelectionTable) {
-      this.currentSelectionTable.classList.remove('mewyse-table-selecting');
+      this.currentSelectionTable.classList.remove('libraeditor-table-selecting');
     }
 
     this.selectedTableCells.forEach(function(cell) {
-      cell.classList.remove('mewyse-cell-selected');
+      cell.classList.remove('libraeditor-cell-selected');
     });
     this.selectedTableCells = [];
     this.tableCellSelectionStart = null;
@@ -8349,7 +8349,7 @@
    * Combina las celdas seleccionadas
    * @param {number} blockId
    */
-  meWYSE.prototype.mergeSelectedCells = function(blockId) {
+  LibraEditor.prototype.mergeSelectedCells = function(blockId) {
     if (this.selectedTableCells.length < 2) return;
 
     var table = this.currentSelectionTable;
@@ -8455,7 +8455,7 @@
    * @param {HTMLElement} cell - La celda combinada
    * @param {number} blockId
    */
-  meWYSE.prototype.unmergeCell = function(cell, blockId) {
+  LibraEditor.prototype.unmergeCell = function(cell, blockId) {
     var table = cell.closest('table');
     if (!table) return;
 
@@ -8537,7 +8537,7 @@
    * @param {number} targetCol - columna lógica objetivo
    * @returns {HTMLElement|null}
    */
-  meWYSE.prototype.findInsertPosition = function(matrix, rowIdx, rowEl, targetCol) {
+  LibraEditor.prototype.findInsertPosition = function(matrix, rowIdx, rowEl, targetCol) {
     var cells = rowEl.querySelectorAll('td, th');
     var matrixRow = matrix[rowIdx] || [];
 
@@ -8561,7 +8561,7 @@
    * @param {HTMLElement} table
    * @param {number} blockId
    */
-  meWYSE.prototype.addTableControls = function(table, blockId) {
+  LibraEditor.prototype.addTableControls = function(table, blockId) {
     // No-op: los controles hamburguesa de fila/columna se sustituyeron por la
     // toolbar contextual flotante (showTableToolbar). Se conserva el método para
     // compatibilidad con las llamadas existentes.
@@ -8572,7 +8572,7 @@
    * @param {HTMLElement} table
    * @param {number} blockId
    */
-  meWYSE.prototype.addTableRow = function(table, blockId) {
+  LibraEditor.prototype.addTableRow = function(table, blockId) {
     // Insertar una fila al final usando el número de columnas LÓGICO (la última
     // fila no puede tener rowspans entrantes, así que recibe celdas frescas).
     var v_rows = table.querySelectorAll('tr');
@@ -8590,7 +8590,7 @@
    * @param {HTMLElement} table
    * @param {number} blockId
    */
-  meWYSE.prototype.addTableColumn = function(table, blockId) {
+  LibraEditor.prototype.addTableColumn = function(table, blockId) {
     // Insertar una columna al final (posición lógica = nº de columnas)
     var v_colCount = this._logicalColCount(this.buildTableMatrix(table));
     this._insertTableColumnAt(table, v_colCount, blockId);
@@ -8607,10 +8607,10 @@
    * @param {HTMLElement} table
    * @param {number} blockId
    */
-  meWYSE.prototype.refreshTableControls = function(table, blockId) {
+  LibraEditor.prototype.refreshTableControls = function(table, blockId) {
     // Limpiar restos de controles hamburguesa antiguos (por si vinieran de
     // contenido guardado previo a la migración a la toolbar)
-    var existingControls = table.querySelectorAll('.mewyse-table-row-control, .mewyse-table-col-control');
+    var existingControls = table.querySelectorAll('.libraeditor-table-row-control, .libraeditor-table-col-control');
     for (var i = 0; i < existingControls.length; i++) {
       existingControls[i].remove();
     }
@@ -8633,7 +8633,7 @@
    * selección de rango de celdas) junto con su tabla y blockId.
    * @returns {Object|null} { cell, table, blockId }
    */
-  meWYSE.prototype._getActiveTableCell = function() {
+  LibraEditor.prototype._getActiveTableCell = function() {
     var cell = null;
 
     // 1. Selección de rango de celdas (drag): usar la primera
@@ -8660,7 +8660,7 @@
 
     if (!cell || !this.container.contains(cell)) return null;
     var table = cell.closest('table');
-    var blockEl = cell.closest('.mewyse-block');
+    var blockEl = cell.closest('.libraeditor-block');
     if (!table || !blockEl) return null;
     var blockId = parseInt(blockEl.getAttribute('data-block-id'), 10);
     if (isNaN(blockId)) return null;
@@ -8671,7 +8671,7 @@
    * Decide si mostrar/ocultar la toolbar de tabla según el foco y la selección.
    * Se llama desde selectionchange, focusin/focusout y tras acciones de tabla.
    */
-  meWYSE.prototype._updateTableToolbar = function() {
+  LibraEditor.prototype._updateTableToolbar = function() {
     if (this._destroyed || this.readOnly) { this.hideTableToolbar(); return; }
     // No competir con la selección de imagen
     if (this.selectedImage) { this.hideTableToolbar(); return; }
@@ -8695,11 +8695,11 @@
    * Muestra (creando si hace falta) la toolbar y la reconstruye según el estado.
    * @param {Object} info - { cell, table, blockId }
    */
-  meWYSE.prototype.showTableToolbar = function(info) {
+  LibraEditor.prototype.showTableToolbar = function(info) {
     var needNew = !this._tableToolbar;
     if (needNew) {
       this._tableToolbar = document.createElement('div');
-      this._tableToolbar.className = 'mewyse-table-toolbar';
+      this._tableToolbar.className = 'libraeditor-table-toolbar';
       this._tableToolbar.setAttribute('role', 'toolbar');
       this._tableToolbar.setAttribute('aria-label', this.t('tableMenu.toolbarLabel'));
       document.body.appendChild(this._tableToolbar);
@@ -8726,7 +8726,7 @@
   /**
    * Oculta y destruye la toolbar de tabla.
    */
-  meWYSE.prototype.hideTableToolbar = function() {
+  LibraEditor.prototype.hideTableToolbar = function() {
     if (this._tableToolbar) {
       if (this._tableToolbar._cancelAnchor) this._tableToolbar._cancelAnchor();
       this._detachTooltips(this._tableToolbar);
@@ -8742,7 +8742,7 @@
    * la toolbar permanezca anclada y resoluble.
    * @param {HTMLElement} table
    */
-  meWYSE.prototype._refocusTable = function(table) {
+  LibraEditor.prototype._refocusTable = function(table) {
     if (!table) return;
     var ed = table.querySelector('[contenteditable="true"]');
     if (ed) { try { ed.focus(); } catch (e) {} }
@@ -8753,7 +8753,7 @@
    * combinación. rowIndex/colIndex son LÓGICOS (respetan colspan/rowspan).
    * @param {Object} info - { cell, table, blockId }
    */
-  meWYSE.prototype._buildTableToolbar = function(info) {
+  LibraEditor.prototype._buildTableToolbar = function(info) {
     var self = this;
     var table = info.table;
     var blockId = info.blockId;
@@ -8793,7 +8793,7 @@
       opts = opts || {};
       var b = document.createElement('button');
       b.type = 'button';
-      b.className = 'mewyse-table-toolbar-btn' + (opts.danger ? ' danger' : '');
+      b.className = 'libraeditor-table-toolbar-btn' + (opts.danger ? ' danger' : '');
       b.innerHTML = icon;
       var label = self.t(titleKey);
       b.title = label;
@@ -8811,7 +8811,7 @@
     };
     var sep = function() {
       var s = document.createElement('span');
-      s.className = 'mewyse-table-toolbar-sep';
+      s.className = 'libraeditor-table-toolbar-sep';
       return s;
     };
     // Ejecuta una acción y vuelve a enfocar la tabla para mantener la toolbar
@@ -8881,18 +8881,18 @@
    * @param {number} blockId
    * @param {HTMLElement} anchorEl - botón de anclaje
    */
-  meWYSE.prototype.showCellColorPicker = function(cells, blockId, anchorEl) {
+  LibraEditor.prototype.showCellColorPicker = function(cells, blockId, anchorEl) {
     var self = this;
     if (!cells || !cells.length) return;
     var table = cells[0].closest('table');
     if (!table) return;
 
     // Cerrar picker existente
-    var existing = document.querySelector('.mewyse-color-picker');
+    var existing = document.querySelector('.libraeditor-color-picker');
     if (existing) { if (existing._cancelAnchor) existing._cancelAnchor(); existing.remove(); }
 
     var picker = document.createElement('div');
-    picker.className = 'mewyse-color-picker';
+    picker.className = 'libraeditor-color-picker';
 
     var closePicker = function() {
       if (picker._cancelAnchor) picker._cancelAnchor();
@@ -8919,7 +8919,7 @@
     colors.forEach(function(color) {
       var cb = document.createElement('button');
       cb.type = 'button';
-      cb.className = 'mewyse-color-button';
+      cb.className = 'libraeditor-color-button';
       cb.style.backgroundColor = color;
       cb.title = color;
       cb.onmousedown = function(e) { e.preventDefault(); e.stopPropagation(); };
@@ -8930,7 +8930,7 @@
     // Botón para quitar color
     var removeBtn = document.createElement('button');
     removeBtn.type = 'button';
-    removeBtn.className = 'mewyse-color-button mewyse-color-remove';
+    removeBtn.className = 'libraeditor-color-button libraeditor-color-remove';
     removeBtn.innerHTML = WYSIWYG_ICONS.close;
     removeBtn.title = self.t('colors.removeColor');
     removeBtn.onmousedown = function(e) { e.preventDefault(); e.stopPropagation(); };
@@ -8959,7 +8959,7 @@
    * @param {string} action
    * @param {number} blockId
    */
-  meWYSE.prototype.executeRowAction = function(table, rowIndex, action, blockId) {
+  LibraEditor.prototype.executeRowAction = function(table, rowIndex, action, blockId) {
     var rows = table.querySelectorAll('tr');
     if (!rows[rowIndex]) return;
 
@@ -9014,7 +9014,7 @@
    * @param {number} rowIndex
    * @param {number} blockId
    */
-  meWYSE.prototype._duplicateTableRow = function(table, rowIndex, blockId) {
+  LibraEditor.prototype._duplicateTableRow = function(table, rowIndex, blockId) {
     // Capturar el contenido de la fila original por columna lógica ANTES de
     // modificar la tabla
     var v_srcMatrix = this.buildTableMatrix(table);
@@ -9056,7 +9056,7 @@
    * @param {string} action
    * @param {number} blockId
    */
-  meWYSE.prototype.executeColAction = function(table, colIndex, action, blockId) {
+  LibraEditor.prototype.executeColAction = function(table, colIndex, action, blockId) {
     switch (action) {
       case 'insertBefore':
         this._insertTableColumnAt(table, colIndex, blockId);
@@ -9107,7 +9107,7 @@
    * @param {number} colIndex
    * @param {number} blockId
    */
-  meWYSE.prototype._duplicateTableColumn = function(table, colIndex, blockId) {
+  LibraEditor.prototype._duplicateTableColumn = function(table, colIndex, blockId) {
     // Capturar contenido de la columna original por fila ANTES de modificar
     var v_srcMatrix = this.buildTableMatrix(table);
     var v_srcHtml = {};
@@ -9144,7 +9144,7 @@
    * Restablece los anchos de columna de una tabla al 100%
    * @param {number} blockId
    */
-  meWYSE.prototype.resetTableColumnWidths = function(blockId) {
+  LibraEditor.prototype.resetTableColumnWidths = function(blockId) {
     var blockElement = this.container.querySelector('[data-block-id="' + blockId + '"]');
     if (!blockElement) return;
 
@@ -9170,7 +9170,7 @@
    * @param {HTMLElement} table
    * @param {number} blockId
    */
-  meWYSE.prototype.enableColumnResizing = function(table, blockId) {
+  LibraEditor.prototype.enableColumnResizing = function(table, blockId) {
     var self = this;
 
     // Establecer table-layout fixed para que funcione el redimensionamiento
@@ -9191,7 +9191,7 @@
 
       // Crear el handle de redimensionamiento
       var resizeHandle = document.createElement('div');
-      resizeHandle.className = 'mewyse-table-resize-handle';
+      resizeHandle.className = 'libraeditor-table-resize-handle';
       resizeHandle.contentEditable = false;
 
       // Posicionar el handle
@@ -9212,7 +9212,7 @@
           nextStartWidth = currentNextCell ? currentNextCell.offsetWidth : 0;
 
           // Añadir clase de redimensionamiento
-          table.classList.add('mewyse-table-resizing');
+          table.classList.add('libraeditor-table-resizing');
 
           // Event listeners para el arrastre
           document.addEventListener('mousemove', onMouseMove);
@@ -9238,7 +9238,7 @@
 
         function onMouseUp() {
           // Remover clase de redimensionamiento
-          table.classList.remove('mewyse-table-resizing');
+          table.classList.remove('libraeditor-table-resizing');
 
           // Remover event listeners
           document.removeEventListener('mousemove', onMouseMove);
@@ -9257,7 +9257,7 @@
    * @param {number} blockId
    * @param {HTMLElement} element
    */
-  meWYSE.prototype.handleKeyUp = function(e, blockId, element) {
+  LibraEditor.prototype.handleKeyUp = function(e, blockId, element) {
     // Ignorar teclas de navegación para no interferir con los menús
     if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' ||
         e.key === 'ArrowRight' || e.key === 'Enter' || e.key === 'Escape' ||
@@ -9266,8 +9266,8 @@
     }
 
     // El texto sobre el que detectamos triggers (`/` `@` `#` `:`) IGNORA el
-    // contenido de spans atómicos contenteditable=false (mewyse-mention,
-    // mewyse-tag, mewyse-emoji). Sin esto, al borrar el espacio que sigue a
+    // contenido de spans atómicos contenteditable=false (libraeditor-mention,
+    // libraeditor-tag, libraeditor-emoji). Sin esto, al borrar el espacio que sigue a
     // un tag con texto `#xxx` el matcher dispararía el menú falsamente —
     // creyendo que el usuario tecleó `#xxx`. El texto del tag no es texto
     // editable por el usuario y debe excluirse del matcher.
@@ -9384,14 +9384,14 @@
    * @param {number} blockId
    * @param {HTMLElement} element
    */
-  meWYSE.prototype.showSlashMenu = function(blockId, element) {
+  LibraEditor.prototype.showSlashMenu = function(blockId, element) {
     var self = this;
 
     // Cerrar menú existente
     this.closeSlashMenu();
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-slash-menu';
+    menu.className = 'libraeditor-slash-menu';
     menu.setAttribute('role', 'listbox');
     menu.setAttribute('aria-label', this.t('blockMenu.changeType'));
     // Evitar que clicar el menú quite el foco del bloque (que dispararía un
@@ -9432,7 +9432,7 @@
 
     types.forEach(function(typeInfo, index) {
       var item = document.createElement('div');
-      item.className = 'mewyse-slash-menu-item';
+      item.className = 'libraeditor-slash-menu-item';
       item.setAttribute('role', 'option');
       item.setAttribute('data-index', index);
       item.innerHTML = '<span class="icon">' + typeInfo.icon + '</span>' +
@@ -9469,11 +9469,11 @@
   /**
    * Actualiza la selección visual del menú slash
    */
-  meWYSE.prototype.updateSlashMenuSelection = function() {
+  LibraEditor.prototype.updateSlashMenuSelection = function() {
     if (!this.slashMenu) return;
 
     // Solo considerar elementos visibles
-    var visibleItems = this.slashMenu.querySelectorAll('.mewyse-slash-menu-item:not([style*="display: none"])');
+    var visibleItems = this.slashMenu.querySelectorAll('.libraeditor-slash-menu-item:not([style*="display: none"])');
 
     for (var i = 0; i < visibleItems.length; i++) {
       if (i === this.slashMenuSelectedIndex) {
@@ -9492,7 +9492,7 @@
    * @param {string} text - Texto a normalizar
    * @returns {string}
    */
-  meWYSE.prototype.normalizeText = function(text) {
+  LibraEditor.prototype.normalizeText = function(text) {
     return text
       .toLowerCase()
       .normalize('NFD')
@@ -9503,11 +9503,11 @@
    * Filtra el menú slash según el texto de búsqueda
    * @param {string} searchText - Texto a buscar
    */
-  meWYSE.prototype.filterSlashMenu = function(searchText) {
+  LibraEditor.prototype.filterSlashMenu = function(searchText) {
     if (!this.slashMenu || !this.slashMenuTypes) return;
 
     var self = this;
-    var items = this.slashMenu.querySelectorAll('.mewyse-slash-menu-item');
+    var items = this.slashMenu.querySelectorAll('.libraeditor-slash-menu-item');
     var searchNormalized = this.normalizeText(searchText);
     var visibleCount = 0;
 
@@ -9539,22 +9539,22 @@
   /**
    * Navega hacia arriba en el menú slash
    */
-  meWYSE.prototype.slashMenuNavigateUp = function() {
-    this._navigateMenu('slashMenu', '.mewyse-slash-menu-item', 'slashMenuSelectedIndex', 'updateSlashMenuSelection', 'up');
+  LibraEditor.prototype.slashMenuNavigateUp = function() {
+    this._navigateMenu('slashMenu', '.libraeditor-slash-menu-item', 'slashMenuSelectedIndex', 'updateSlashMenuSelection', 'up');
   };
 
   /**
    * Navega hacia abajo en el menú slash
    */
-  meWYSE.prototype.slashMenuNavigateDown = function() {
-    this._navigateMenu('slashMenu', '.mewyse-slash-menu-item', 'slashMenuSelectedIndex', 'updateSlashMenuSelection', 'down');
+  LibraEditor.prototype.slashMenuNavigateDown = function() {
+    this._navigateMenu('slashMenu', '.libraeditor-slash-menu-item', 'slashMenuSelectedIndex', 'updateSlashMenuSelection', 'down');
   };
 
   /**
    * Selecciona un elemento del menú slash
    * @param {number} index
    */
-  meWYSE.prototype.selectSlashMenuItem = function(index) {
+  LibraEditor.prototype.selectSlashMenuItem = function(index) {
     if (!this.slashMenu || !this.slashMenuElement) return;
 
     // `index` es SIEMPRE el índice real en slashMenuTypes (el data-index del item):
@@ -9619,7 +9619,7 @@
   /**
    * Cierra el menú de comandos "/"
    */
-  meWYSE.prototype.closeSlashMenu = function() {
+  LibraEditor.prototype.closeSlashMenu = function() {
     this._closeMenu('slashMenu');
     this.slashMenuSelectedIndex = 0;
     this.slashMenuElement = null;
@@ -9637,14 +9637,14 @@
    * @param {number} blockId
    * @param {HTMLElement} element
    */
-  meWYSE.prototype.showMentionMenu = function(blockId, element) {
+  LibraEditor.prototype.showMentionMenu = function(blockId, element) {
     var self = this;
 
     // Cerrar menú existente
     this.closeMentionMenu();
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-mention-menu';
+    menu.className = 'libraeditor-mention-menu';
     menu.setAttribute('role', 'listbox');
     menu.setAttribute('aria-label', self.t('aria.mentions'));
     // Mantener el foco del bloque al clicar el menú (evita onBlur espurio)
@@ -9664,27 +9664,27 @@
     // Crear items del menú
     this.mentions.forEach(function(mention, index) {
       var item = document.createElement('div');
-      item.className = 'mewyse-mention-menu-item';
+      item.className = 'libraeditor-mention-menu-item';
       item.setAttribute('role', 'option');
       item.setAttribute('data-index', index);
 
       // Avatar si existe
       if (mention.avatar) {
         var avatar = document.createElement('img');
-        avatar.className = 'mewyse-mention-avatar';
+        avatar.className = 'libraeditor-mention-avatar';
         avatar.src = mention.avatar;
         avatar.alt = mention.name;
         item.appendChild(avatar);
       } else {
         // Avatar placeholder con inicial
         var avatarPlaceholder = document.createElement('span');
-        avatarPlaceholder.className = 'mewyse-mention-avatar-placeholder';
+        avatarPlaceholder.className = 'libraeditor-mention-avatar-placeholder';
         avatarPlaceholder.textContent = mention.name.charAt(0).toUpperCase();
         item.appendChild(avatarPlaceholder);
       }
 
       var nameSpan = document.createElement('span');
-      nameSpan.className = 'mewyse-mention-name';
+      nameSpan.className = 'libraeditor-mention-name';
       nameSpan.textContent = mention.name;
       item.appendChild(nameSpan);
 
@@ -9724,7 +9724,7 @@
    * lo referencie.
    * @param {HTMLElement} menu
    */
-  meWYSE.prototype.positionMentionMenuAtCaret = function(menu) {
+  LibraEditor.prototype.positionMentionMenuAtCaret = function(menu) {
     var self = this;
 
     function updatePosition() {
@@ -9812,12 +9812,12 @@
    * Filtra el menú de menciones según el texto de búsqueda
    * @param {string} searchText
    */
-  meWYSE.prototype.filterMentionMenu = function(searchText) {
+  LibraEditor.prototype.filterMentionMenu = function(searchText) {
     if (!this.mentionMenu) return;
 
     var self = this;
     var searchLower = searchText.toLowerCase();
-    var items = this.mentionMenu.querySelectorAll('.mewyse-mention-menu-item');
+    var items = this.mentionMenu.querySelectorAll('.libraeditor-mention-menu-item');
     var visibleCount = 0;
 
     this.mentionMenuItems = [];
@@ -9851,11 +9851,11 @@
   /**
    * Actualiza la selección visual del menú de menciones
    */
-  meWYSE.prototype.updateMentionMenuSelection = function() {
+  LibraEditor.prototype.updateMentionMenuSelection = function() {
     if (!this.mentionMenu) return;
 
-    var items = this.mentionMenu.querySelectorAll('.mewyse-mention-menu-item');
-    var visibleItems = this.mentionMenu.querySelectorAll('.mewyse-mention-menu-item:not([style*="display: none"])');
+    var items = this.mentionMenu.querySelectorAll('.libraeditor-mention-menu-item');
+    var visibleItems = this.mentionMenu.querySelectorAll('.libraeditor-mention-menu-item:not([style*="display: none"])');
 
     items.forEach(function(item) {
       item.classList.remove('selected');
@@ -9871,22 +9871,22 @@
   /**
    * Navega hacia arriba en el menú de menciones
    */
-  meWYSE.prototype.mentionMenuNavigateUp = function() {
-    this._navigateMenu('mentionMenu', '.mewyse-mention-menu-item', 'mentionMenuSelectedIndex', 'updateMentionMenuSelection', 'up');
+  LibraEditor.prototype.mentionMenuNavigateUp = function() {
+    this._navigateMenu('mentionMenu', '.libraeditor-mention-menu-item', 'mentionMenuSelectedIndex', 'updateMentionMenuSelection', 'up');
   };
 
   /**
    * Navega hacia abajo en el menú de menciones
    */
-  meWYSE.prototype.mentionMenuNavigateDown = function() {
-    this._navigateMenu('mentionMenu', '.mewyse-mention-menu-item', 'mentionMenuSelectedIndex', 'updateMentionMenuSelection', 'down');
+  LibraEditor.prototype.mentionMenuNavigateDown = function() {
+    this._navigateMenu('mentionMenu', '.libraeditor-mention-menu-item', 'mentionMenuSelectedIndex', 'updateMentionMenuSelection', 'down');
   };
 
   /**
    * Selecciona un item del menú de menciones e inserta la mención
    * @param {number} index - Índice en el array original de mentions
    */
-  meWYSE.prototype.selectMentionItem = function(index) {
+  LibraEditor.prototype.selectMentionItem = function(index) {
     if (!this.mentionMenu || !this.mentionMenuElement) return;
 
     // `index` es SIEMPRE el índice real en this.mentions (el data-index del item):
@@ -9900,12 +9900,12 @@
    * Inserta una mención en el contenido
    * @param {Object} mention - Objeto con id y name
    */
-  meWYSE.prototype.insertMention = function(mention) {
+  LibraEditor.prototype.insertMention = function(mention) {
     var element = this.mentionMenuElement;
 
     // Crear el span de mención
     var mentionSpan = document.createElement('span');
-    mentionSpan.className = 'mewyse-mention';
+    mentionSpan.className = 'libraeditor-mention';
     mentionSpan.setAttribute('data-mention-id', mention.id);
     mentionSpan.setAttribute('data-mention-name', mention.name);
     mentionSpan.setAttribute('contenteditable', 'false');
@@ -9984,7 +9984,7 @@
   /**
    * Cierra el menú de menciones
    */
-  meWYSE.prototype.closeMentionMenu = function() {
+  LibraEditor.prototype.closeMentionMenu = function() {
     this._closeMenu('mentionMenu');
     this.mentionMenuSelectedIndex = 0;
     this.mentionMenuElement = null;
@@ -10003,14 +10003,14 @@
    * @param {number} blockId
    * @param {HTMLElement} element
    */
-  meWYSE.prototype.showEmojiMenu = function(blockId, element) {
+  LibraEditor.prototype.showEmojiMenu = function(blockId, element) {
     var self = this;
 
     // Cerrar menú existente
     this.closeEmojiMenu();
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-emoji-menu';
+    menu.className = 'libraeditor-emoji-menu';
     menu.setAttribute('role', 'listbox');
     menu.setAttribute('aria-label', self.t('aria.emoji'));
     // Mantener el foco del bloque al clicar el menú (evita onBlur espurio)
@@ -10029,7 +10029,7 @@
       this.emojiMenuItems.push(emojiData);
 
       var item = document.createElement('div');
-      item.className = 'mewyse-emoji-menu-item';
+      item.className = 'libraeditor-emoji-menu-item';
       item.setAttribute('role', 'option');
       item.setAttribute('data-index', i);
 
@@ -10077,7 +10077,7 @@
    * Posiciona el menú de emojis en la posición del cursor
    * @param {HTMLElement} menu
    */
-  meWYSE.prototype.positionEmojiMenuAtCaret = function(menu) {
+  LibraEditor.prototype.positionEmojiMenuAtCaret = function(menu) {
     var self = this;
     var cancelled = false;
 
@@ -10139,11 +10139,11 @@
    * Filtra el menú de emojis según el texto de búsqueda
    * @param {string} searchText
    */
-  meWYSE.prototype.filterEmojiMenu = function(searchText) {
+  LibraEditor.prototype.filterEmojiMenu = function(searchText) {
     if (!this.emojiMenu) return;
 
     var searchLower = searchText.toLowerCase();
-    var items = this.emojiMenu.querySelectorAll('.mewyse-emoji-menu-item');
+    var items = this.emojiMenu.querySelectorAll('.libraeditor-emoji-menu-item');
     var visibleCount = 0;
 
     this.emojiMenuItems = [];
@@ -10179,10 +10179,10 @@
   /**
    * Actualiza la selección visual en el menú de emojis
    */
-  meWYSE.prototype.updateEmojiMenuSelection = function() {
+  LibraEditor.prototype.updateEmojiMenuSelection = function() {
     if (!this.emojiMenu) return;
 
-    var items = this.emojiMenu.querySelectorAll('.mewyse-emoji-menu-item');
+    var items = this.emojiMenu.querySelectorAll('.libraeditor-emoji-menu-item');
     var visibleIndex = 0;
 
     for (var i = 0; i < items.length; i++) {
@@ -10207,22 +10207,22 @@
   /**
    * Navega hacia arriba en el menú de emojis
    */
-  meWYSE.prototype.emojiMenuNavigateUp = function() {
-    this._navigateMenu('emojiMenu', '.mewyse-emoji-menu-item', 'emojiMenuSelectedIndex', 'updateEmojiMenuSelection', 'up');
+  LibraEditor.prototype.emojiMenuNavigateUp = function() {
+    this._navigateMenu('emojiMenu', '.libraeditor-emoji-menu-item', 'emojiMenuSelectedIndex', 'updateEmojiMenuSelection', 'up');
   };
 
   /**
    * Navega hacia abajo en el menú de emojis
    */
-  meWYSE.prototype.emojiMenuNavigateDown = function() {
-    this._navigateMenu('emojiMenu', '.mewyse-emoji-menu-item', 'emojiMenuSelectedIndex', 'updateEmojiMenuSelection', 'down');
+  LibraEditor.prototype.emojiMenuNavigateDown = function() {
+    this._navigateMenu('emojiMenu', '.libraeditor-emoji-menu-item', 'emojiMenuSelectedIndex', 'updateEmojiMenuSelection', 'down');
   };
 
   /**
    * Selecciona un emoji del menú
    * @param {number} index
    */
-  meWYSE.prototype.selectEmojiItem = function(index) {
+  LibraEditor.prototype.selectEmojiItem = function(index) {
     // `index` es SIEMPRE el índice real en WYSIWYG_EMOJIS (el data-index del item):
     // el clic lo pasa directamente y el teclado lo resuelve con _resolveMenuFullIndex.
     if (index >= 0 && index < WYSIWYG_EMOJIS.length) {
@@ -10234,7 +10234,7 @@
    * Inserta un emoji en el contenido
    * @param {Object} emojiData - Objeto con name y emoji
    */
-  meWYSE.prototype.insertEmoji = function(emojiData) {
+  LibraEditor.prototype.insertEmoji = function(emojiData) {
     var element = this.emojiMenuElement;
     var blockId = this.emojiMenuBlockId;
 
@@ -10285,7 +10285,7 @@
         emojiSpan.setAttribute('data-name', emojiData.name);
         emojiSpan.setAttribute('data-type', 'emoji');
         emojiSpan.setAttribute('contenteditable', 'false');
-        emojiSpan.className = 'mewyse-emoji';
+        emojiSpan.className = 'libraeditor-emoji';
         emojiSpan.textContent = emojiData.emoji;
 
         // Insertar el emoji
@@ -10313,7 +10313,7 @@
   /**
    * Cierra el menú de emojis
    */
-  meWYSE.prototype.closeEmojiMenu = function() {
+  LibraEditor.prototype.closeEmojiMenu = function() {
     this._closeMenu('emojiMenu');
     this.emojiMenuSelectedIndex = 0;
     this.emojiMenuElement = null;
@@ -10330,7 +10330,7 @@
   /**
    * Construye el HTML inline de un tag (cápsula). Reusable desde insertTag y
    * desde la preview en el menú. El color es opcional — si no se proporciona,
-   * la cápsula hereda el color genérico definido por CSS (.mewyse-tag).
+   * la cápsula hereda el color genérico definido por CSS (.libraeditor-tag).
    */
   /**
    * Devuelve el textContent del elemento EXCLUYENDO el texto que vive dentro
@@ -10338,8 +10338,8 @@
    * detector de triggers (`/`, `@`, `#`, `:`) en `handleKeyUp` para que el
    * matcher no vea el texto de los átomos como si fuera texto del usuario.
    */
-  meWYSE.prototype._editableTextContent = function(element) {
-    var ATOMIC_CLASSES = { 'mewyse-mention': 1, 'mewyse-tag': 1, 'mewyse-emoji': 1, 'mewyse-mergetag': 1 };
+  LibraEditor.prototype._editableTextContent = function(element) {
+    var ATOMIC_CLASSES = { 'libraeditor-mention': 1, 'libraeditor-tag': 1, 'libraeditor-emoji': 1, 'libraeditor-mergetag': 1 };
     var out = '';
     function walk(node) {
       if (!node) return;
@@ -10364,9 +10364,9 @@
     return out;
   };
 
-  meWYSE.prototype._renderTagCapsule = function(tag) {
+  LibraEditor.prototype._renderTagCapsule = function(tag) {
     var span = document.createElement('span');
-    span.className = 'mewyse-tag';
+    span.className = 'libraeditor-tag';
     span.setAttribute('data-tag-id', String(tag.id));
     span.setAttribute('data-tag-name', tag.name);
     span.setAttribute('contenteditable', 'false');
@@ -10386,7 +10386,7 @@
    * Soporta hex (#rgb, #rrggbb), rgb(...) y nombres CSS comunes. Para colores
    * que no parsea cae en blanco como default seguro.
    */
-  meWYSE.prototype._pickContrastColor = function(bg) {
+  LibraEditor.prototype._pickContrastColor = function(bg) {
     var rgb = this._parseColorToRGB(bg);
     if (!rgb) return '#fff';
     // Luminancia relativa simplificada (W3C — versión rápida).
@@ -10394,7 +10394,7 @@
     return lum > 0.6 ? '#1a1a1a' : '#fff';
   };
 
-  meWYSE.prototype._parseColorToRGB = function(s) {
+  LibraEditor.prototype._parseColorToRGB = function(s) {
     if (typeof s !== 'string') return null;
     s = s.trim().toLowerCase();
     // Hex #rgb, #rrggbb
@@ -10410,13 +10410,13 @@
     return null;
   };
 
-  meWYSE.prototype.showTagMenu = function(blockId, element) {
+  LibraEditor.prototype.showTagMenu = function(blockId, element) {
     var self = this;
 
     this.closeTagMenu();
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-tag-menu';
+    menu.className = 'libraeditor-tag-menu';
     menu.setAttribute('role', 'listbox');
     menu.setAttribute('aria-label', self.t('aria.tags'));
     this.tagMenu = menu;
@@ -10432,20 +10432,20 @@
 
     this.tags.forEach(function(tag, index) {
       var item = document.createElement('div');
-      item.className = 'mewyse-tag-menu-item';
+      item.className = 'libraeditor-tag-menu-item';
       item.setAttribute('role', 'option');
       item.setAttribute('data-index', index);
 
       // Swatch visual del color
       var swatch = document.createElement('span');
-      swatch.className = 'mewyse-tag-menu-swatch';
+      swatch.className = 'libraeditor-tag-menu-swatch';
       if (typeof tag.color === 'string' && tag.color) {
         swatch.style.backgroundColor = tag.color;
       }
       item.appendChild(swatch);
 
       var nameSpan = document.createElement('span');
-      nameSpan.className = 'mewyse-tag-menu-name';
+      nameSpan.className = 'libraeditor-tag-menu-name';
       nameSpan.textContent = tag.name;
       item.appendChild(nameSpan);
 
@@ -10474,12 +10474,12 @@
     this._showBackdrop('tagMenu', function() { self.closeTagMenu(); });
   };
 
-  meWYSE.prototype.filterTagMenu = function(searchText) {
+  LibraEditor.prototype.filterTagMenu = function(searchText) {
     if (!this.tagMenu) return;
 
     var self = this;
     var searchLower = searchText.toLowerCase();
-    var items = this.tagMenu.querySelectorAll('.mewyse-tag-menu-item');
+    var items = this.tagMenu.querySelectorAll('.libraeditor-tag-menu-item');
     var visibleCount = 0;
 
     this.tagMenuItems = [];
@@ -10506,10 +10506,10 @@
     }
   };
 
-  meWYSE.prototype.updateTagMenuSelection = function() {
+  LibraEditor.prototype.updateTagMenuSelection = function() {
     if (!this.tagMenu) return;
-    var items = this.tagMenu.querySelectorAll('.mewyse-tag-menu-item');
-    var visibleItems = this.tagMenu.querySelectorAll('.mewyse-tag-menu-item:not([style*="display: none"])');
+    var items = this.tagMenu.querySelectorAll('.libraeditor-tag-menu-item');
+    var visibleItems = this.tagMenu.querySelectorAll('.libraeditor-tag-menu-item:not([style*="display: none"])');
     items.forEach(function(item) {
       item.classList.remove('selected');
       item.setAttribute('aria-selected', 'false');
@@ -10520,14 +10520,14 @@
     }
   };
 
-  meWYSE.prototype.tagMenuNavigateUp = function() {
-    this._navigateMenu('tagMenu', '.mewyse-tag-menu-item', 'tagMenuSelectedIndex', 'updateTagMenuSelection', 'up');
+  LibraEditor.prototype.tagMenuNavigateUp = function() {
+    this._navigateMenu('tagMenu', '.libraeditor-tag-menu-item', 'tagMenuSelectedIndex', 'updateTagMenuSelection', 'up');
   };
-  meWYSE.prototype.tagMenuNavigateDown = function() {
-    this._navigateMenu('tagMenu', '.mewyse-tag-menu-item', 'tagMenuSelectedIndex', 'updateTagMenuSelection', 'down');
+  LibraEditor.prototype.tagMenuNavigateDown = function() {
+    this._navigateMenu('tagMenu', '.libraeditor-tag-menu-item', 'tagMenuSelectedIndex', 'updateTagMenuSelection', 'down');
   };
 
-  meWYSE.prototype.selectTagItem = function(index) {
+  LibraEditor.prototype.selectTagItem = function(index) {
     if (!this.tagMenu || !this.tagMenuElement) return;
     // `index` es SIEMPRE el índice real en this.tags (el data-index del item):
     // el clic lo pasa directamente y el teclado lo resuelve con _resolveMenuFullIndex.
@@ -10536,7 +10536,7 @@
     this.insertTag(tag);
   };
 
-  meWYSE.prototype.insertTag = function(tag) {
+  LibraEditor.prototype.insertTag = function(tag) {
     var element = this.tagMenuElement;
     var tagSpan = this._renderTagCapsule(tag);
 
@@ -10585,7 +10585,7 @@
     this.closeTagMenu();
   };
 
-  meWYSE.prototype.closeTagMenu = function() {
+  LibraEditor.prototype.closeTagMenu = function() {
     this._closeMenu('tagMenu');
     this.tagMenuSelectedIndex = 0;
     this.tagMenuElement = null;
@@ -10600,21 +10600,21 @@
    * editable + menú filtrable). Trigger `{{`.
    * ======================================================================= */
 
-  meWYSE.prototype._renderMergeTagCapsule = function(mt) {
+  LibraEditor.prototype._renderMergeTagCapsule = function(mt) {
     var span = document.createElement('span');
-    span.className = 'mewyse-mergetag';
+    span.className = 'libraeditor-mergetag';
     span.setAttribute('data-merge-name', String(mt.name));
     span.setAttribute('contenteditable', 'false');
     span.textContent = '{{' + mt.name + '}}';
     return span;
   };
 
-  meWYSE.prototype.showMergeTagMenu = function(blockId, element) {
+  LibraEditor.prototype.showMergeTagMenu = function(blockId, element) {
     var self = this;
     this.closeMergeTagMenu();
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-mergetag-menu';
+    menu.className = 'libraeditor-mergetag-menu';
     menu.setAttribute('role', 'listbox');
     menu.setAttribute('aria-label', self.t('aria.mergeTags'));
     this.mergeTagMenu = menu;
@@ -10629,17 +10629,17 @@
 
     this.mergeTags.forEach(function(mt, index) {
       var item = document.createElement('div');
-      item.className = 'mewyse-mergetag-menu-item';
+      item.className = 'libraeditor-mergetag-menu-item';
       item.setAttribute('role', 'option');
       item.setAttribute('data-index', index);
 
       var nameSpan = document.createElement('span');
-      nameSpan.className = 'mewyse-mergetag-menu-name';
+      nameSpan.className = 'libraeditor-mergetag-menu-name';
       nameSpan.textContent = '{{' + mt.name + '}}';
       item.appendChild(nameSpan);
       if (mt.label) {
         var lbl = document.createElement('span');
-        lbl.className = 'mewyse-mergetag-menu-label';
+        lbl.className = 'libraeditor-mergetag-menu-label';
         lbl.textContent = mt.label;
         item.appendChild(lbl);
       }
@@ -10665,10 +10665,10 @@
     this._showBackdrop('mergeTagMenu', function() { self.closeMergeTagMenu(); });
   };
 
-  meWYSE.prototype.filterMergeTagMenu = function(searchText) {
+  LibraEditor.prototype.filterMergeTagMenu = function(searchText) {
     if (!this.mergeTagMenu) return;
     var searchLower = searchText.toLowerCase();
-    var items = this.mergeTagMenu.querySelectorAll('.mewyse-mergetag-menu-item');
+    var items = this.mergeTagMenu.querySelectorAll('.libraeditor-mergetag-menu-item');
     var visibleCount = 0;
     this.mergeTags.forEach(function(mt, index) {
       var item = items[index];
@@ -10686,10 +10686,10 @@
     if (visibleCount === 0) this.closeMergeTagMenu();
   };
 
-  meWYSE.prototype.updateMergeTagMenuSelection = function() {
+  LibraEditor.prototype.updateMergeTagMenuSelection = function() {
     if (!this.mergeTagMenu) return;
-    var items = this.mergeTagMenu.querySelectorAll('.mewyse-mergetag-menu-item');
-    var visibleItems = this.mergeTagMenu.querySelectorAll('.mewyse-mergetag-menu-item:not([style*="display: none"])');
+    var items = this.mergeTagMenu.querySelectorAll('.libraeditor-mergetag-menu-item');
+    var visibleItems = this.mergeTagMenu.querySelectorAll('.libraeditor-mergetag-menu-item:not([style*="display: none"])');
     items.forEach(function(item) {
       item.classList.remove('selected');
       item.setAttribute('aria-selected', 'false');
@@ -10700,21 +10700,21 @@
     }
   };
 
-  meWYSE.prototype.mergeTagMenuNavigateUp = function() {
-    this._navigateMenu('mergeTagMenu', '.mewyse-mergetag-menu-item', 'mergeTagMenuSelectedIndex', 'updateMergeTagMenuSelection', 'up');
+  LibraEditor.prototype.mergeTagMenuNavigateUp = function() {
+    this._navigateMenu('mergeTagMenu', '.libraeditor-mergetag-menu-item', 'mergeTagMenuSelectedIndex', 'updateMergeTagMenuSelection', 'up');
   };
-  meWYSE.prototype.mergeTagMenuNavigateDown = function() {
-    this._navigateMenu('mergeTagMenu', '.mewyse-mergetag-menu-item', 'mergeTagMenuSelectedIndex', 'updateMergeTagMenuSelection', 'down');
+  LibraEditor.prototype.mergeTagMenuNavigateDown = function() {
+    this._navigateMenu('mergeTagMenu', '.libraeditor-mergetag-menu-item', 'mergeTagMenuSelectedIndex', 'updateMergeTagMenuSelection', 'down');
   };
 
-  meWYSE.prototype.selectMergeTagItem = function(index) {
+  LibraEditor.prototype.selectMergeTagItem = function(index) {
     if (!this.mergeTagMenu || !this.mergeTagMenuElement) return;
     var mt = this.mergeTags[index];
     if (!mt) return;
     this.insertMergeTag(mt);
   };
 
-  meWYSE.prototype.insertMergeTag = function(mt) {
+  LibraEditor.prototype.insertMergeTag = function(mt) {
     var element = this.mergeTagMenuElement;
     var capsule = this._renderMergeTagCapsule(mt);
 
@@ -10760,7 +10760,7 @@
     this.closeMergeTagMenu();
   };
 
-  meWYSE.prototype.closeMergeTagMenu = function() {
+  LibraEditor.prototype.closeMergeTagMenu = function() {
     this._closeMenu('mergeTagMenu');
     this.mergeTagMenuSelectedIndex = 0;
     this.mergeTagMenuElement = null;
@@ -10776,12 +10776,12 @@
    * @param {Object} valuesMap
    * @returns {string}
    */
-  meWYSE.prototype.getResolvedHTML = function(valuesMap) {
+  LibraEditor.prototype.getResolvedHTML = function(valuesMap) {
     var map = valuesMap || {};
     var html = this.getSafeHTML();
     var tmp = document.createElement('div');
     tmp.innerHTML = html;
-    var caps = tmp.querySelectorAll('span.mewyse-mergetag');
+    var caps = tmp.querySelectorAll('span.libraeditor-mergetag');
     for (var i = 0; i < caps.length; i++) {
       var name = caps[i].getAttribute('data-merge-name');
       var val = (map.hasOwnProperty(name)) ? map[name] : ('{{' + name + '}}');
@@ -10797,7 +10797,7 @@
    * @param {number} blockId
    * @param {HTMLElement} element
    */
-  meWYSE.prototype.handleKeyDown = function(e, blockId, element) {
+  LibraEditor.prototype.handleKeyDown = function(e, blockId, element) {
     // Si hay selección cross-block activa
     if (this.crossBlockSelection) {
       var isCtrlOrCmd = e.ctrlKey || e.metaKey;
@@ -10844,7 +10844,7 @@
       return;
     }
 
-    // Espacio dentro/al final de una cápsula `.mewyse-tag`: redirigir el espacio
+    // Espacio dentro/al final de una cápsula `.libraeditor-tag`: redirigir el espacio
     // a DESPUÉS del tag y llevar el cursor allí. Sin este guard, el cursor a
     // veces queda atrapado en la frontera del span contenteditable=false
     // (especialmente tras navegar con flechas o clicar al borde derecho del
@@ -10894,7 +10894,7 @@
           if (probe && probe.nodeType === 3) probe = probe.parentNode;
           var tagAncestor = null;
           while (probe && probe !== element) {
-            if (probe.classList && probe.classList.contains('mewyse-tag')) {
+            if (probe.classList && probe.classList.contains('libraeditor-tag')) {
               tagAncestor = probe;
               break;
             }
@@ -10939,7 +10939,7 @@
       // Enter: seleccionar elemento del menú (convertir índice visual → real)
       if (e.key === 'Enter') {
         e.preventDefault();
-        this.selectSlashMenuItem(this._resolveMenuFullIndex(this.slashMenu, '.mewyse-slash-menu-item', this.slashMenuSelectedIndex));
+        this.selectSlashMenuItem(this._resolveMenuFullIndex(this.slashMenu, '.libraeditor-slash-menu-item', this.slashMenuSelectedIndex));
         return;
       }
 
@@ -10990,7 +10990,7 @@
       // Enter: seleccionar elemento del menú (convertir índice visual → real)
       if (e.key === 'Enter') {
         e.preventDefault();
-        this.selectMentionItem(this._resolveMenuFullIndex(this.mentionMenu, '.mewyse-mention-menu-item', this.mentionMenuSelectedIndex));
+        this.selectMentionItem(this._resolveMenuFullIndex(this.mentionMenu, '.libraeditor-mention-menu-item', this.mentionMenuSelectedIndex));
         return;
       }
 
@@ -11016,7 +11016,7 @@
       }
       if (e.key === 'Enter') {
         e.preventDefault();
-        this.selectTagItem(this._resolveMenuFullIndex(this.tagMenu, '.mewyse-tag-menu-item', this.tagMenuSelectedIndex));
+        this.selectTagItem(this._resolveMenuFullIndex(this.tagMenu, '.libraeditor-tag-menu-item', this.tagMenuSelectedIndex));
         return;
       }
       if (e.key === 'Escape') {
@@ -11040,7 +11040,7 @@
       }
       if (e.key === 'Enter') {
         e.preventDefault();
-        this.selectMergeTagItem(this._resolveMenuFullIndex(this.mergeTagMenu, '.mewyse-mergetag-menu-item', this.mergeTagMenuSelectedIndex));
+        this.selectMergeTagItem(this._resolveMenuFullIndex(this.mergeTagMenu, '.libraeditor-mergetag-menu-item', this.mergeTagMenuSelectedIndex));
         return;
       }
       if (e.key === 'Escape') {
@@ -11069,7 +11069,7 @@
       // Enter: seleccionar elemento del menú (convertir índice visual → real)
       if (e.key === 'Enter') {
         e.preventDefault();
-        this.selectEmojiItem(this._resolveMenuFullIndex(this.emojiMenu, '.mewyse-emoji-menu-item', this.emojiMenuSelectedIndex));
+        this.selectEmojiItem(this._resolveMenuFullIndex(this.emojiMenu, '.libraeditor-emoji-menu-item', this.emojiMenuSelectedIndex));
         return;
       }
 
@@ -11281,16 +11281,16 @@
         // antes de partir el contenido. Sin esto, el split chopearía el
         // átomo en dos mitades — la primera con el texto parcial y la
         // segunda como cápsula vacía visible (el "círculo gris" reportado).
-        var ATOMIC = { 'mewyse-mention': 1, 'mewyse-tag': 1, 'mewyse-emoji': 1 };
+        var ATOMIC = { 'libraeditor-mention': 1, 'libraeditor-tag': 1, 'libraeditor-emoji': 1 };
         var probeNode = range.startContainer;
         if (probeNode && probeNode.nodeType === 3) probeNode = probeNode.parentNode;
         var atomicAncestor = null;
         while (probeNode && probeNode !== element) {
           if (probeNode.classList) {
             var cls = probeNode.classList;
-            if (ATOMIC['mewyse-mention'] && cls.contains('mewyse-mention')) { atomicAncestor = probeNode; break; }
-            if (ATOMIC['mewyse-tag'] && cls.contains('mewyse-tag')) { atomicAncestor = probeNode; break; }
-            if (ATOMIC['mewyse-emoji'] && cls.contains('mewyse-emoji')) { atomicAncestor = probeNode; break; }
+            if (ATOMIC['libraeditor-mention'] && cls.contains('libraeditor-mention')) { atomicAncestor = probeNode; break; }
+            if (ATOMIC['libraeditor-tag'] && cls.contains('libraeditor-tag')) { atomicAncestor = probeNode; break; }
+            if (ATOMIC['libraeditor-emoji'] && cls.contains('libraeditor-emoji')) { atomicAncestor = probeNode; break; }
           }
           probeNode = probeNode.parentNode;
         }
@@ -11413,7 +11413,7 @@
 
               // Imagen: seleccionarla (permite borrarla con Backspace/Delete)
               if (prevBlock.type === 'image') {
-                var img = prevBlockElement.querySelector('img.mewyse-image') ||
+                var img = prevBlockElement.querySelector('img.libraeditor-image') ||
                           prevBlockElement.querySelector('img');
                 if (img) { self.selectImage(img, prevBlock.id, false); return; }
               }
@@ -11501,7 +11501,7 @@
   /**
    * Devuelve el rect del caret (rango colapsado actual), o null.
    */
-  meWYSE.prototype._getCaretClientRect = function() {
+  LibraEditor.prototype._getCaretClientRect = function() {
     var sel = window.getSelection();
     if (!sel || !sel.rangeCount) return null;
     var range = sel.getRangeAt(0).cloneRange();
@@ -11541,7 +11541,7 @@
    * usando line-height y padding como tolerancia.
    * @returns {{first:boolean, last:boolean}}
    */
-  meWYSE.prototype._caretLineEdge = function(editableEl, caretRect) {
+  LibraEditor.prototype._caretLineEdge = function(editableEl, caretRect) {
     var elRect = editableEl.getBoundingClientRect();
     var cs = window.getComputedStyle(editableEl);
     var padT = parseFloat(cs.paddingTop) || 0;
@@ -11563,14 +11563,14 @@
    * @param {number} x - coordenada horizontal a preservar
    * @param {string} edge - 'top' (primera línea) | 'bottom' (última línea)
    */
-  meWYSE.prototype._moveCaretToAdjacentBlock = function(targetBlockId, x, edge) {
+  LibraEditor.prototype._moveCaretToAdjacentBlock = function(targetBlockId, x, edge) {
     var targetEl = this.getBlockElementById(targetBlockId);
     if (!targetEl) return;
     var block = this.getBlock(targetBlockId);
 
     // Imagen suelta: seleccionarla
     if (block && block.type === 'image') {
-      var img = targetEl.querySelector('img.mewyse-image') || targetEl.querySelector('img');
+      var img = targetEl.querySelector('img.libraeditor-image') || targetEl.querySelector('img');
       if (img) { this.selectImage(img, targetBlockId, false); return; }
     }
 
@@ -11631,7 +11631,7 @@
    * @param {string} type
    * @returns {string}
    */
-  meWYSE.prototype.getBlockTypeIcon = function(type) {
+  LibraEditor.prototype.getBlockTypeIcon = function(type) {
     var icons = {
       'paragraph': WYSIWYG_ICONS.paragraph,
       'heading1': WYSIWYG_ICONS.heading1,
@@ -11657,11 +11657,11 @@
    * @param {number} blockId
    * @param {HTMLElement} button
    */
-  meWYSE.prototype.showBlockOptionsMenu = function(blockId, button) {
+  LibraEditor.prototype.showBlockOptionsMenu = function(blockId, button) {
     var self = this;
 
     // Cerrar menú existente si hay alguno
-    var existingMenu = document.querySelector('.mewyse-options-menu');
+    var existingMenu = document.querySelector('.libraeditor-options-menu');
     if (existingMenu) {
       existingMenu.remove();
     }
@@ -11669,16 +11669,16 @@
     // Marcar el bloque como seleccionado visualmente
     var blockElement = this.getBlockElementById(blockId);
     if (blockElement) {
-      blockElement.classList.add('mewyse-block-selected');
+      blockElement.classList.add('libraeditor-block-selected');
     }
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-options-menu';
+    menu.className = 'libraeditor-options-menu';
 
     // Función para limpiar la selección al cerrar el menú
     menu._cleanupSelection = function() {
       if (blockElement) {
-        blockElement.classList.remove('mewyse-block-selected');
+        blockElement.classList.remove('libraeditor-block-selected');
       }
     };
 
@@ -11732,7 +11732,7 @@
 
     options.forEach(function(option) {
       var item = document.createElement('div');
-      item.className = 'mewyse-options-menu-item' + (option.danger ? ' danger' : '');
+      item.className = 'libraeditor-options-menu-item' + (option.danger ? ' danger' : '');
       item.innerHTML = '<span class="icon">' + option.icon + '</span> ' + option.label;
 
       item.onclick = function(e) {
@@ -11794,11 +11794,11 @@
    * @param {number} blockId
    * @param {HTMLElement} button
    */
-  meWYSE.prototype.showBlockTypeMenu = function(blockId, button) {
+  LibraEditor.prototype.showBlockTypeMenu = function(blockId, button) {
     var self = this;
 
     // Cerrar menú existente si hay alguno
-    var existingMenu = document.querySelector('.mewyse-type-menu');
+    var existingMenu = document.querySelector('.libraeditor-type-menu');
     if (existingMenu) {
       existingMenu.remove();
     }
@@ -11806,16 +11806,16 @@
     // Marcar el bloque como seleccionado visualmente
     var blockElement = this.getBlockElementById(blockId);
     if (blockElement) {
-      blockElement.classList.add('mewyse-block-selected');
+      blockElement.classList.add('libraeditor-block-selected');
     }
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-type-menu';
+    menu.className = 'libraeditor-type-menu';
 
     // Función para limpiar la selección al cerrar el menú
     menu._cleanupSelection = function() {
       if (blockElement) {
-        blockElement.classList.remove('mewyse-block-selected');
+        blockElement.classList.remove('libraeditor-block-selected');
       }
     };
 
@@ -11841,7 +11841,7 @@
 
     types.forEach(function(typeInfo) {
       var item = document.createElement('div');
-      item.className = 'mewyse-type-menu-item';
+      item.className = 'libraeditor-type-menu-item';
       item.innerHTML = '<span class="icon">' + typeInfo.icon + '</span> ' + self.t('blockTypes.' + typeInfo.type);
       item.onclick = function() {
         // Si hay selección múltiple, cambiar tipo de todos los seleccionados
@@ -11879,7 +11879,7 @@
    * @param {number} blockId
    * @param {string} newType
    */
-  meWYSE.prototype.changeBlockType = function(blockId, newType) {
+  LibraEditor.prototype.changeBlockType = function(blockId, newType) {
     this.pushHistory(true);
     var block = this.getBlock(blockId);
     if (block) {
@@ -11957,10 +11957,10 @@
    * Crea el botón para añadir bloques
    * @returns {HTMLElement}
    */
-  meWYSE.prototype.createAddBlockButton = function() {
+  LibraEditor.prototype.createAddBlockButton = function() {
     var self = this;
     var button = document.createElement('button');
-    button.className = 'mewyse-add-block';
+    button.className = 'libraeditor-add-block';
     button.innerHTML = this.t('misc.addBlock');
     button.onclick = function(e) {
       e.preventDefault();
@@ -11976,7 +11976,7 @@
    * Esta funcion se mantiene por compatibilidad pero puede no necesitar hacer nada.
    * @param {number} fromIndex - Índice desde donde empezar a actualizar
    */
-  meWYSE.prototype.updateConsecutiveNumberLists = function(fromIndex) {
+  LibraEditor.prototype.updateConsecutiveNumberLists = function(fromIndex) {
     // Con la nueva arquitectura, las listas consecutivas ya estan en un <ol> comun
     // La numeracion es automatica gracias al navegador
     // Solo re-renderizar si hay cambios que afecten la agrupacion
@@ -11989,7 +11989,7 @@
    * @param {number} index - Posición donde insertar (opcional)
    * @returns {number} - ID del bloque creado
    */
-  meWYSE.prototype.addBlock = function(type, index, content, props) {
+  LibraEditor.prototype.addBlock = function(type, index, content, props) {
     this.pushHistory(true);
     var block = {
       id: ++this.currentBlockId,
@@ -12050,7 +12050,7 @@
    * Duplica un bloque
    * @param {number} blockId
    */
-  meWYSE.prototype.duplicateBlock = function(blockId) {
+  LibraEditor.prototype.duplicateBlock = function(blockId) {
     this.pushHistory(true);
     var block = this.getBlock(blockId);
     if (block) {
@@ -12092,7 +12092,7 @@
    * Elimina un bloque
    * @param {number} blockId
    */
-  meWYSE.prototype.deleteBlock = function(blockId) {
+  LibraEditor.prototype.deleteBlock = function(blockId) {
     this.pushHistory(true);
     var index = this.getBlockIndex(blockId);
     if (index !== -1) {
@@ -12187,7 +12187,7 @@
    * @param {number} index
    * @returns {boolean} true si enfocó algún editable
    */
-  meWYSE.prototype._focusBlockNear = function(index) {
+  LibraEditor.prototype._focusBlockNear = function(index) {
     if (this._destroyed || !this.container || !this.blocks.length) return false;
     if (index < 0) index = 0;
     if (index > this.blocks.length - 1) index = this.blocks.length - 1;
@@ -12228,7 +12228,7 @@
    * caret dentro del editor.
    * @returns {?{blockId:number, offset:?number}}
    */
-  meWYSE.prototype._captureCaretContext = function() {
+  LibraEditor.prototype._captureCaretContext = function() {
     var v_id = this._getFocusedBlockId();
     if (v_id === null) return null;
     var v_ctx = { blockId: v_id, offset: null };
@@ -12258,7 +12258,7 @@
    * @param {HTMLElement} editable
    * @param {?number} offset
    */
-  meWYSE.prototype._setCaretAtOffset = function(editable, offset) {
+  LibraEditor.prototype._setCaretAtOffset = function(editable, offset) {
     var sel = window.getSelection ? window.getSelection() : null;
     if (!sel || !editable) return;
     var v_range = document.createRange();
@@ -12292,7 +12292,7 @@
    * de la ventana si el editor no scrollea internamente). Fallback: 0.
    * @returns {number}
    */
-  meWYSE.prototype._getVisibleBlockIndex = function() {
+  LibraEditor.prototype._getVisibleBlockIndex = function() {
     if (!this.container || !this.blocks.length) return 0;
     var v_crect = this.container.getBoundingClientRect();
     var v_win_h = window.innerHeight || document.documentElement.clientHeight;
@@ -12313,7 +12313,7 @@
    * momento; último recurso, el primer bloque editable.
    * @param {?{blockId:number, offset:?number}} ctx
    */
-  meWYSE.prototype._restoreCaretContext = function(ctx) {
+  LibraEditor.prototype._restoreCaretContext = function(ctx) {
     if (this._destroyed || !this.container) return;
     this._suppressBlurUntil = Date.now() + 300;
 
@@ -12359,7 +12359,7 @@
    * @param {number} draggedBlockId - ID del bloque arrastrado
    * @param {number} targetBlockId - ID del bloque destino
    */
-  meWYSE.prototype.moveBlock = function(draggedBlockId, targetBlockId) {
+  LibraEditor.prototype.moveBlock = function(draggedBlockId, targetBlockId) {
     this.pushHistory(true);
     var draggedIndex = this.getBlockIndex(draggedBlockId);
     var targetIndex = this.getBlockIndex(targetBlockId);
@@ -12432,7 +12432,7 @@
    * @param {number} blockId
    * @param {string} content
    */
-  meWYSE.prototype.updateBlockContent = function(blockId, content) {
+  LibraEditor.prototype.updateBlockContent = function(blockId, content) {
     var block = this.getBlock(blockId);
     if (block) {
       // Para bloques de tabla, limpiar controles del editor antes de guardar
@@ -12456,7 +12456,7 @@
    *
    * @returns {boolean} true si persistió algún bloque.
    */
-  meWYSE.prototype._persistActiveBlockContent = function() {
+  LibraEditor.prototype._persistActiveBlockContent = function() {
     var v_selection = window.getSelection();
     if (!v_selection || !v_selection.rangeCount) return false;
 
@@ -12464,7 +12464,7 @@
     var v_element = (v_node.nodeType === 1) ? v_node : v_node.parentElement;
     if (!v_element || !v_element.closest) return false;
 
-    var v_block_element = v_element.closest('.mewyse-block[data-block-id]');
+    var v_block_element = v_element.closest('.libraeditor-block[data-block-id]');
     if (!v_block_element) return false;
 
     var v_block_id = parseInt(v_block_element.getAttribute('data-block-id'), 10);
@@ -12485,7 +12485,7 @@
     if (v_block.type === 'toggle') {
       var v_tg_edit = v_element.closest('[contenteditable="true"]');
       if (v_tg_edit) {
-        if (v_tg_edit.getAttribute('data-mewyse-field') === 'toggleTitle') {
+        if (v_tg_edit.getAttribute('data-libraeditor-field') === 'toggleTitle') {
           this.updateBlockField(v_block_id, 'toggleTitle', v_tg_edit.innerHTML);
         } else {
           this.updateBlockContent(v_block_id, v_tg_edit.innerHTML);
@@ -12505,7 +12505,7 @@
    * @param {number} blockId
    * @returns {Object|null}
    */
-  meWYSE.prototype.getBlock = function(blockId) {
+  LibraEditor.prototype.getBlock = function(blockId) {
     for (var i = 0; i < this.blocks.length; i++) {
       if (this.blocks[i].id === blockId) {
         return this.blocks[i];
@@ -12519,7 +12519,7 @@
    * @param {number} blockId
    * @returns {number}
    */
-  meWYSE.prototype.getBlockIndex = function(blockId) {
+  LibraEditor.prototype.getBlockIndex = function(blockId) {
     for (var i = 0; i < this.blocks.length; i++) {
       if (this.blocks[i].id === blockId) {
         return i;
@@ -12533,7 +12533,7 @@
    * @param {number} blockId
    * @returns {boolean}
    */
-  meWYSE.prototype.isBlockSelected = function(blockId) {
+  LibraEditor.prototype.isBlockSelected = function(blockId) {
     return this.selectedBlocks.indexOf(blockId) !== -1;
   };
 
@@ -12541,7 +12541,7 @@
    * Selecciona un bloque
    * @param {number} blockId
    */
-  meWYSE.prototype.selectBlock = function(blockId) {
+  LibraEditor.prototype.selectBlock = function(blockId) {
     if (!this.isBlockSelected(blockId)) {
       this.selectedBlocks.push(blockId);
       this.updateBlockSelectionVisual(blockId, true);
@@ -12552,7 +12552,7 @@
    * Deselecciona un bloque
    * @param {number} blockId
    */
-  meWYSE.prototype.deselectBlock = function(blockId) {
+  LibraEditor.prototype.deselectBlock = function(blockId) {
     var index = this.selectedBlocks.indexOf(blockId);
     if (index !== -1) {
       this.selectedBlocks.splice(index, 1);
@@ -12563,7 +12563,7 @@
   /**
    * Limpia toda la selección
    */
-  meWYSE.prototype.clearSelection = function() {
+  LibraEditor.prototype.clearSelection = function() {
     var self = this;
     var blocksToDeselect = this.selectedBlocks.slice();
     blocksToDeselect.forEach(function(blockId) {
@@ -12576,7 +12576,7 @@
    * Alterna la selección de un bloque (para Ctrl+Click)
    * @param {number} blockId
    */
-  meWYSE.prototype.toggleBlockSelection = function(blockId) {
+  LibraEditor.prototype.toggleBlockSelection = function(blockId) {
     if (this.isBlockSelected(blockId)) {
       this.deselectBlock(blockId);
     } else {
@@ -12589,7 +12589,7 @@
    * @param {number} fromBlockId
    * @param {number} toBlockId
    */
-  meWYSE.prototype.selectBlockRange = function(fromBlockId, toBlockId) {
+  LibraEditor.prototype.selectBlockRange = function(fromBlockId, toBlockId) {
     var fromIndex = this.getBlockIndex(fromBlockId);
     var toIndex = this.getBlockIndex(toBlockId);
 
@@ -12615,13 +12615,13 @@
    * @param {number} blockId
    * @param {boolean} selected
    */
-  meWYSE.prototype.updateBlockSelectionVisual = function(blockId, selected) {
+  LibraEditor.prototype.updateBlockSelectionVisual = function(blockId, selected) {
     var blockWrapper = this.container.querySelector('[data-block-id="' + blockId + '"]');
     if (blockWrapper) {
       if (selected) {
-        blockWrapper.classList.add('mewyse-block-selected');
+        blockWrapper.classList.add('libraeditor-block-selected');
       } else {
-        blockWrapper.classList.remove('mewyse-block-selected');
+        blockWrapper.classList.remove('libraeditor-block-selected');
       }
     }
   };
@@ -12631,7 +12631,7 @@
    * @param {MouseEvent} e
    * @param {number} blockId
    */
-  meWYSE.prototype.handleBlockClick = function(e, blockId) {
+  LibraEditor.prototype.handleBlockClick = function(e, blockId) {
     var isCtrlOrCmd = e.ctrlKey || e.metaKey;
     var isShift = e.shiftKey;
 
@@ -12664,7 +12664,7 @@
   /**
    * Elimina todos los bloques seleccionados
    */
-  meWYSE.prototype.deleteSelectedBlocks = function() {
+  LibraEditor.prototype.deleteSelectedBlocks = function() {
     if (this.selectedBlocks.length === 0) {
       return;
     }
@@ -12756,7 +12756,7 @@
    * Cambia el tipo de todos los bloques seleccionados
    * @param {string} newType
    */
-  meWYSE.prototype.changeSelectedBlocksType = function(newType) {
+  LibraEditor.prototype.changeSelectedBlocksType = function(newType) {
     if (this.selectedBlocks.length === 0) {
       return;
     }
@@ -12810,13 +12810,13 @@
    * @param {string} v_text
    * @returns {boolean}
    */
-  meWYSE.prototype._looks_like_html = function(v_text) {
+  LibraEditor.prototype._looks_like_html = function(v_text) {
     if (typeof v_text !== 'string' || v_text === '') return false;
     // <tag ...>  |  </tag>  |  <tag/>  → nombre de etiqueta que empieza por letra
     return /<([a-z][a-z0-9-]*)(\s[^>]*)?\/?>|<\/[a-z][a-z0-9-]*\s*>/i.test(v_text);
   };
 
-  meWYSE.prototype.loadFromText = function(text) {
+  LibraEditor.prototype.loadFromText = function(text) {
     var lines = text.split('\n');
     var self = this;
 
@@ -12833,7 +12833,7 @@
    * Filtra los bloques excluyendo el último si está vacío
    * @returns {Array}
    */
-  meWYSE.prototype.getFilteredBlocks = function() {
+  LibraEditor.prototype.getFilteredBlocks = function() {
     var blocks = this.blocks.slice();
 
     // Red de seguridad: limpiar controles de editor en tablas (por si algún
@@ -12882,7 +12882,7 @@
    * Obtiene el contenido como texto plano
    * @returns {string}
    */
-  meWYSE.prototype.getPlainText = function() {
+  LibraEditor.prototype.getPlainText = function() {
     return this.getFilteredBlocks().map(function(block) {
       var c = block.content;
 
@@ -12911,7 +12911,7 @@
    * Obtiene el contenido como HTML
    * @returns {string}
    */
-  meWYSE.prototype.getHTML = function() {
+  LibraEditor.prototype.getHTML = function() {
     var html = '';
     var blocks = this.getFilteredBlocks();
     var i = 0;
@@ -12939,7 +12939,7 @@
       if (blocks[v_k].type === 'toc') { v_has_toc = true; break; }
     }
     var idAttr = function(b) {
-      return v_has_toc ? ' id="mewyse-h-' + b.id + '"' : '';
+      return v_has_toc ? ' id="libraeditor-h-' + b.id + '"' : '';
     };
 
     // Transformer del contenido inline. Pasos:
@@ -12947,7 +12947,7 @@
     //     a <br>, etc.).
     //  2. Strip de `style` en elementos NO nativos del editor — limpia spans
     //     de color picker, párrafos pegados con estilos heredados, etc. Solo
-    //     conserva style en table/td/th/img/iframe/video/audio y span.mewyse-tag.
+    //     conserva style en table/td/th/img/iframe/video/audio y span.libraeditor-tag.
     //  3. Si `escapeHtmlEntities` está activo (default), aplica el escape de
     //     entidades sobre el resultado.
     var inline = function(c) {
@@ -12967,7 +12967,7 @@
       // un comentario con el tipo saneado, dejando rastro sin romper el documento.
       // El dato íntegro sigue disponible en getJSON.
       if (!VALID_BLOCK_TYPES[block.type]) {
-        html += '<!-- mewyse:unknown-block ' + String(block.type).replace(/[^a-zA-Z0-9_-]/g, '') + ' -->';
+        html += '<!-- libraeditor:unknown-block ' + String(block.type).replace(/[^a-zA-Z0-9_-]/g, '') + ' -->';
         i++;
         continue;
       }
@@ -13081,10 +13081,10 @@
             html += '<hr>';
             break;
           case 'pageBreak':
-            html += '<div class="mewyse-page-break"></div>';
+            html += '<div class="libraeditor-page-break"></div>';
             break;
           case 'callout':
-            html += '<div class="mewyse-callout mewyse-callout-' +
+            html += '<div class="libraeditor-callout libraeditor-callout-' +
                     (block.calloutVariant || 'info') + '">' + inline(content) + '</div>';
             break;
           case 'toggle':
@@ -13109,7 +13109,7 @@
    * Obtiene el contenido como código fuente HTML (con formato inline)
    * @returns {string}
    */
-  meWYSE.prototype.getHTMLSource = function() {
+  LibraEditor.prototype.getHTMLSource = function() {
     var html = '';
     var self = this;
     var blocks = this.getFilteredBlocks();
@@ -13126,7 +13126,7 @@
     for (var v_k = 0; v_k < blocks.length; v_k++) {
       if (blocks[v_k].type === 'toc') { v_has_toc = true; break; }
     }
-    var idAttr = function(b) { return v_has_toc ? ' id="mewyse-h-' + b.id + '"' : ''; };
+    var idAttr = function(b) { return v_has_toc ? ' id="libraeditor-h-' + b.id + '"' : ''; };
 
     // Transformer del contenido inline para la vista "fuente": sanea el HTML
     // (whitelist de tags) y limpia styles no nativos, pero NO escapa las
@@ -13142,7 +13142,7 @@
 
       // Bloque de tipo DESCONOCIDO (preservado): degradar a comentario (ver getHTML).
       if (!VALID_BLOCK_TYPES[block.type]) {
-        html += '<!-- mewyse:unknown-block ' + String(block.type).replace(/[^a-zA-Z0-9_-]/g, '') + ' -->';
+        html += '<!-- libraeditor:unknown-block ' + String(block.type).replace(/[^a-zA-Z0-9_-]/g, '') + ' -->';
         i++;
         continue;
       }
@@ -13253,10 +13253,10 @@
             html += '<hr>';
             break;
           case 'pageBreak':
-            html += '<div class="mewyse-page-break"></div>';
+            html += '<div class="libraeditor-page-break"></div>';
             break;
           case 'callout':
-            html += '<div class="mewyse-callout mewyse-callout-' +
+            html += '<div class="libraeditor-callout libraeditor-callout-' +
                     (block.calloutVariant || 'info') + '">' + content + '</div>';
             break;
           case 'toggle':
@@ -13280,7 +13280,7 @@
    * Obtiene el contenido como JSON
    * @returns {string}
    */
-  meWYSE.prototype.getJSON = function() {
+  LibraEditor.prototype.getJSON = function() {
     return JSON.stringify(this.getFilteredBlocks(), null, 2);
   };
 
@@ -13291,7 +13291,7 @@
    * markPristine() tras guardar. La firma es el JSON del modelo (determinista y
    * ya normalizado); dos estados con el mismo contenido producen la misma firma.
    */
-  meWYSE.prototype._capture_pristine = function() {
+  LibraEditor.prototype._capture_pristine = function() {
     this._pristine_signature = this.getJSON();
   };
 
@@ -13307,7 +13307,7 @@
    *
    * @returns {boolean} true si hay cambios sin "confirmar" respecto a la base.
    */
-  meWYSE.prototype.isDirty = function() {
+  LibraEditor.prototype.isDirty = function() {
     // Si aún no hay base (editor recién construido, sin initDomEditor), no hay
     // cambios que reportar.
     if (this._pristine_signature === null) return false;
@@ -13318,7 +13318,7 @@
    * Alias semántico de isDirty(): ¿se han producido cambios? API pública.
    * @returns {boolean}
    */
-  meWYSE.prototype.hasChanges = function() {
+  LibraEditor.prototype.hasChanges = function() {
     return this.isDirty();
   };
 
@@ -13326,9 +13326,9 @@
    * Marca el estado ACTUAL como "limpio" (nueva línea base). Se llama tras
    * guardar el contenido, para que isDirty()/hasChanges() midan los cambios a
    * partir de este punto. API pública.
-   * @returns {meWYSE} this (encadenable)
+   * @returns {LibraEditor} this (encadenable)
    */
-  meWYSE.prototype.markPristine = function() {
+  LibraEditor.prototype.markPristine = function() {
     this._capture_pristine();
     return this;
   };
@@ -13338,9 +13338,9 @@
    * fijando el contenido ACTUAL como nueva línea base. Alias explícito de
    * markPristine(). Pensado para llamarse, p. ej., dentro de `onBlur` tras
    * guardar, para "resetear" la detección de cambios. API pública.
-   * @returns {meWYSE} this (encadenable)
+   * @returns {LibraEditor} this (encadenable)
    */
-  meWYSE.prototype.resetDirty = function() {
+  LibraEditor.prototype.resetDirty = function() {
     return this.markPristine();
   };
 
@@ -13349,7 +13349,7 @@
    * @param {string} html - HTML con formato inline
    * @returns {string} Markdown equivalente
    */
-  meWYSE.prototype.htmlToMarkdownInline = function(html) {
+  LibraEditor.prototype.htmlToMarkdownInline = function(html) {
     if (!html) return '';
 
     var parser = new DOMParser();
@@ -13370,12 +13370,12 @@
       }
 
       // Menciones: conservar como @Name
-      if (tag === 'span' && node.classList.contains('mewyse-mention')) {
+      if (tag === 'span' && node.classList.contains('libraeditor-mention')) {
         return inner;
       }
 
       // Merge tags / variables: emitir el literal {{name}} (plantilla).
-      if (tag === 'span' && node.classList.contains('mewyse-mergetag')) {
+      if (tag === 'span' && node.classList.contains('libraeditor-mergetag')) {
         var mn = node.getAttribute('data-merge-name');
         return mn ? ('{{' + mn + '}}') : inner;
       }
@@ -13430,7 +13430,7 @@
    * Obtiene el contenido como Markdown
    * @returns {string}
    */
-  meWYSE.prototype.getMarkdown = function() {
+  LibraEditor.prototype.getMarkdown = function() {
     var self = this;
     var blocks = this.getFilteredBlocks();
     var lines = [];
@@ -13444,7 +13444,7 @@
       // se degrada a un comentario HTML (Markdown admite comentarios). El dato
       // íntegro sigue en getJSON.
       if (!VALID_BLOCK_TYPES[block.type]) {
-        lines.push('<!-- mewyse:unknown-block ' + String(block.type).replace(/[^a-zA-Z0-9_-]/g, '') + ' -->');
+        lines.push('<!-- libraeditor:unknown-block ' + String(block.type).replace(/[^a-zA-Z0-9_-]/g, '') + ' -->');
         i++;
         continue;
       }
@@ -13601,7 +13601,7 @@
    * @param {string} text - Texto Markdown con formato inline
    * @returns {string} HTML equivalente
    */
-  meWYSE.prototype.markdownInlineToHtml = function(text) {
+  LibraEditor.prototype.markdownInlineToHtml = function(text) {
     if (!text) return '';
     var self = this;
 
@@ -13682,7 +13682,7 @@
    * Carga contenido desde Markdown
    * @param {string} markdown - Contenido en formato Markdown
    */
-  meWYSE.prototype.loadFromMarkdown = function(markdown) {
+  LibraEditor.prototype.loadFromMarkdown = function(markdown) {
     this.pushHistory(true);
     var self = this;
     var lines = markdown.split('\n');
@@ -13879,7 +13879,7 @@
    * Carga contenido desde JSON
    * @param {string|Object} json
    */
-  meWYSE.prototype.loadFromJSON = function(json) {
+  LibraEditor.prototype.loadFromJSON = function(json) {
     this.pushHistory(true);
     var data;
     try {
@@ -13911,13 +13911,13 @@
    * si `autosave` está activo; estos métodos permiten al consumidor gestionar el
    * borrador (comprobar/restaurar/limpiar) sin auto-restauración implícita.
    */
-  meWYSE.prototype.hasDraft = function() {
+  LibraEditor.prototype.hasDraft = function() {
     try {
       return !!window.localStorage.getItem(this.autosaveKey);
     } catch (e) { return false; }
   };
 
-  meWYSE.prototype.restoreDraft = function() {
+  LibraEditor.prototype.restoreDraft = function() {
     var v_raw;
     try {
       v_raw = window.localStorage.getItem(this.autosaveKey);
@@ -13928,7 +13928,7 @@
     return true;
   };
 
-  meWYSE.prototype.clearDraft = function() {
+  LibraEditor.prototype.clearDraft = function() {
     try {
       window.localStorage.removeItem(this.autosaveKey);
     } catch (e) {}
@@ -13938,11 +13938,11 @@
    * Carga contenido desde una cadena HTML.
    * Útil para migrar contenido guardado por editores WYSIWYG previos (TinyMCE, CKEditor).
    * Detecta automáticamente iframes de YouTube/Vimeo, <video>, <audio>, <img>, tablas
-   * y listas, y los convierte al modelo de bloques de meWYSE.
+   * y listas, y los convierte al modelo de bloques de LibraEditor.
    *
    * @param {string} html - HTML source
    */
-  meWYSE.prototype.loadFromHTML = function(html) {
+  LibraEditor.prototype.loadFromHTML = function(html) {
     this.pushHistory(true);
     var blocks = this._htmlToBlocks(html || '');
     this.blocks = this._sanitizeBlocks(blocks);
@@ -13959,7 +13959,7 @@
   /**
    * Dispara el evento onChange
    */
-  meWYSE.prototype.triggerChange = function() {
+  LibraEditor.prototype.triggerChange = function() {
     if (!this.isUndoRedo) {
       this.pushHistory();
     }
@@ -14036,7 +14036,7 @@
    * operación de edición en curso (mismo patrón que onFocus/onBlur).
    * @param {Object} payload
    */
-  meWYSE.prototype._fireChangeCallback = function(payload) {
+  LibraEditor.prototype._fireChangeCallback = function(payload) {
     // Guarda por si un onChange debounced se dispara tras destroy() (carrera).
     if (this._destroyed) return;
     if (typeof this.onChange !== 'function') return;
@@ -14053,7 +14053,7 @@
    * @param {Element} el
    * @returns {boolean}
    */
-  meWYSE.prototype._isPartOfEditorUI = function(el) {
+  LibraEditor.prototype._isPartOfEditorUI = function(el) {
     if (!el || !el.closest) return false;
 
     // 1. Dentro del wrapper completo del editor (incluye toolbar + container + char counter)
@@ -14072,16 +14072,16 @@
     }
 
     // 4. Dentro de algún menú/modal/picker flotante del editor (todos en body, todos
-    //    con clase prefijo mewyse-). Selector amplio que cubre todos los casos:
+    //    con clase prefijo libraeditor-). Selector amplio que cubre todos los casos:
     var floatingSelector =
-      '.mewyse-slash-menu, .mewyse-mention-menu, .mewyse-emoji-menu, ' +
-      '.mewyse-format-menu, .mewyse-options-menu, .mewyse-type-menu, ' +
-      '.mewyse-toolbar-menu, .mewyse-table-toolbar, ' +
-      '.mewyse-color-picker, .mewyse-unified-color-picker, ' +
-      '.mewyse-modal-overlay, .mewyse-find-replace, ' +
-      '.mewyse-summary-tooltip, .mewyse-floating-handle, ' +
-      '[class*="mewyse-"][class*="-menu"], [class*="mewyse-"][class*="-modal"], ' +
-      '[class*="mewyse-"][class*="-picker"], [class*="mewyse-"][class*="-tooltip"]';
+      '.libraeditor-slash-menu, .libraeditor-mention-menu, .libraeditor-emoji-menu, ' +
+      '.libraeditor-format-menu, .libraeditor-options-menu, .libraeditor-type-menu, ' +
+      '.libraeditor-toolbar-menu, .libraeditor-table-toolbar, ' +
+      '.libraeditor-color-picker, .libraeditor-unified-color-picker, ' +
+      '.libraeditor-modal-overlay, .libraeditor-find-replace, ' +
+      '.libraeditor-summary-tooltip, .libraeditor-floating-handle, ' +
+      '[class*="libraeditor-"][class*="-menu"], [class*="libraeditor-"][class*="-modal"], ' +
+      '[class*="libraeditor-"][class*="-picker"], [class*="libraeditor-"][class*="-tooltip"]';
     try {
       if (el.closest(floatingSelector)) return true;
     } catch (e) {}
@@ -14106,7 +14106,7 @@
    *   `{ plainText }` que triggerChange calcula igualmente para el textarea).
    * @returns {Object} payload con getters perezosos
    */
-  meWYSE.prototype._make_change_payload = function(v_focused_el, v_seed) {
+  LibraEditor.prototype._make_change_payload = function(v_focused_el, v_seed) {
     var self = this;
     v_seed = v_seed || {};
     // Cache de valores calculados. `undefined` = aún no calculado; un seed
@@ -14172,14 +14172,14 @@
   /**
    * Payload para onFocus/onBlur (delega en el builder perezoso; añade el foco).
    */
-  meWYSE.prototype._buildEventPayload = function(focusedElement) {
+  LibraEditor.prototype._buildEventPayload = function(focusedElement) {
     return this._make_change_payload(focusedElement);
   };
 
   /**
    * Dispara onFocus con el payload estándar.
    */
-  meWYSE.prototype._fireFocusCallback = function(focusedElement) {
+  LibraEditor.prototype._fireFocusCallback = function(focusedElement) {
     if (this.readOnly) return; // sin eventos en modo solo-visualización
     if (typeof this.onFocus !== 'function') return;
     try {
@@ -14190,7 +14190,7 @@
   /**
    * Dispara onBlur con el payload estándar.
    */
-  meWYSE.prototype._fireBlurCallback = function(blurredElement) {
+  LibraEditor.prototype._fireBlurCallback = function(blurredElement) {
     if (this.readOnly) return; // sin eventos en modo solo-visualización
     if (typeof this.onBlur !== 'function') return;
     try {
@@ -14201,7 +14201,7 @@
   /**
    * Destruye el editor
    */
-  meWYSE.prototype.destroy = function() {
+  LibraEditor.prototype.destroy = function() {
     // Idempotencia: no destruir dos veces
     if (this._destroyed) return;
 
@@ -14291,10 +14291,10 @@
     if (this.toolbar && this.toolbar.parentNode) {
       // El toolbar está dentro de un wrapper, eliminar el wrapper completo.
       // Se usa classList.contains (no === className) porque el wrapper lleva más
-      // clases por defecto (mewyse-editor-styled, tema, rtl...) y el === fallaba,
+      // clases por defecto (libraeditor-editor-styled, tema, rtl...) y el === fallaba,
       // dejando el div del wrapper huérfano en el DOM.
       var wrapper = this.toolbar.parentNode;
-      if (wrapper.classList && wrapper.classList.contains('mewyse-editor-wrapper')) {
+      if (wrapper.classList && wrapper.classList.contains('libraeditor-editor-wrapper')) {
         wrapper.remove();
       } else {
         this.toolbar.remove();
@@ -14392,7 +14392,7 @@
   /**
    * Inicializa el menú de formato (solo en modo minimalista)
    */
-  meWYSE.prototype.initFormatMenu = function() {
+  LibraEditor.prototype.initFormatMenu = function() {
     var self = this;
 
     // Escuchar cambios en la selección
@@ -14406,7 +14406,7 @@
   /**
    * Maneja cambios en la selección de texto
    */
-  meWYSE.prototype.onSelectionChange = function() {
+  LibraEditor.prototype.onSelectionChange = function() {
     var self = this;
 
     // Si estamos en modo cross-block selecting, no interferir
@@ -14470,9 +14470,9 @@
       var checkNode = container.nodeType === 3 ? container.parentNode : container;
       while (checkNode && checkNode !== self.container) {
         if (checkNode.classList && (
-            checkNode.classList.contains('mewyse-mention') ||
-            checkNode.classList.contains('mewyse-emoji') ||
-            checkNode.classList.contains('mewyse-tag'))) {
+            checkNode.classList.contains('libraeditor-mention') ||
+            checkNode.classList.contains('libraeditor-emoji') ||
+            checkNode.classList.contains('libraeditor-tag'))) {
           selectionContainsSpecial = true;
           break;
         }
@@ -14482,9 +14482,9 @@
       // Verificar si hay menciones, emojis o tags dentro del rango seleccionado
       if (!selectionContainsSpecial) {
         var fragment = range.cloneContents();
-        if (fragment.querySelectorAll('.mewyse-mention').length > 0 ||
-            fragment.querySelectorAll('.mewyse-emoji').length > 0 ||
-            fragment.querySelectorAll('.mewyse-tag').length > 0) {
+        if (fragment.querySelectorAll('.libraeditor-mention').length > 0 ||
+            fragment.querySelectorAll('.libraeditor-emoji').length > 0 ||
+            fragment.querySelectorAll('.libraeditor-tag').length > 0) {
           selectionContainsSpecial = true;
         }
       }
@@ -14510,7 +14510,7 @@
    * @param {Selection} selection
    * @param {Range} range
    */
-  meWYSE.prototype.showFormatMenu = function(selection, range, crossBlockReference) {
+  LibraEditor.prototype.showFormatMenu = function(selection, range, crossBlockReference) {
     var self = this;
     var isCrossBlock = !!crossBlockReference;
 
@@ -14528,7 +14528,7 @@
     this.closeFormatMenu();
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-format-menu';
+    menu.className = 'libraeditor-format-menu';
     this.formatMenu = menu;
 
     // `name` = nombre PÚBLICO de la acción (el mismo de la toolbar / STANDARD_ACTION_NAMES);
@@ -14593,12 +14593,12 @@
 
       if (tool.type === 'separator') {
         var separator = document.createElement('div');
-        separator.className = 'mewyse-format-separator';
+        separator.className = 'libraeditor-format-separator';
         menu.appendChild(separator);
         return;
       }
 
-      // Acción CUSTOM (placement floating|both): botón .mewyse-format-button que
+      // Acción CUSTOM (placement floating|both): botón .libraeditor-format-button que
       // despacha por _runAction; su estado (requiresSelection/isEnabled/isActive)
       // se evalúa al construir (el menú se recrea en cada selección).
       if (tool.type === 'custom') {
@@ -14625,7 +14625,7 @@
       }
 
       var button = document.createElement('button');
-      button.className = 'mewyse-format-button';
+      button.className = 'libraeditor-format-button';
       button.innerHTML = tool.label;
       var v_title = tool._title || self.t(tool.titleKey);
       button.title = v_title;
@@ -14701,7 +14701,7 @@
    * Aplica color de texto a la selección
    * @param {string} color - Color en formato hexadecimal
    */
-  meWYSE.prototype.applyTextColor = function(color) {
+  LibraEditor.prototype.applyTextColor = function(color) {
     var self = this;
     // Si hay varios bloques seleccionados, aplicar a todos; si no, comportamiento normal.
     if (this._applyInlineAcrossSelection(function() { self.applyInlineStyle('color', color); })) return;
@@ -14714,7 +14714,7 @@
    * Aplica color de fondo a la selección
    * @param {string} color - Color en formato hexadecimal
    */
-  meWYSE.prototype.applyBackgroundColor = function(color) {
+  LibraEditor.prototype.applyBackgroundColor = function(color) {
     var self = this;
     if (this._applyInlineAcrossSelection(function() { self.applyInlineStyle('backgroundColor', color); })) return;
     this.applyInlineStyle('backgroundColor', color);
@@ -14727,7 +14727,7 @@
    * @param {string} styleProperty - Propiedad CSS (color, backgroundColor, etc.)
    * @param {string} styleValue - Valor del estilo
    */
-  meWYSE.prototype.applyInlineStyle = function(styleProperty, styleValue) {
+  LibraEditor.prototype.applyInlineStyle = function(styleProperty, styleValue) {
     var selection = window.getSelection();
     if (!selection.rangeCount || selection.isCollapsed) return;
 
@@ -14771,7 +14771,7 @@
   /**
    * Elimina el color de texto del texto seleccionado
    */
-  meWYSE.prototype.removeTextColor = function() {
+  LibraEditor.prototype.removeTextColor = function() {
     this.removeInlineStyle('color');
     // removeInlineStyle solo muta el DOM: persistir el cambio al modelo.
     this._persistActiveBlockContent();
@@ -14780,7 +14780,7 @@
   /**
    * Elimina el color de fondo del texto seleccionado
    */
-  meWYSE.prototype.removeBackgroundColor = function() {
+  LibraEditor.prototype.removeBackgroundColor = function() {
     this.removeInlineStyle('backgroundColor');
     // removeInlineStyle solo muta el DOM: persistir el cambio al modelo.
     this._persistActiveBlockContent();
@@ -14790,7 +14790,7 @@
    * Elimina un estilo inline de la selección actual
    * @param {string} styleProperty - Propiedad CSS a eliminar (color, backgroundColor, etc.)
    */
-  meWYSE.prototype.removeInlineStyle = function(styleProperty) {
+  LibraEditor.prototype.removeInlineStyle = function(styleProperty) {
     var selection = window.getSelection();
     if (!selection.rangeCount) return;
 
@@ -14846,7 +14846,7 @@
    * @param {Node} node
    * @returns {boolean}
    */
-  meWYSE.prototype._rangeIntersectsNode = function(range, node) {
+  LibraEditor.prototype._rangeIntersectsNode = function(range, node) {
     var v_node_range = document.createRange();
     try {
       v_node_range.selectNode(node);
@@ -14862,7 +14862,7 @@
    * Desenvuelve un elemento, moviendo su contenido al padre y eliminando el elemento
    * @param {HTMLElement} element - Elemento a desenvolver
    */
-  meWYSE.prototype.unwrapElement = function(element) {
+  LibraEditor.prototype.unwrapElement = function(element) {
     if (!element || !element.parentNode) return;
 
     var parent = element.parentNode;
@@ -14876,17 +14876,17 @@
    * Muestra un selector unificado de color para texto y fondo
    * @param {HTMLElement} button
    */
-  meWYSE.prototype.showUnifiedColorPicker = function(button) {
+  LibraEditor.prototype.showUnifiedColorPicker = function(button) {
     var self = this;
 
     // Cerrar picker existente
-    var existingPicker = document.querySelector('.mewyse-color-picker');
+    var existingPicker = document.querySelector('.libraeditor-color-picker');
     if (existingPicker) {
       existingPicker.remove();
     }
 
     var picker = document.createElement('div');
-    picker.className = 'mewyse-color-picker mewyse-unified-color-picker';
+    picker.className = 'libraeditor-color-picker libraeditor-unified-color-picker';
 
     // Array de colores actualizado
     var colors = [
@@ -14900,19 +14900,19 @@
 
     // Sección de color de texto
     var textColorSection = document.createElement('div');
-    textColorSection.className = 'mewyse-color-section';
+    textColorSection.className = 'libraeditor-color-section';
 
     var textColorLabel = document.createElement('div');
-    textColorLabel.className = 'mewyse-color-section-label';
+    textColorLabel.className = 'libraeditor-color-section-label';
     textColorLabel.textContent = self.t('colors.textColor');
     textColorSection.appendChild(textColorLabel);
 
     var textColorGrid = document.createElement('div');
-    textColorGrid.className = 'mewyse-color-grid';
+    textColorGrid.className = 'libraeditor-color-grid';
 
     colors.forEach(function(color) {
       var colorBtn = document.createElement('button');
-      colorBtn.className = 'mewyse-color-button';
+      colorBtn.className = 'libraeditor-color-button';
       colorBtn.style.backgroundColor = color;
       colorBtn.title = color;
 
@@ -14934,7 +14934,7 @@
 
     // Botón para remover color de texto
     var removeTextBtn = document.createElement('button');
-    removeTextBtn.className = 'mewyse-color-button mewyse-color-remove';
+    removeTextBtn.className = 'libraeditor-color-button libraeditor-color-remove';
     removeTextBtn.innerHTML = WYSIWYG_ICONS.close;
     removeTextBtn.title = self.t('colors.removeTextColor');
     removeTextBtn.onclick = function(e) {
@@ -14951,19 +14951,19 @@
 
     // Sección de color de fondo
     var bgColorSection = document.createElement('div');
-    bgColorSection.className = 'mewyse-color-section';
+    bgColorSection.className = 'libraeditor-color-section';
 
     var bgColorLabel = document.createElement('div');
-    bgColorLabel.className = 'mewyse-color-section-label';
+    bgColorLabel.className = 'libraeditor-color-section-label';
     bgColorLabel.textContent = self.t('colors.backgroundColor');
     bgColorSection.appendChild(bgColorLabel);
 
     var bgColorGrid = document.createElement('div');
-    bgColorGrid.className = 'mewyse-color-grid';
+    bgColorGrid.className = 'libraeditor-color-grid';
 
     colors.forEach(function(color) {
       var colorBtn = document.createElement('button');
-      colorBtn.className = 'mewyse-color-button';
+      colorBtn.className = 'libraeditor-color-button';
       colorBtn.style.backgroundColor = color;
       colorBtn.title = color;
 
@@ -14985,7 +14985,7 @@
 
     // Botón para remover color de fondo
     var removeBgBtn = document.createElement('button');
-    removeBgBtn.className = 'mewyse-color-button mewyse-color-remove';
+    removeBgBtn.className = 'libraeditor-color-button libraeditor-color-remove';
     removeBgBtn.innerHTML = WYSIWYG_ICONS.close;
     removeBgBtn.title = self.t('colors.removeBackgroundColor');
     removeBgBtn.onclick = function(e) {
@@ -15081,7 +15081,7 @@
   /**
    * Crea un enlace
    */
-  meWYSE.prototype.createLink = function() {
+  LibraEditor.prototype.createLink = function() {
     var self = this;
 
     // Guardar la selección actual antes de abrir el modal
@@ -15107,20 +15107,20 @@
 
     // Crear el modal
     var overlay = document.createElement('div');
-    overlay.className = 'mewyse-modal-overlay';
+    overlay.className = 'libraeditor-modal-overlay';
 
     var container = document.createElement('div');
-    container.className = 'mewyse-modal-container';
+    container.className = 'libraeditor-modal-container';
     self._applyMenuTheme(container); // dark mode si el editor está en oscuro
 
     var title = document.createElement('h3');
-    title.className = 'mewyse-modal-title';
+    title.className = 'libraeditor-modal-title';
     title.textContent = existingLink ? self.t('modals.editLink') : self.t('modals.insertLink');
     container.appendChild(title);
 
     // Campo de URL
     var urlGroup = document.createElement('div');
-    urlGroup.className = 'mewyse-modal-input-group';
+    urlGroup.className = 'libraeditor-modal-input-group';
     urlGroup.style.marginBottom = '16px';
 
     var urlLabel = document.createElement('label');
@@ -15129,7 +15129,7 @@
 
     var urlInput = document.createElement('input');
     urlInput.type = 'text';
-    urlInput.className = 'mewyse-modal-input';
+    urlInput.className = 'libraeditor-modal-input';
     urlInput.placeholder = self.t('placeholders.urlExample');
     urlInput.value = existingUrl;
     urlGroup.appendChild(urlInput);
@@ -15138,7 +15138,7 @@
 
     // Campo de texto (opcional)
     var textGroup = document.createElement('div');
-    textGroup.className = 'mewyse-modal-input-group';
+    textGroup.className = 'libraeditor-modal-input-group';
     textGroup.style.marginBottom = '16px';
 
     var textLabel = document.createElement('label');
@@ -15147,7 +15147,7 @@
 
     var textInput = document.createElement('input');
     textInput.type = 'text';
-    textInput.className = 'mewyse-modal-input';
+    textInput.className = 'libraeditor-modal-input';
     textInput.placeholder = self.t('placeholders.linkTextPlaceholder');
     textInput.value = selectedText || (existingLink ? existingLink.textContent : '');
     textGroup.appendChild(textInput);
@@ -15156,17 +15156,17 @@
 
     // Checkbox para abrir en nueva pestaña
     var checkboxGroup = document.createElement('div');
-    checkboxGroup.className = 'mewyse-modal-checkbox-group';
+    checkboxGroup.className = 'libraeditor-modal-checkbox-group';
 
     var checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.id = 'mewyse-link-new-tab';
+    checkbox.id = 'libraeditor-link-new-tab';
     if (existingLink && existingLink.getAttribute('target') === '_blank') {
       checkbox.checked = true;
     }
 
     var checkboxLabel = document.createElement('label');
-    checkboxLabel.setAttribute('for', 'mewyse-link-new-tab');
+    checkboxLabel.setAttribute('for', 'libraeditor-link-new-tab');
     checkboxLabel.textContent = self.t('modals.openInNewTab');
 
     checkboxGroup.appendChild(checkbox);
@@ -15175,11 +15175,11 @@
 
     // Botones
     var buttonsDiv = document.createElement('div');
-    buttonsDiv.className = 'mewyse-modal-buttons';
+    buttonsDiv.className = 'libraeditor-modal-buttons';
 
     var cancelBtn = document.createElement('button');
     cancelBtn.type = 'button';
-    cancelBtn.className = 'mewyse-modal-button mewyse-modal-button-cancel';
+    cancelBtn.className = 'libraeditor-modal-button libraeditor-modal-button-cancel';
     cancelBtn.textContent = self.t('modals.cancel');
 
     // Botón "Quitar enlace": solo al editar un enlace existente. Desenvuelve el
@@ -15188,13 +15188,13 @@
     if (existingLink) {
       removeBtn = document.createElement('button');
       removeBtn.type = 'button';
-      removeBtn.className = 'mewyse-modal-button mewyse-modal-button-danger';
+      removeBtn.className = 'libraeditor-modal-button libraeditor-modal-button-danger';
       removeBtn.textContent = self.t('modals.removeLink');
     }
 
     var submitBtn = document.createElement('button');
     submitBtn.type = 'button';
-    submitBtn.className = 'mewyse-modal-button mewyse-modal-button-primary';
+    submitBtn.className = 'libraeditor-modal-button libraeditor-modal-button-primary';
     submitBtn.textContent = existingLink ? self.t('modals.update') : self.t('modals.insert');
 
     if (removeBtn) buttonsDiv.appendChild(removeBtn);
@@ -15373,7 +15373,7 @@
   /**
    * Alterna el texto seleccionado entre mayúsculas y minúsculas
    */
-  meWYSE.prototype.toggleSelectionCase = function() {
+  LibraEditor.prototype.toggleSelectionCase = function() {
     // Mantener compatibilidad: toggle binario (smart: si tiene alguna minúscula → UPPER, si no → lower)
     this.applyCaseTransform('smart');
   };
@@ -15497,7 +15497,7 @@
    * Aplica una transformación de caso al texto seleccionado.
    * @param {string} mode - 'upper' | 'lower' | 'title' | 'sentence' | 'toggle' | 'smart'
    */
-  meWYSE.prototype.applyCaseTransform = function(mode) {
+  LibraEditor.prototype.applyCaseTransform = function(mode) {
     var transformer = CASE_TRANSFORMERS[mode];
     if (!transformer) return;
 
@@ -15566,7 +15566,7 @@
    * Envuelve la selección actual en un tag inline simple (ej: <code>).
    * Si ya está envuelta en ese tag, lo desenvuelve (toggle).
    */
-  meWYSE.prototype._wrapSelectionInTag = function(tagName) {
+  LibraEditor.prototype._wrapSelectionInTag = function(tagName) {
     var selection = window.getSelection();
     if (!selection || !selection.rangeCount) return;
     var range = selection.getRangeAt(0);
@@ -15609,7 +15609,7 @@
    * @param {number} blockId
    * @returns {boolean}
    */
-  meWYSE.prototype._tryInlineAutoformat = function(element, blockId) {
+  LibraEditor.prototype._tryInlineAutoformat = function(element, blockId) {
     var sel = window.getSelection();
     if (!sel || !sel.rangeCount) return false;
     var range = sel.getRangeAt(0);
@@ -15668,7 +15668,7 @@
    * Muestra el dropdown de opciones de caso (UPPER/lower/Title/Sentence/Toggle).
    * Anclado al botón "Aa" del toolbar o del format menu.
    */
-  meWYSE.prototype.showCaseMenu = function(button) {
+  LibraEditor.prototype.showCaseMenu = function(button) {
     var self = this;
     // Si ya hay uno abierto, cerrarlo (toggle)
     if (this._caseMenu && this._caseMenu.parentNode) {
@@ -15678,7 +15678,7 @@
     }
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-options-menu';
+    menu.className = 'libraeditor-options-menu';
     menu.setAttribute('role', 'menu');
 
     var options = [
@@ -15704,9 +15704,9 @@
 
     options.forEach(function(opt) {
       var item = document.createElement('div');
-      item.className = 'mewyse-options-menu-item';
+      item.className = 'libraeditor-options-menu-item';
       item.setAttribute('role', 'menuitem');
-      item.innerHTML = '<span class="icon" style="font-family: var(--mewyse-font-mono, monospace); font-weight: 600; font-size: 12px">' + opt.sample + '</span> ' + opt.label;
+      item.innerHTML = '<span class="icon" style="font-family: var(--libraeditor-font-mono, monospace); font-weight: 600; font-size: 12px">' + opt.sample + '</span> ' + opt.label;
       item.onclick = function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -15745,11 +15745,11 @@
    * menú flotante de formato). Los handlers son COMPARTIDOS entre contenedores
    * (se crean una sola vez) y usan `e.currentTarget` como contenedor de
    * referencia. Al posicionar el cursor sobre un botón/select se muestra su texto
-   * (title/aria-label) tras 350 ms; migra `title` -> `data-mewyse-tip` en el
+   * (title/aria-label) tras 350 ms; migra `title` -> `data-libraeditor-tip` en el
    * primer hover para suprimir el tooltip nativo (el aria-label se conserva).
    * @param {HTMLElement} containerEl
    */
-  meWYSE.prototype._attachTooltips = function(containerEl) {
+  LibraEditor.prototype._attachTooltips = function(containerEl) {
     var self = this;
     if (!containerEl) return;
     if (!this._tooltipContainers) this._tooltipContainers = [];
@@ -15771,17 +15771,17 @@
         if (!v_target) return;
         // Ya mostrándose sobre el mismo elemento: no reprogramar.
         if (self._toolbarTooltipTarget === v_target && self._toolbarTooltip &&
-            self._toolbarTooltip.classList.contains('mewyse-tooltip-visible')) {
+            self._toolbarTooltip.classList.contains('libraeditor-tooltip-visible')) {
           return;
         }
-        // Migrar title -> data-mewyse-tip (suprime el nativo). Si el title cambió
+        // Migrar title -> data-libraeditor-tip (suprime el nativo). Si el title cambió
         // (botones con texto dinámico, p. ej. alineación), re-migrar.
         var v_title = v_target.getAttribute('title');
         if (v_title) {
-          v_target.setAttribute('data-mewyse-tip', v_title);
+          v_target.setAttribute('data-libraeditor-tip', v_title);
           v_target.removeAttribute('title');
         }
-        var v_text = v_target.getAttribute('data-mewyse-tip') || v_target.getAttribute('aria-label');
+        var v_text = v_target.getAttribute('data-libraeditor-tip') || v_target.getAttribute('aria-label');
         if (!v_text) return;
 
         self._toolbarTooltipTarget = v_target;
@@ -15819,7 +15819,7 @@
    * la lista; si el tooltip visible pertenecía a él, lo oculta.
    * @param {HTMLElement} containerEl
    */
-  meWYSE.prototype._detachTooltips = function(containerEl) {
+  LibraEditor.prototype._detachTooltips = function(containerEl) {
     if (!containerEl || !this._tooltipContainers) return;
     var v_idx = this._tooltipContainers.indexOf(containerEl);
     if (v_idx === -1) return;
@@ -15838,12 +15838,12 @@
    * @param {HTMLElement} target
    * @param {string} text
    */
-  meWYSE.prototype._showToolbarTooltip = function(target, text) {
+  LibraEditor.prototype._showToolbarTooltip = function(target, text) {
     if (!target || !document.body.contains(target)) return;
     // Crear el elemento una sola vez (reutilizable).
     if (!this._toolbarTooltip) {
       this._toolbarTooltip = document.createElement('div');
-      this._toolbarTooltip.className = 'mewyse-toolbar-tooltip';
+      this._toolbarTooltip.className = 'libraeditor-toolbar-tooltip';
       this._toolbarTooltip.setAttribute('role', 'tooltip');
       document.body.appendChild(this._toolbarTooltip);
     }
@@ -15851,7 +15851,7 @@
     // Tema (claro/oscuro) coherente con los menús flotantes.
     this._applyMenuTheme(this._toolbarTooltip);
     this._positionToolbarTooltip(target);
-    this._toolbarTooltip.classList.add('mewyse-tooltip-visible');
+    this._toolbarTooltip.classList.add('libraeditor-tooltip-visible');
   };
 
   /**
@@ -15859,7 +15859,7 @@
    * cabe, y ajustándolo a los límites del viewport.
    * @param {HTMLElement} target
    */
-  meWYSE.prototype._positionToolbarTooltip = function(target) {
+  LibraEditor.prototype._positionToolbarTooltip = function(target) {
     var tip = this._toolbarTooltip;
     if (!tip) return;
     var v_rect = target.getBoundingClientRect();
@@ -15889,14 +15889,14 @@
   /**
    * Oculta el tooltip de la toolbar y cancela el temporizador pendiente.
    */
-  meWYSE.prototype._hideToolbarTooltip = function() {
+  LibraEditor.prototype._hideToolbarTooltip = function() {
     if (this._toolbarTooltipTimer) {
       clearTimeout(this._toolbarTooltipTimer);
       this._toolbarTooltipTimer = null;
     }
     this._toolbarTooltipTarget = null;
     if (this._toolbarTooltip) {
-      this._toolbarTooltip.classList.remove('mewyse-tooltip-visible');
+      this._toolbarTooltip.classList.remove('libraeditor-tooltip-visible');
     }
   };
 
@@ -15916,14 +15916,14 @@
    * devolver el bloque de texto previo).
    * @returns {?number}
    */
-  meWYSE.prototype._getAlignTargetBlockId = function() {
+  LibraEditor.prototype._getAlignTargetBlockId = function() {
     if (this.selectedImage && this.selectedImage.blockId != null && !this.selectedImage.isInTable) {
       return this.selectedImage.blockId;
     }
     return this._getFocusedBlockId();
   };
 
-  meWYSE.prototype._getCurrentAlignment = function() {
+  LibraEditor.prototype._getCurrentAlignment = function() {
     var v_block_id = this._getAlignTargetBlockId();
     if (v_block_id === null) return null;
     var v_block = this.getBlock(v_block_id);
@@ -15943,7 +15943,7 @@
    * @param {string} align - 'left'|'center'|'right'|'justify'
    * @returns {string}
    */
-  meWYSE.prototype._alignButtonInnerHTML = function(align) {
+  LibraEditor.prototype._alignButtonInnerHTML = function(align) {
     // Solo el icono del valor actual (sin flecha lateral): el botón ocupa el
     // ancho de un botón normal. Que abre un menú se indica vía aria-haspopup.
     return WYSIWYG_ICONS[ALIGN_ICONS[align]] || WYSIWYG_ICONS.alignLeft;
@@ -15954,7 +15954,7 @@
    * actual del bloque con foco y lo deshabilita si el tipo no admite alineación.
    * Se invoca desde _updateMoveButtons (mismos disparadores de foco).
    */
-  meWYSE.prototype._updateAlignButton = function() {
+  LibraEditor.prototype._updateAlignButton = function() {
     if (!this.alignButton) return;
     var v_align = this._getCurrentAlignment(); // null si no soportado
     this.alignButton.disabled = (v_align === null);
@@ -15976,7 +15976,7 @@
    * botón pueda reflejarla con fiabilidad.
    * @param {string} align - 'left'|'center'|'right'|'justify'
    */
-  meWYSE.prototype._applyAlignment = function(align) {
+  LibraEditor.prototype._applyAlignment = function(align) {
     // 1) Multi-selección (bloques o cross-block): ya aplica por modelo.
     if (this.applyAlignmentToSelection(align)) {
       this._updateAlignButton();
@@ -16008,7 +16008,7 @@
       this.triggerChange();
       var self_img = this;
       setTimeout(function() {
-        var v_img = self_img.container.querySelector('[data-block-id="' + v_block_id + '"] .mewyse-image');
+        var v_img = self_img.container.querySelector('[data-block-id="' + v_block_id + '"] .libraeditor-image');
         if (v_img) self_img.selectImage(v_img, v_block_id);
         self_img._updateAlignButton();
       }, 0);
@@ -16045,7 +16045,7 @@
    * anclado al botón. Marca el valor actual del bloque. Espeja showCaseMenu.
    * @param {HTMLElement} button - botón que ancla el menú
    */
-  meWYSE.prototype.showAlignMenu = function(button) {
+  LibraEditor.prototype.showAlignMenu = function(button) {
     var self = this;
     // Toggle: si ya está abierto, cerrar.
     if (this._alignMenu && this._alignMenu.parentNode) {
@@ -16055,7 +16055,7 @@
     }
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-options-menu';
+    menu.className = 'libraeditor-options-menu';
     menu.setAttribute('role', 'menu');
     // No perder el caret/foco del bloque al clicar en el menú.
     menu.addEventListener('mousedown', function(e) { e.preventDefault(); });
@@ -16092,7 +16092,7 @@
 
     options.forEach(function(opt) {
       var item = document.createElement('div');
-      item.className = 'mewyse-options-menu-item';
+      item.className = 'libraeditor-options-menu-item';
       item.setAttribute('role', 'menuitemradio');
       if (opt.align === v_current) item.classList.add('active');
       item.setAttribute('aria-checked', opt.align === v_current ? 'true' : 'false');
@@ -16132,14 +16132,14 @@
    * @param {string} value
    * @param {boolean} wholeBlock
    */
-  meWYSE.prototype._applyFontStyle = function(styleProp, value, wholeBlock) {
+  LibraEditor.prototype._applyFontStyle = function(styleProp, value, wholeBlock) {
     var self = this;
     if (wholeBlock) {
       var sel = window.getSelection();
       if (sel && sel.rangeCount) {
         var node = sel.getRangeAt(0).commonAncestorContainer;
         var el = (node.nodeType === 1) ? node : node.parentElement;
-        var blockEl = (el && el.closest) ? el.closest('.mewyse-block[data-block-id]') : null;
+        var blockEl = (el && el.closest) ? el.closest('.libraeditor-block[data-block-id]') : null;
         var editable = blockEl ? self.getEditableElement(blockEl) : null;
         if (editable) {
           var r = document.createRange();
@@ -16158,7 +16158,7 @@
    * Tamaño de fuente (px, redondeado) en la posición del caret/selección, o null.
    * @returns {?number}
    */
-  meWYSE.prototype._getCurrentFontSize = function() {
+  LibraEditor.prototype._getCurrentFontSize = function() {
     if (!this.container) return null;
     var v_node = null;
     var sel = window.getSelection ? window.getSelection() : null;
@@ -16182,7 +16182,7 @@
   /**
    * Refresca el valor mostrado en el stepper de tamaño de fuente (si existe).
    */
-  meWYSE.prototype._updateFontSizeStepper = function() {
+  LibraEditor.prototype._updateFontSizeStepper = function() {
     if (!this._fontSizeDisplay) return;
     var v = this._getCurrentFontSize();
     this._fontSizeDisplay.textContent = (v != null) ? (v + 'px') : '—';
@@ -16193,7 +16193,7 @@
    * valor de FONT_SIZE_SCALE, y aplica el font-size inline.
    * @param {number} dir - +1 o -1
    */
-  meWYSE.prototype._stepFontSize = function(dir) {
+  LibraEditor.prototype._stepFontSize = function(dir) {
     var v_cur = this._getCurrentFontSize();
     if (v_cur == null) v_cur = 16;
     var v_next, i;
@@ -16217,7 +16217,7 @@
    * toolbar (solo si `fontControls`). Las familias van SIN comillas (el sanitizer
    * las rechaza) y los valores son listas cerradas (evita font-size disparatados).
    */
-  meWYSE.prototype.showFontMenu = function(button) {
+  LibraEditor.prototype.showFontMenu = function(button) {
     var self = this;
     if (this._fontMenu && this._fontMenu.parentNode) {
       this._fontMenu.remove(); this._fontMenu = null; return;
@@ -16233,7 +16233,7 @@
       { label: 'Tahoma', value: 'Tahoma, sans-serif' }
     ];
     var menu = document.createElement('div');
-    menu.className = 'mewyse-options-menu mewyse-font-menu';
+    menu.className = 'libraeditor-options-menu libraeditor-font-menu';
     menu.setAttribute('role', 'menu');
     // Preservar la selección del editor al interactuar (como el color picker).
     menu.addEventListener('mousedown', function(e) { e.preventDefault(); });
@@ -16248,13 +16248,13 @@
 
     var addLabel = function(text) {
       var l = document.createElement('div');
-      l.className = 'mewyse-font-menu-label';
+      l.className = 'libraeditor-font-menu-label';
       l.textContent = text;
       menu.appendChild(l);
     };
     var addItem = function(text, onPick, styleAttr) {
       var item = document.createElement('div');
-      item.className = 'mewyse-options-menu-item';
+      item.className = 'libraeditor-options-menu-item';
       item.setAttribute('role', 'menuitem');
       item.textContent = text;
       if (styleAttr) item.setAttribute('style', styleAttr);
@@ -16294,7 +16294,7 @@
    * spans al re-aplicar). Desenvuelve el span si queda sin estilo ni clase.
    * @param {HTMLElement} editable
    */
-  meWYSE.prototype._clearBlockLineHeight = function(editable) {
+  LibraEditor.prototype._clearBlockLineHeight = function(editable) {
     if (!editable) return;
     var v_spans = editable.querySelectorAll('[style*="line-height"]');
     for (var i = 0; i < v_spans.length; i++) {
@@ -16312,7 +16312,7 @@
    * hacia arriba dentro del container buscando un `style.lineHeight` explícito.
    * @returns {?string} p. ej. '1.5', o null si no hay uno explícito.
    */
-  meWYSE.prototype._getCurrentLineHeight = function() {
+  LibraEditor.prototype._getCurrentLineHeight = function() {
     if (!this.container) return null;
     var v_node = null;
     var sel = window.getSelection ? window.getSelection() : null;
@@ -16353,14 +16353,14 @@
    * con un check y aplica el line-height a todo el bloque. Espeja showAlignMenu.
    * @param {HTMLElement} button
    */
-  meWYSE.prototype.showLineHeightMenu = function(button) {
+  LibraEditor.prototype.showLineHeightMenu = function(button) {
     var self = this;
     if (this._lineHeightMenu && this._lineHeightMenu.parentNode) {
       this._lineHeightMenu.remove(); this._lineHeightMenu = null; return;
     }
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-options-menu';
+    menu.className = 'libraeditor-options-menu';
     menu.setAttribute('role', 'menu');
     // No perder el caret/foco del bloque al clicar en el menú.
     menu.addEventListener('mousedown', function(e) { e.preventDefault(); });
@@ -16377,14 +16377,14 @@
 
     LINE_HEIGHT_VALUES.forEach(function(v) {
       var item = document.createElement('div');
-      item.className = 'mewyse-options-menu-item';
+      item.className = 'libraeditor-options-menu-item';
       item.setAttribute('role', 'menuitemradio');
       var v_active = (v === v_current);
       if (v_active) item.classList.add('active');
       item.setAttribute('aria-checked', v_active ? 'true' : 'false');
       // Etiqueta + check a la derecha para el valor activo.
       item.innerHTML = '<span>' + v + '</span>' +
-        (v_active ? '<span class="mewyse-menu-check">' + (WYSIWYG_ICONS.check || '✓') + '</span>' : '');
+        (v_active ? '<span class="libraeditor-menu-check">' + (WYSIWYG_ICONS.check || '✓') + '</span>' : '');
       item.onclick = function(e) {
         e.preventDefault(); e.stopPropagation();
         // Quitar el line-height previo del bloque para no anidar spans.
@@ -16420,7 +16420,7 @@
    * HTML editado pasa por el sanitizer al reimportar.
    * @param {string} mode - 'html' | 'markdown'
    */
-  meWYSE.prototype._showCodeSourceModal = function(mode) {
+  LibraEditor.prototype._showCodeSourceModal = function(mode) {
     var self = this;
     var v_is_md = mode === 'markdown';
     var v_code = v_is_md ? this.getMarkdown() : this.getHTMLSource();
@@ -16431,21 +16431,21 @@
     var v_dark = self._isDark();
 
     var overlay = document.createElement('div');
-    overlay.className = 'mewyse-modal-overlay';
+    overlay.className = 'libraeditor-modal-overlay';
 
     var container = document.createElement('div');
-    container.className = 'mewyse-modal-container mewyse-code-modal';
+    container.className = 'libraeditor-modal-container libraeditor-code-modal';
     self._applyMenuTheme(container);
 
     // --- Cabecera: título + cerrar (×) ---
     var header = document.createElement('div');
-    header.className = 'mewyse-code-header';
+    header.className = 'libraeditor-code-header';
     var title = document.createElement('h3');
-    title.className = 'mewyse-modal-title';
+    title.className = 'libraeditor-modal-title';
     title.textContent = self.t(v_is_md ? 'modals.markdownTitle' : 'modals.sourceCodeTitle');
     var closeX = document.createElement('button');
     closeX.type = 'button';
-    closeX.className = 'mewyse-code-close';
+    closeX.className = 'libraeditor-code-close';
     closeX.innerHTML = WYSIWYG_ICONS.close || '×';
     closeX.setAttribute('aria-label', self.t('modals.cancel'));
     header.appendChild(title);
@@ -16454,21 +16454,21 @@
 
     if (v_is_md) {
       var note = document.createElement('p');
-      note.className = 'mewyse-modal-note';
+      note.className = 'libraeditor-modal-note';
       note.textContent = self.t('modals.markdownNote');
       container.appendChild(note);
     }
 
     // --- Área de edición: gutter de números + textarea (+ mirror oculto) ---
     var editorWrap = document.createElement('div');
-    editorWrap.className = 'mewyse-code-editor';
+    editorWrap.className = 'libraeditor-code-editor';
 
     var gutter = document.createElement('div');
-    gutter.className = 'mewyse-code-gutter';
+    gutter.className = 'libraeditor-code-gutter';
     gutter.setAttribute('aria-hidden', 'true');
 
     var textarea = document.createElement('textarea');
-    textarea.className = 'mewyse-code-textarea';
+    textarea.className = 'libraeditor-code-textarea';
     textarea.value = v_code;
     textarea.spellcheck = false;
     textarea.wrap = 'off';
@@ -16477,7 +16477,7 @@
     // Espejo oculto para medir la altura real de cada línea (respeta wrap/fuente),
     // así los números se alinean incluso con salto de línea automático.
     var mirror = document.createElement('div');
-    mirror.className = 'mewyse-code-mirror';
+    mirror.className = 'libraeditor-code-mirror';
     mirror.setAttribute('aria-hidden', 'true');
 
     editorWrap.appendChild(gutter);
@@ -16512,7 +16512,7 @@
       rebuildGutter();
     };
     var applyDark = function() {
-      container.classList.toggle('mewyse-code-dark', v_dark);
+      container.classList.toggle('libraeditor-code-dark', v_dark);
     };
 
     // Sincronizar el scroll del gutter con el textarea; recalcular al editar.
@@ -16525,15 +16525,15 @@
 
     // --- Pie: herramientas (izq) + Cancelar/Guardar (der) ---
     var footer = document.createElement('div');
-    footer.className = 'mewyse-code-footer';
+    footer.className = 'libraeditor-code-footer';
 
     var tools = document.createElement('div');
-    tools.className = 'mewyse-code-tools';
+    tools.className = 'libraeditor-code-tools';
 
     var mkTool = function(html, titleKey, onClick) {
       var b = document.createElement('button');
       b.type = 'button';
-      b.className = 'mewyse-code-tool-btn';
+      b.className = 'libraeditor-code-tool-btn';
       b.innerHTML = html;
       b.title = self.t(titleKey);
       b.setAttribute('aria-label', self.t(titleKey));
@@ -16541,8 +16541,8 @@
       return b;
     };
     var themeBtn = mkTool(WYSIWYG_ICONS.contrast, 'tooltips.codeTheme', function() { v_dark = !v_dark; applyDark(); });
-    var fontDecBtn = mkTool('A<span class="mewyse-code-sub">−</span>', 'tooltips.codeFontDec', function() { v_font = Math.max(10, v_font - 1); applyFont(); });
-    var fontIncBtn = mkTool('A<span class="mewyse-code-sup">+</span>', 'tooltips.codeFontInc', function() { v_font = Math.min(24, v_font + 1); applyFont(); });
+    var fontDecBtn = mkTool('A<span class="libraeditor-code-sub">−</span>', 'tooltips.codeFontDec', function() { v_font = Math.max(10, v_font - 1); applyFont(); });
+    var fontIncBtn = mkTool('A<span class="libraeditor-code-sup">+</span>', 'tooltips.codeFontInc', function() { v_font = Math.min(24, v_font + 1); applyFont(); });
     var wrapBtn = mkTool(WYSIWYG_ICONS.wordWrap, 'tooltips.codeWrap', function() { v_wrap = !v_wrap; applyWrap(); });
 
     tools.appendChild(themeBtn);
@@ -16551,26 +16551,26 @@
     tools.appendChild(wrapBtn);
 
     var buttons = document.createElement('div');
-    buttons.className = 'mewyse-modal-buttons';
+    buttons.className = 'libraeditor-modal-buttons';
 
     // Bloqueo de scroll de la página mientras el modal está abierto.
-    document.body.classList.add('mewyse-scroll-lock');
+    document.body.classList.add('libraeditor-scroll-lock');
     var close = function() {
       if (v_rebuild_timer) clearTimeout(v_rebuild_timer);
-      document.body.classList.remove('mewyse-scroll-lock');
+      document.body.classList.remove('libraeditor-scroll-lock');
       if (overlay.parentNode) document.body.removeChild(overlay);
     };
     closeX.onclick = close;
 
     var cancelBtn = document.createElement('button');
     cancelBtn.type = 'button';
-    cancelBtn.className = 'mewyse-modal-button mewyse-modal-button-cancel';
+    cancelBtn.className = 'libraeditor-modal-button libraeditor-modal-button-cancel';
     cancelBtn.textContent = self.t('modals.cancel');
     cancelBtn.onclick = close;
 
     var saveBtn = document.createElement('button');
     saveBtn.type = 'button';
-    saveBtn.className = 'mewyse-modal-button mewyse-modal-button-primary';
+    saveBtn.className = 'libraeditor-modal-button libraeditor-modal-button-primary';
     saveBtn.textContent = self.t('modals.save');
     saveBtn.onclick = function() {
       var v_val = textarea.value;
@@ -16600,7 +16600,7 @@
    * Picker de caracteres especiales. Inserta el símbolo como TEXTO (execCommand
    * insertText) → sin riesgo para el sanitizer. Anclado a un botón de la toolbar.
    */
-  meWYSE.prototype.showSpecialCharsMenu = function(button) {
+  LibraEditor.prototype.showSpecialCharsMenu = function(button) {
     var self = this;
     if (this._specialCharsMenu && this._specialCharsMenu.parentNode) {
       this._specialCharsMenu.remove(); this._specialCharsMenu = null; return;
@@ -16611,7 +16611,7 @@
                  '£','¥','¢','←','→','↑','↓','✓','✗','★'];
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-special-chars-menu';
+    menu.className = 'libraeditor-special-chars-menu';
     menu.setAttribute('role', 'menu');
     // Guardar el range actual para restaurarlo antes de insertar.
     var v_saved = null;
@@ -16629,7 +16629,7 @@
 
     chars.forEach(function(ch) {
       var b = document.createElement('button');
-      b.className = 'mewyse-special-char';
+      b.className = 'libraeditor-special-char';
       b.textContent = ch;
       b.title = ch;
       b.onclick = function(e) {
@@ -16665,7 +16665,7 @@
    * Menú de variante del bloque callout (info/warning/success/danger). Cambia
    * block.calloutVariant y re-renderiza el bloque.
    */
-  meWYSE.prototype.showCalloutVariantMenu = function(blockId, button) {
+  LibraEditor.prototype.showCalloutVariantMenu = function(blockId, button) {
     var self = this;
     if (this._calloutMenu && this._calloutMenu.parentNode) {
       this._calloutMenu.remove(); this._calloutMenu = null; return;
@@ -16673,7 +16673,7 @@
     var variants = ['info', 'warning', 'success', 'danger'];
 
     var menu = document.createElement('div');
-    menu.className = 'mewyse-options-menu mewyse-callout-menu';
+    menu.className = 'libraeditor-options-menu libraeditor-callout-menu';
     menu.setAttribute('role', 'menu');
     menu.addEventListener('mousedown', function(e) { e.preventDefault(); });
 
@@ -16687,9 +16687,9 @@
 
     variants.forEach(function(v) {
       var item = document.createElement('div');
-      item.className = 'mewyse-options-menu-item';
+      item.className = 'libraeditor-options-menu-item';
       item.setAttribute('role', 'menuitem');
-      item.innerHTML = '<span class="mewyse-callout-swatch mewyse-callout-' + v + '"></span> ' + self.t('callout.' + v);
+      item.innerHTML = '<span class="libraeditor-callout-swatch libraeditor-callout-' + v + '"></span> ' + self.t('callout.' + v);
       item.onclick = function(e) {
         e.preventDefault(); e.stopPropagation();
         var blk = self.getBlock(blockId);
@@ -16721,7 +16721,7 @@
   /**
    * Cierra el menú de formato
    */
-  meWYSE.prototype.closeFormatMenu = function() {
+  LibraEditor.prototype.closeFormatMenu = function() {
     if (this.formatMenu) {
       // Cancelar la animación de anclaje antes de eliminar el menú
       if (this.formatMenu._cancelAnchor) {
@@ -16744,7 +16744,7 @@
     if (this._closeColorPicker) {
       this._closeColorPicker();
     } else {
-      var picker = document.querySelector('.mewyse-color-picker');
+      var picker = document.querySelector('.libraeditor-color-picker');
       if (picker) picker.remove();
     }
   };
@@ -16752,7 +16752,7 @@
   /**
    * Crea el botón de resumen
    */
-  meWYSE.prototype.createSummaryButton = function() {
+  LibraEditor.prototype.createSummaryButton = function() {
     var self = this;
 
     // Si el botón ya existe, eliminarlo primero
@@ -16762,7 +16762,7 @@
 
     // Crear el botón
     this.summaryButton = document.createElement('button');
-    this.summaryButton.className = 'mewyse-summary-button';
+    this.summaryButton.className = 'libraeditor-summary-button';
     this.summaryButton.innerHTML = WYSIWYG_ICONS.summaryPanel;
     this.summaryButton.title = this.t('tooltips.summary');
 
@@ -16804,7 +16804,7 @@
   /**
    * Obtiene el índice de encabezados
    */
-  meWYSE.prototype.getHeadingsIndex = function() {
+  LibraEditor.prototype.getHeadingsIndex = function() {
     var headings = [];
 
     this.getFilteredBlocks().forEach(function(block, index) {
@@ -16830,7 +16830,7 @@
   /**
    * Muestra el tooltip con índice rápido
    */
-  meWYSE.prototype.showSummaryTooltip = function() {
+  LibraEditor.prototype.showSummaryTooltip = function() {
     var self = this;
 
     // Cerrar tooltip anterior si existe
@@ -16845,11 +16845,11 @@
 
     // Crear tooltip
     var tooltip = document.createElement('div');
-    tooltip.className = 'mewyse-summary-tooltip';
+    tooltip.className = 'libraeditor-summary-tooltip';
 
     headings.forEach(function(heading) {
       var item = document.createElement('div');
-      item.className = 'mewyse-summary-tooltip-item mewyse-summary-' + heading.type;
+      item.className = 'libraeditor-summary-tooltip-item libraeditor-summary-' + heading.type;
       item.textContent = heading.text;
       item.addEventListener('click', function(e) {
         e.preventDefault();
@@ -16920,7 +16920,7 @@
   /**
    * Oculta el tooltip
    */
-  meWYSE.prototype.hideSummaryTooltip = function() {
+  LibraEditor.prototype.hideSummaryTooltip = function() {
     if (this.summaryTooltip) {
       this.summaryTooltip.remove();
       this.summaryTooltip = null;
@@ -16931,7 +16931,7 @@
   /**
    * Alterna el panel de esquema lateral. Sin wrapper (toolbar), cae al modal.
    */
-  meWYSE.prototype.toggleOutlinePanel = function() {
+  LibraEditor.prototype.toggleOutlinePanel = function() {
     if (!this.editorWrapper) {
       // Sin wrapper no se puede empujar el contenido: usar el modal de antes.
       this.showSummaryModal();
@@ -16947,20 +16947,20 @@
   /**
    * Construye el contenido del panel de esquema (stats compactas + índice).
    */
-  meWYSE.prototype._buildOutlineContent = function() {
+  LibraEditor.prototype._buildOutlineContent = function() {
     var self = this;
     var panel = this.outlinePanel;
     if (!panel) return;
-    var body = panel.querySelector('.mewyse-outline-body');
+    var body = panel.querySelector('.libraeditor-outline-body');
     if (!body) return;
     body.innerHTML = '';
 
     // Stats compactas
     var stats = document.createElement('div');
-    stats.className = 'mewyse-summary-stats';
-    stats.innerHTML = '<div class="mewyse-summary-stats-grid">' +
-      '<div class="mewyse-summary-stat"><span class="mewyse-summary-stat-label">' + this.t('summary.words') + '</span> <span class="mewyse-summary-stat-value">' + this.getWordCount() + '</span></div>' +
-      '<div class="mewyse-summary-stat"><span class="mewyse-summary-stat-label">' + this.t('summary.readingTime') + '</span> <span class="mewyse-summary-stat-value">' + this.getReadingTime() + '</span></div>' +
+    stats.className = 'libraeditor-summary-stats';
+    stats.innerHTML = '<div class="libraeditor-summary-stats-grid">' +
+      '<div class="libraeditor-summary-stat"><span class="libraeditor-summary-stat-label">' + this.t('summary.words') + '</span> <span class="libraeditor-summary-stat-value">' + this.getWordCount() + '</span></div>' +
+      '<div class="libraeditor-summary-stat"><span class="libraeditor-summary-stat-label">' + this.t('summary.readingTime') + '</span> <span class="libraeditor-summary-stat-value">' + this.getReadingTime() + '</span></div>' +
       '</div>';
     body.appendChild(stats);
 
@@ -16968,15 +16968,15 @@
     var headings = this.getHeadingsIndex();
     if (headings.length > 0) {
       var indexSection = document.createElement('div');
-      indexSection.className = 'mewyse-summary-index';
+      indexSection.className = 'libraeditor-summary-index';
       var indexTitle = document.createElement('h4');
       indexTitle.textContent = this.t('summary.index');
       indexSection.appendChild(indexTitle);
       var indexList = document.createElement('div');
-      indexList.className = 'mewyse-summary-index-list';
+      indexList.className = 'libraeditor-summary-index-list';
       headings.forEach(function(heading) {
         var item = document.createElement('div');
-        item.className = 'mewyse-summary-index-item mewyse-summary-' + heading.type;
+        item.className = 'libraeditor-summary-index-item libraeditor-summary-' + heading.type;
         item.textContent = heading.text;
         item.addEventListener('click', function() {
           self.navigateToHeading(heading.id);
@@ -16987,7 +16987,7 @@
       body.appendChild(indexSection);
     } else {
       var noHeadings = document.createElement('p');
-      noHeadings.className = 'mewyse-summary-no-headings';
+      noHeadings.className = 'libraeditor-summary-no-headings';
       noHeadings.textContent = this.t('summary.noHeadings');
       body.appendChild(noHeadings);
     }
@@ -16996,19 +16996,19 @@
   /**
    * Abre el panel de esquema anclado a la derecha (empuja el contenido).
    */
-  meWYSE.prototype.openOutlinePanel = function() {
+  LibraEditor.prototype.openOutlinePanel = function() {
     var self = this;
     if (!this.editorWrapper || this.outlinePanel) return;
 
     var panel = document.createElement('div');
-    panel.className = 'mewyse-outline-panel';
+    panel.className = 'libraeditor-outline-panel';
     this._applyMenuTheme(panel);
 
     var header = document.createElement('div');
-    header.className = 'mewyse-outline-header';
-    header.innerHTML = '<span class="mewyse-outline-title">' + this.t('summary.title') + '</span>';
+    header.className = 'libraeditor-outline-header';
+    header.innerHTML = '<span class="libraeditor-outline-title">' + this.t('summary.title') + '</span>';
     var closeBtn = document.createElement('button');
-    closeBtn.className = 'mewyse-outline-close';
+    closeBtn.className = 'libraeditor-outline-close';
     closeBtn.innerHTML = WYSIWYG_ICONS.close;
     closeBtn.title = this.t('summary.close');
     closeBtn.setAttribute('aria-label', this.t('summary.close'));
@@ -17017,11 +17017,11 @@
     panel.appendChild(header);
 
     var bodyEl = document.createElement('div');
-    bodyEl.className = 'mewyse-outline-body';
+    bodyEl.className = 'libraeditor-outline-body';
     panel.appendChild(bodyEl);
 
     this.editorWrapper.appendChild(panel);
-    this.editorWrapper.classList.add('mewyse-has-outline');
+    this.editorWrapper.classList.add('libraeditor-has-outline');
     this.outlinePanel = panel;
 
     this._setSummaryButtonsActive(true);
@@ -17034,7 +17034,7 @@
    * que existan: el flotante (this.summaryButton) y el de la toolbar
    * (this.toolbarSummaryButton).
    */
-  meWYSE.prototype._setSummaryButtonsActive = function(v_active) {
+  LibraEditor.prototype._setSummaryButtonsActive = function(v_active) {
     var v_buttons = [this.summaryButton, this.toolbarSummaryButton];
     for (var i = 0; i < v_buttons.length; i++) {
       var v_btn = v_buttons[i];
@@ -17047,13 +17047,13 @@
   /**
    * Cierra el panel de esquema y restaura el ancho del editor.
    */
-  meWYSE.prototype.closeOutlinePanel = function() {
+  LibraEditor.prototype.closeOutlinePanel = function() {
     if (this.outlinePanel && this.outlinePanel.parentNode) {
       this.outlinePanel.parentNode.removeChild(this.outlinePanel);
     }
     this.outlinePanel = null;
     if (this.editorWrapper) {
-      this.editorWrapper.classList.remove('mewyse-has-outline');
+      this.editorWrapper.classList.remove('libraeditor-has-outline');
     }
     this._setSummaryButtonsActive(false);
   };
@@ -17061,26 +17061,26 @@
   /**
    * Muestra el modal de resumen completo
    */
-  meWYSE.prototype.showSummaryModal = function() {
+  LibraEditor.prototype.showSummaryModal = function() {
     var self = this;
 
     // Crear overlay
     var overlay = document.createElement('div');
-    overlay.className = 'mewyse-summary-overlay';
+    overlay.className = 'libraeditor-summary-overlay';
 
     // Crear modal
     var modal = document.createElement('div');
-    modal.className = 'mewyse-summary-modal';
+    modal.className = 'libraeditor-summary-modal';
     self._applyMenuTheme(modal); // dark mode si el editor está en oscuro
 
     // Título del modal
     var header = document.createElement('div');
-    header.className = 'mewyse-summary-modal-header';
+    header.className = 'libraeditor-summary-modal-header';
     header.innerHTML = '<h3>' + this.t('summary.title') + '</h3>';
 
     // Botón cerrar
     var closeBtn = document.createElement('button');
-    closeBtn.className = 'mewyse-summary-close';
+    closeBtn.className = 'libraeditor-summary-close';
     closeBtn.innerHTML = WYSIWYG_ICONS.close;
     closeBtn.addEventListener('click', function() {
       overlay.remove();
@@ -17091,22 +17091,22 @@
 
     // Contenido del modal
     var content = document.createElement('div');
-    content.className = 'mewyse-summary-modal-content';
+    content.className = 'libraeditor-summary-modal-content';
 
     // Bloque de estadísticas
     var stats = document.createElement('div');
-    stats.className = 'mewyse-summary-stats';
+    stats.className = 'libraeditor-summary-stats';
 
     var wordCount = this.getWordCount();
     var charCount = this.getCharacterCount();
     var paragraphCount = this.getParagraphCount();
     var readingTime = this.getReadingTime();
 
-    stats.innerHTML = '<div class="mewyse-summary-stats-grid">' +
-      '<div class="mewyse-summary-stat"><span class="mewyse-summary-stat-label">' + this.t('summary.words') + '</span> <span class="mewyse-summary-stat-value">' + wordCount + '</span></div>' +
-      '<div class="mewyse-summary-stat"><span class="mewyse-summary-stat-label">' + this.t('summary.characters') + '</span> <span class="mewyse-summary-stat-value">' + charCount + '</span></div>' +
-      '<div class="mewyse-summary-stat"><span class="mewyse-summary-stat-label">' + this.t('summary.paragraphs') + '</span> <span class="mewyse-summary-stat-value">' + paragraphCount + '</span></div>' +
-      '<div class="mewyse-summary-stat"><span class="mewyse-summary-stat-label">' + this.t('summary.readingTime') + '</span> <span class="mewyse-summary-stat-value">' + readingTime + '</span></div>' +
+    stats.innerHTML = '<div class="libraeditor-summary-stats-grid">' +
+      '<div class="libraeditor-summary-stat"><span class="libraeditor-summary-stat-label">' + this.t('summary.words') + '</span> <span class="libraeditor-summary-stat-value">' + wordCount + '</span></div>' +
+      '<div class="libraeditor-summary-stat"><span class="libraeditor-summary-stat-label">' + this.t('summary.characters') + '</span> <span class="libraeditor-summary-stat-value">' + charCount + '</span></div>' +
+      '<div class="libraeditor-summary-stat"><span class="libraeditor-summary-stat-label">' + this.t('summary.paragraphs') + '</span> <span class="libraeditor-summary-stat-value">' + paragraphCount + '</span></div>' +
+      '<div class="libraeditor-summary-stat"><span class="libraeditor-summary-stat-label">' + this.t('summary.readingTime') + '</span> <span class="libraeditor-summary-stat-value">' + readingTime + '</span></div>' +
       '</div>';
 
     content.appendChild(stats);
@@ -17116,18 +17116,18 @@
 
     if (headings.length > 0) {
       var indexSection = document.createElement('div');
-      indexSection.className = 'mewyse-summary-index';
+      indexSection.className = 'libraeditor-summary-index';
 
       var indexTitle = document.createElement('h4');
       indexTitle.textContent = this.t('summary.index');
       indexSection.appendChild(indexTitle);
 
       var indexList = document.createElement('div');
-      indexList.className = 'mewyse-summary-index-list';
+      indexList.className = 'libraeditor-summary-index-list';
 
       headings.forEach(function(heading) {
         var item = document.createElement('div');
-        item.className = 'mewyse-summary-index-item mewyse-summary-' + heading.type;
+        item.className = 'libraeditor-summary-index-item libraeditor-summary-' + heading.type;
         item.textContent = heading.text;
         item.addEventListener('click', function() {
           self.navigateToHeading(heading.id);
@@ -17140,7 +17140,7 @@
       content.appendChild(indexSection);
     } else {
       var noHeadings = document.createElement('p');
-      noHeadings.className = 'mewyse-summary-no-headings';
+      noHeadings.className = 'libraeditor-summary-no-headings';
       noHeadings.textContent = this.t('summary.noHeadings');
       content.appendChild(noHeadings);
     }
@@ -17161,7 +17161,7 @@
   /**
    * Navega a un encabezado específico
    */
-  meWYSE.prototype.navigateToHeading = function(blockId) {
+  LibraEditor.prototype.navigateToHeading = function(blockId) {
     var v_block_el = this.container.querySelector('[data-block-id="' + blockId + '"]');
     if (!v_block_el) return;
 
@@ -17209,34 +17209,34 @@
    * Rellena el contenido de un elemento TOC (tabla de contenidos) a partir de los
    * títulos actuales del documento. Se separa de _buildTocElement para poder
    * refrescar el mismo nodo sin recrear el bloque (conserva clases/atributos).
-   * @param {HTMLElement} v_nav - el elemento .mewyse-toc a rellenar
+   * @param {HTMLElement} v_nav - el elemento .libraeditor-toc a rellenar
    */
-  meWYSE.prototype._fillTocContent = function(v_nav) {
+  LibraEditor.prototype._fillTocContent = function(v_nav) {
     var self = this;
     v_nav.innerHTML = '';
 
     var v_title = document.createElement('div');
-    v_title.className = 'mewyse-toc-title';
+    v_title.className = 'libraeditor-toc-title';
     v_title.textContent = this.t('toc.title');
     v_nav.appendChild(v_title);
 
     var v_headings = this.getHeadingsIndex();
     if (!v_headings.length) {
       var v_empty = document.createElement('div');
-      v_empty.className = 'mewyse-toc-empty';
+      v_empty.className = 'libraeditor-toc-empty';
       v_empty.textContent = this.t('toc.empty');
       v_nav.appendChild(v_empty);
       return;
     }
 
     var v_list = document.createElement('ul');
-    v_list.className = 'mewyse-toc-list';
+    v_list.className = 'libraeditor-toc-list';
     v_headings.forEach(function(v_h) {
       var v_li = document.createElement('li');
       // Clase por nivel (heading1/2/3) para la indentación visual.
-      v_li.className = 'mewyse-toc-item mewyse-toc-' + v_h.type;
+      v_li.className = 'libraeditor-toc-item libraeditor-toc-' + v_h.type;
       var v_link = document.createElement('a');
-      v_link.className = 'mewyse-toc-link';
+      v_link.className = 'libraeditor-toc-link';
       v_link.href = '#';
       v_link.textContent = v_h.text || self.t('toc.untitled');
       v_link.onclick = function(e) {
@@ -17254,9 +17254,9 @@
    * @param {number} blockId
    * @returns {HTMLElement}
    */
-  meWYSE.prototype._buildTocElement = function(blockId) {
+  LibraEditor.prototype._buildTocElement = function(blockId) {
     var v_nav = document.createElement('nav');
-    v_nav.className = 'mewyse-toc';
+    v_nav.className = 'libraeditor-toc';
     v_nav.setAttribute('contenteditable', 'false');
     v_nav.setAttribute('aria-label', this.t('toc.title'));
     this._fillTocContent(v_nav);
@@ -17267,9 +17267,9 @@
    * Refresca todos los bloques TOC presentes en el DOM para reflejar los títulos
    * en vivo. Se llama desde triggerChange. No-op si no hay ninguno.
    */
-  meWYSE.prototype._refreshTocBlocks = function() {
+  LibraEditor.prototype._refreshTocBlocks = function() {
     if (!this.container) return;
-    var v_tocs = this.container.querySelectorAll('.mewyse-block[data-block-type="toc"]');
+    var v_tocs = this.container.querySelectorAll('.libraeditor-block[data-block-type="toc"]');
     for (var i = 0; i < v_tocs.length; i++) {
       this._fillTocContent(v_tocs[i]);
     }
@@ -17277,12 +17277,12 @@
 
   /**
    * Construye el HTML del índice (TOC) para el export, con enlaces a los ids de
-   * ancla de los títulos (id="mewyse-h-{id}", emitidos por getHTML/getHTMLSource
+   * ancla de los títulos (id="libraeditor-h-{id}", emitidos por getHTML/getHTMLSource
    * cuando hay un TOC). Recibe la lista de bloques ya filtrada.
    * @param {Array} v_blocks
    * @returns {string}
    */
-  meWYSE.prototype._buildTocHTML = function(v_blocks) {
+  LibraEditor.prototype._buildTocHTML = function(v_blocks) {
     var v_items = '';
     for (var i = 0; i < v_blocks.length; i++) {
       var b = v_blocks[i];
@@ -17291,12 +17291,12 @@
         var v_tmp = document.createElement('div');
         v_tmp.innerHTML = b.content || '';
         var v_txt = v_tmp.textContent || '';
-        v_items += '<li class="mewyse-toc-' + b.type + '"><a href="#mewyse-h-' +
+        v_items += '<li class="libraeditor-toc-' + b.type + '"><a href="#libraeditor-h-' +
                    b.id + '">' + escapeHtml(v_txt) + '</a></li>';
       }
     }
-    if (!v_items) return '<nav class="mewyse-toc"></nav>';
-    return '<nav class="mewyse-toc"><ul class="mewyse-toc-list">' + v_items + '</ul></nav>';
+    if (!v_items) return '<nav class="libraeditor-toc"></nav>';
+    return '<nav class="libraeditor-toc"><ul class="libraeditor-toc-list">' + v_items + '</ul></nav>';
   };
 
   /**
@@ -17305,7 +17305,7 @@
    * @param {string} v_text
    * @returns {string}
    */
-  meWYSE.prototype._slugify = function(v_text) {
+  LibraEditor.prototype._slugify = function(v_text) {
     var v_str = (typeof v_text === 'string') ? v_text : '';
     // normalizeText: minúsculas + sin diacríticos (á→a). Reutiliza el helper.
     return this.normalizeText(v_str)
@@ -17318,7 +17318,7 @@
   /**
    * Obtiene el número de palabras
    */
-  meWYSE.prototype.getWordCount = function() {
+  LibraEditor.prototype.getWordCount = function() {
     var text = this.getPlainText();
     if (!text || text.trim() === '') {
       return 0;
@@ -17332,7 +17332,7 @@
   /**
    * Obtiene el número de caracteres
    */
-  meWYSE.prototype.getCharacterCount = function() {
+  LibraEditor.prototype.getCharacterCount = function() {
     var text = this.getPlainText();
     return text.length;
   };
@@ -17340,7 +17340,7 @@
   /**
    * Obtiene el número de párrafos
    */
-  meWYSE.prototype.getParagraphCount = function() {
+  LibraEditor.prototype.getParagraphCount = function() {
     var count = 0;
 
     this.getFilteredBlocks().forEach(function(block) {
@@ -17365,7 +17365,7 @@
   /**
    * Obtiene el tiempo estimado de lectura
    */
-  meWYSE.prototype.getReadingTime = function() {
+  LibraEditor.prototype.getReadingTime = function() {
     var wordCount = this.getWordCount();
 
     // Promedio de lectura: 200 palabras por minuto
@@ -17390,10 +17390,10 @@
    * @param {number} clientY
    * @returns {string|null}
    */
-  meWYSE.prototype.getBlockIdAtPoint = function(clientX, clientY) {
+  LibraEditor.prototype.getBlockIdAtPoint = function(clientX, clientY) {
     var el = document.elementFromPoint(clientX, clientY);
     while (el && el !== this.container) {
-      if (el.classList && el.classList.contains('mewyse-block') && el.getAttribute('data-block-id')) {
+      if (el.classList && el.classList.contains('libraeditor-block') && el.getAttribute('data-block-id')) {
         return parseInt(el.getAttribute('data-block-id'), 10);
       }
       el = el.parentNode;
@@ -17407,7 +17407,7 @@
    * @param {number} clientY
    * @returns {{ node: Node, offset: number }|null}
    */
-  meWYSE.prototype.getCaretInfoAtPoint = function(clientX, clientY) {
+  LibraEditor.prototype.getCaretInfoAtPoint = function(clientX, clientY) {
     if (document.caretRangeFromPoint) {
       // Chrome, Safari
       var range = document.caretRangeFromPoint(clientX, clientY);
@@ -17428,10 +17428,10 @@
    * Crea el overlay de selección visual si no existe
    * @returns {HTMLElement}
    */
-  meWYSE.prototype.createSelectionOverlay = function() {
+  LibraEditor.prototype.createSelectionOverlay = function() {
     if (!this.crossBlockOverlay) {
       var overlay = document.createElement('div');
-      overlay.className = 'mewyse-selection-overlay';
+      overlay.className = 'libraeditor-selection-overlay';
       this.container.appendChild(overlay);
       this.crossBlockOverlay = overlay;
     }
@@ -17443,7 +17443,7 @@
    * @param {MouseEvent} e
    * @param {number} blockId
    */
-  meWYSE.prototype.startCrossBlockTracking = function(e, blockId) {
+  LibraEditor.prototype.startCrossBlockTracking = function(e, blockId) {
     var self = this;
     if (this.crossBlockSelection) {
       this.clearCrossBlockSelection();
@@ -17469,7 +17469,7 @@
         if (!self.isCrossBlockSelecting) {
           // Comenzamos selección cross-block
           self.isCrossBlockSelecting = true;
-          self.container.classList.add('mewyse-cross-selecting');
+          self.container.classList.add('libraeditor-cross-selecting');
           // Limpiar selección nativa
           var sel = window.getSelection();
           if (sel) sel.removeAllRanges();
@@ -17501,7 +17501,7 @@
    * @param {number} clientY
    * @param {number} currentBlockId
    */
-  meWYSE.prototype.updateCrossBlockSelection = function(clientX, clientY, currentBlockId) {
+  LibraEditor.prototype.updateCrossBlockSelection = function(clientX, clientY, currentBlockId) {
     var origin = this.crossBlockSelectOrigin;
     if (!origin) return;
 
@@ -17542,7 +17542,7 @@
    * estableció una selección.
    * @returns {boolean}
    */
-  meWYSE.prototype.selectAllBlocks = function() {
+  LibraEditor.prototype.selectAllBlocks = function() {
     if (!this.blocks || this.blocks.length === 0) return false;
 
     var firstBlock = this.blocks[0];
@@ -17584,7 +17584,7 @@
    * @param {Object} sel - El objeto crossBlockSelection
    * @returns {Range|null}
    */
-  meWYSE.prototype.getRangeForBlock = function(blockId, sel) {
+  LibraEditor.prototype.getRangeForBlock = function(blockId, sel) {
     var blockEl = this.getBlockElementById(blockId);
     if (!blockEl) return null;
 
@@ -17661,7 +17661,7 @@
   /**
    * Renderiza el highlight visual de la selección cross-block
    */
-  meWYSE.prototype.renderCrossBlockHighlight = function() {
+  LibraEditor.prototype.renderCrossBlockHighlight = function() {
     var self = this;
     if (this._crossBlockRafId) {
       cancelAnimationFrame(this._crossBlockRafId);
@@ -17674,7 +17674,7 @@
   /**
    * Implementación real del renderizado de highlight
    */
-  meWYSE.prototype._renderCrossBlockHighlightNow = function() {
+  LibraEditor.prototype._renderCrossBlockHighlightNow = function() {
     var overlay = this.createSelectionOverlay();
     // Limpiar rectángulos anteriores
     overlay.innerHTML = '';
@@ -17696,7 +17696,7 @@
         var r = rects[j];
         if (r.width === 0 && r.height === 0) continue;
         var div = document.createElement('div');
-        div.className = 'mewyse-cross-selection-rect';
+        div.className = 'libraeditor-cross-selection-rect';
         div.style.left = (r.left - containerRect.left + scrollLeft) + 'px';
         div.style.top = (r.top - containerRect.top + scrollTop) + 'px';
         div.style.width = r.width + 'px';
@@ -17709,9 +17709,9 @@
   /**
    * Finaliza la selección cross-block al soltar el mouse
    */
-  meWYSE.prototype.finalizeCrossBlockSelection = function() {
+  LibraEditor.prototype.finalizeCrossBlockSelection = function() {
     this.isCrossBlockSelecting = false;
-    this.container.classList.remove('mewyse-cross-selecting');
+    this.container.classList.remove('libraeditor-cross-selecting');
     this.crossBlockSelectOrigin = null;
 
     if (!this.crossBlockSelection || this.crossBlockSelection.blockIds.length === 0) {
@@ -17769,11 +17769,11 @@
   /**
    * Limpia toda la selección cross-block
    */
-  meWYSE.prototype.clearCrossBlockSelection = function() {
+  LibraEditor.prototype.clearCrossBlockSelection = function() {
     this.crossBlockSelection = null;
     this.isCrossBlockSelecting = false;
     this.crossBlockSelectOrigin = null;
-    this.container.classList.remove('mewyse-cross-selecting');
+    this.container.classList.remove('libraeditor-cross-selecting');
 
     if (this._crossBlockRafId) {
       cancelAnimationFrame(this._crossBlockRafId);
@@ -17789,7 +17789,7 @@
   /**
    * Copia el contenido de la selección cross-block al clipboard
    */
-  meWYSE.prototype.executeCrossBlockCopy = function() {
+  LibraEditor.prototype.executeCrossBlockCopy = function() {
     if (!this.crossBlockSelection) return;
 
     var sel = this.crossBlockSelection;
@@ -17863,7 +17863,7 @@
    * @param {string} command - Comando execCommand (bold, italic, etc.)
    * @param {string} [value] - Valor opcional del comando
    */
-  meWYSE.prototype.applyCrossBlockFormat = function(command, value) {
+  LibraEditor.prototype.applyCrossBlockFormat = function(command, value) {
     if (!this.crossBlockSelection) return;
 
     var sel = this.crossBlockSelection;
@@ -17897,7 +17897,7 @@
   /**
    * Toggle case para la selección cross-block
    */
-  meWYSE.prototype.toggleCrossBlockCase = function() {
+  LibraEditor.prototype.toggleCrossBlockCase = function() {
     // Compat: toggle binario smart
     this.applyCaseTransform('smart');
   };
@@ -17905,7 +17905,7 @@
   /**
    * Elimina el contenido de la selección cross-block
    */
-  meWYSE.prototype.deleteCrossBlockSelection = function() {
+  LibraEditor.prototype.deleteCrossBlockSelection = function() {
     if (!this.crossBlockSelection) return;
     this.pushHistory(true);
 
@@ -17969,7 +17969,7 @@
           // Si está en un grupo de lista, manejar correctamente
           var parent = removeEl.parentNode;
           removeEl.remove();
-          if (parent && (parent.classList.contains('mewyse-list-group') || parent.classList.contains('mewyse-checklist-group'))) {
+          if (parent && (parent.classList.contains('libraeditor-list-group') || parent.classList.contains('libraeditor-checklist-group'))) {
             if (parent.children.length === 0) {
               parent.remove();
             }
@@ -18022,7 +18022,7 @@
    * debounced pendiente de esa carga (que, al coincidir con la base, se
    * deduplicaría igualmente).
    */
-  meWYSE.prototype._reset_history = function() {
+  LibraEditor.prototype._reset_history = function() {
     clearTimeout(this.historyDebounceTimer);
     this.historyDebounceTimer = null;
     this.history = [JSON.parse(JSON.stringify(this.blocks))];
@@ -18030,7 +18030,7 @@
     this.updateUndoRedoButtons();
   };
 
-  meWYSE.prototype.pushHistory = function(force) {
+  LibraEditor.prototype.pushHistory = function(force) {
     if (this.isUndoRedo) return;
 
     var self = this;
@@ -18076,7 +18076,7 @@
   /**
    * Deshace el último cambio
    */
-  meWYSE.prototype.undo = function() {
+  LibraEditor.prototype.undo = function() {
     // Capturar dónde está el caret ANTES de reconstruir el DOM, para devolver el
     // foco al editor después (a la misma posición si sobrevive; si no, al final
     // del bloque visible).
@@ -18129,7 +18129,7 @@
   /**
    * Rehace el último cambio deshecho
    */
-  meWYSE.prototype.redo = function() {
+  LibraEditor.prototype.redo = function() {
     if (this.historyIndex >= this.history.length - 1) return;
 
     // Capturar el caret antes del render para devolver el foco después.
@@ -18159,7 +18159,7 @@
   /**
    * Actualiza el estado de los botones undo/redo en la toolbar
    */
-  meWYSE.prototype.updateUndoRedoButtons = function() {
+  LibraEditor.prototype.updateUndoRedoButtons = function() {
     if (this.undoButton) {
       this.undoButton.disabled = (this.historyIndex <= 0);
     }
@@ -18180,7 +18180,7 @@
    * Obtiene el ID del bloque con foco actual
    * @returns {number|null}
    */
-  meWYSE.prototype._getFocusedBlockId = function() {
+  LibraEditor.prototype._getFocusedBlockId = function() {
     // 1) Preferir la posición del CARET (selección). En listas anidadas, los <li>
     //    son contenteditable dentro de otro contenteditable, así que activeElement
     //    apunta al <li> padre (editing host), pero el caret está en el ítem real.
@@ -18205,7 +18205,7 @@
   /**
    * Mueve el bloque con foco una posición arriba
    */
-  meWYSE.prototype.moveBlockUp = function() {
+  LibraEditor.prototype.moveBlockUp = function() {
     var blockId = this._getFocusedBlockId();
     if (blockId === null) return;
     var index = this.getBlockIndex(blockId);
@@ -18224,7 +18224,7 @@
   /**
    * Mueve el bloque con foco una posición abajo
    */
-  meWYSE.prototype.moveBlockDown = function() {
+  LibraEditor.prototype.moveBlockDown = function() {
     var blockId = this._getFocusedBlockId();
     if (blockId === null) return;
     var index = this.getBlockIndex(blockId);
@@ -18253,7 +18253,7 @@
   /**
    * Actualiza el estado enabled/disabled de los botones de mover
    */
-  meWYSE.prototype._updateMoveButtons = function() {
+  LibraEditor.prototype._updateMoveButtons = function() {
     // Actualizar también los botones de sangría y de alineación y el stepper de
     // tamaño de fuente (comparten los disparadores de foco).
     this._updateIndentButtons();
@@ -18275,7 +18275,7 @@
    * Actualiza el estado enabled/disabled de los botones de sangría según el
    * bloque con foco (solo activos en ítems de lista que pueden indentar/desindentar).
    */
-  meWYSE.prototype._updateIndentButtons = function() {
+  LibraEditor.prototype._updateIndentButtons = function() {
     if (!this.indentButton || !this.outdentButton) return;
     var blockId = this._getFocusedBlockId();
     if (blockId === null) {
@@ -18295,8 +18295,8 @@
    * Aplica un tema al editor y sus elementos
    * @param {string} theme - nombre del tema (ej: 'dark')
    */
-  meWYSE.prototype._applyTheme = function(theme) {
-    var themeClass = 'mewyse-editor-' + theme;
+  LibraEditor.prototype._applyTheme = function(theme) {
+    var themeClass = 'libraeditor-editor-' + theme;
     if (this.container) {
       this.container.classList.add(themeClass);
     }
@@ -18310,8 +18310,8 @@
    * Elimina un tema del editor y sus elementos
    * @param {string} theme - nombre del tema a eliminar
    */
-  meWYSE.prototype._removeTheme = function(theme) {
-    var themeClass = 'mewyse-editor-' + theme;
+  LibraEditor.prototype._removeTheme = function(theme) {
+    var themeClass = 'libraeditor-editor-' + theme;
     if (this.container) {
       this.container.classList.remove(themeClass);
     }
@@ -18324,7 +18324,7 @@
   /**
    * Devuelve true si el editor está en modo dark
    */
-  meWYSE.prototype._isDark = function() {
+  LibraEditor.prototype._isDark = function() {
     return this.options.theme === 'dark';
   };
 
@@ -18336,9 +18336,9 @@
    * Aplica la clase dark a un menú flotante si el editor está en dark mode
    * @param {HTMLElement} menuElement
    */
-  meWYSE.prototype._applyMenuTheme = function(menuElement) {
+  LibraEditor.prototype._applyMenuTheme = function(menuElement) {
     if (this._isDark()) {
-      menuElement.classList.add('mewyse-dark');
+      menuElement.classList.add('libraeditor-dark');
     }
   };
 
@@ -18346,7 +18346,7 @@
    * Cierra un menú genérico: cancela anchor, remueve del DOM, nullifica referencia
    * @param {string} menuProp - nombre de la propiedad del menú (ej: 'slashMenu')
    */
-  meWYSE.prototype._closeMenu = function(menuProp) {
+  LibraEditor.prototype._closeMenu = function(menuProp) {
     var menu = this[menuProp];
     if (menu) {
       if (menu._cancelAnchor) {
@@ -18363,7 +18363,7 @@
    * clic-fuera (selección de item, Escape, etc.).
    * @param {Function} fn
    */
-  meWYSE.prototype._add_doc_click = function(fn) {
+  LibraEditor.prototype._add_doc_click = function(fn) {
     if (!this._doc_click_handlers) this._doc_click_handlers = [];
     this._doc_click_handlers.push(fn);
     document.addEventListener('click', fn);
@@ -18373,7 +18373,7 @@
    * Elimina un listener registrado con _add_doc_click y lo saca del registro.
    * @param {Function} fn
    */
-  meWYSE.prototype._remove_doc_click = function(fn) {
+  LibraEditor.prototype._remove_doc_click = function(fn) {
     document.removeEventListener('click', fn);
     if (this._doc_click_handlers) {
       var v_idx = this._doc_click_handlers.indexOf(fn);
@@ -18389,7 +18389,7 @@
    * @param {string} updateMethod - nombre del método de actualización visual
    * @param {string} direction - 'up' o 'down'
    */
-  meWYSE.prototype._navigateMenu = function(menuProp, itemSelector, indexProp, updateMethod, direction) {
+  LibraEditor.prototype._navigateMenu = function(menuProp, itemSelector, indexProp, updateMethod, direction) {
     var menu = this[menuProp];
     if (!menu) return;
 
@@ -18422,7 +18422,7 @@
    * @param {number} visualIndex
    * @returns {number} índice real o -1
    */
-  meWYSE.prototype._resolveMenuFullIndex = function(menu, itemSelector, visualIndex) {
+  LibraEditor.prototype._resolveMenuFullIndex = function(menu, itemSelector, visualIndex) {
     if (!menu) return -1;
     var visible = menu.querySelectorAll(itemSelector + ':not([style*="display: none"])');
     var item = visible[visualIndex];
@@ -18435,7 +18435,7 @@
    * Enfoca el editor (primer bloque o bloque especificado)
    * @param {number} [blockId] - ID del bloque a enfocar. Sin parámetro, enfoca el primer bloque.
    */
-  meWYSE.prototype.focus = function(blockId) {
+  LibraEditor.prototype.focus = function(blockId) {
     var targetId = (blockId !== undefined) ? blockId : (this.blocks.length > 0 ? this.blocks[0].id : null);
     if (targetId === null) return;
 
@@ -18457,7 +18457,7 @@
    * ============================================
    * Alterna el modo pantalla completa del editor
    */
-  meWYSE.prototype.toggleFullscreen = function() {
+  LibraEditor.prototype.toggleFullscreen = function() {
     if (this.isFullscreen) {
       this.exitFullscreen();
     } else {
@@ -18465,7 +18465,7 @@
     }
   };
 
-  meWYSE.prototype.enterFullscreen = function() {
+  LibraEditor.prototype.enterFullscreen = function() {
     // Determinar qué elemento expandir: wrapper si hay toolbar, container si no
     var target = this.editorWrapper || this.container;
     if (!target) return;
@@ -18475,13 +18475,13 @@
     // ancla a ese ancestro y solo cubriría "el padre"; moverlo a body lo evita.
     // Guardamos la posición original con un placeholder para restaurarla al salir.
     if (target.parentNode && target.parentNode !== document.body) {
-      this._fsPlaceholder = document.createComment('mewyse-fullscreen-placeholder');
+      this._fsPlaceholder = document.createComment('libraeditor-fullscreen-placeholder');
       target.parentNode.insertBefore(this._fsPlaceholder, target);
       document.body.appendChild(target);
     }
 
-    target.classList.add('mewyse-fullscreen');
-    document.body.classList.add('mewyse-fullscreen-lock');
+    target.classList.add('libraeditor-fullscreen');
+    document.body.classList.add('libraeditor-fullscreen-lock');
     this.isFullscreen = true;
 
     if (this.fullscreenButton) {
@@ -18502,12 +18502,12 @@
     document.addEventListener('keydown', this._fullscreenEscHandler);
   };
 
-  meWYSE.prototype.exitFullscreen = function() {
+  LibraEditor.prototype.exitFullscreen = function() {
     var target = this.editorWrapper || this.container;
     if (!target) return;
 
-    target.classList.remove('mewyse-fullscreen');
-    document.body.classList.remove('mewyse-fullscreen-lock');
+    target.classList.remove('libraeditor-fullscreen');
+    document.body.classList.remove('libraeditor-fullscreen-lock');
     this.isFullscreen = false;
 
     // Restaurar el wrapper a su posición original (donde quedó el placeholder)
@@ -18537,10 +18537,10 @@
    * ============================================
    * Alterna la visualización de bordes en cada bloque
    */
-  meWYSE.prototype.toggleShowBlocks = function() {
+  LibraEditor.prototype.toggleShowBlocks = function() {
     this.showingBlocks = !this.showingBlocks;
     if (this.container) {
-      this.container.classList.toggle('mewyse-show-blocks', this.showingBlocks);
+      this.container.classList.toggle('libraeditor-show-blocks', this.showingBlocks);
     }
   };
 
@@ -18548,10 +18548,10 @@
    * Alterna el ajuste de texto (wordWrap): el contenido largo envuelve dentro
    * del bloque o desborda. Refleja el estado en this.wordWrap y la clase.
    */
-  meWYSE.prototype.toggleWordWrap = function() {
+  LibraEditor.prototype.toggleWordWrap = function() {
     this.wordWrap = !this.wordWrap;
     if (this.container) {
-      this.container.classList.toggle('mewyse-word-wrap', this.wordWrap);
+      this.container.classList.toggle('libraeditor-word-wrap', this.wordWrap);
     }
   };
 
@@ -18561,19 +18561,19 @@
    * ============================================
    * Crea la barra inferior con contador de palabras, caracteres y tiempo de lectura
    */
-  meWYSE.prototype.createCharCounterBar = function() {
+  LibraEditor.prototype.createCharCounterBar = function() {
     var bar = document.createElement('div');
-    bar.className = 'mewyse-char-counter';
+    bar.className = 'libraeditor-char-counter';
     if (this.options.theme) {
-      bar.classList.add('mewyse-editor-' + this.options.theme);
+      bar.classList.add('libraeditor-editor-' + this.options.theme);
     }
     bar.setAttribute('role', 'status');
     bar.setAttribute('aria-live', 'polite');
 
     bar.innerHTML =
-      '<span class="mewyse-char-counter-item"><span class="label">' + this.t('counter.words') + ':</span> <span class="value" data-counter="words">0</span></span>' +
-      '<span class="mewyse-char-counter-item"><span class="label">' + this.t('counter.characters') + ':</span> <span class="value" data-counter="chars">0</span></span>' +
-      '<span class="mewyse-char-counter-item"><span class="label">' + this.t('counter.readingTime') + ':</span> <span class="value" data-counter="time">0 min</span></span>';
+      '<span class="libraeditor-char-counter-item"><span class="label">' + this.t('counter.words') + ':</span> <span class="value" data-counter="words">0</span></span>' +
+      '<span class="libraeditor-char-counter-item"><span class="label">' + this.t('counter.characters') + ':</span> <span class="value" data-counter="chars">0</span></span>' +
+      '<span class="libraeditor-char-counter-item"><span class="label">' + this.t('counter.readingTime') + ':</span> <span class="value" data-counter="time">0 min</span></span>';
 
     return bar;
   };
@@ -18581,7 +18581,7 @@
   /**
    * Actualiza los valores del contador
    */
-  meWYSE.prototype.updateCharCounter = function() {
+  LibraEditor.prototype.updateCharCounter = function() {
     if (!this.showCharCounter || !this.charCounterBar) return;
 
     var words = this.getWordCount ? this.getWordCount() : 0;
@@ -18604,10 +18604,10 @@
    * ============================================
    * Muestra el diálogo de buscar y reemplazar
    */
-  meWYSE.prototype.showFindReplace = function() {
+  LibraEditor.prototype.showFindReplace = function() {
     if (this.findReplaceDialog) {
       // Ya abierto: enfocar el campo
-      var input = this.findReplaceDialog.querySelector('.mewyse-fr-find-input');
+      var input = this.findReplaceDialog.querySelector('.libraeditor-fr-find-input');
       if (input) input.focus();
       return;
     }
@@ -18616,7 +18616,7 @@
     var t = function(key) { return self.t('findReplace.' + key); };
 
     var dialog = document.createElement('div');
-    dialog.className = 'mewyse-find-replace';
+    dialog.className = 'libraeditor-find-replace';
     // Aplicar clase dark SOLO si el editor está en modo oscuro (no para
     // cualquier theme — `compact` u otros no implican dark). Reusa el helper
     // común que ya hace esa comprobación correctamente.
@@ -18625,26 +18625,26 @@
     dialog.setAttribute('aria-label', t('title'));
 
     dialog.innerHTML =
-      '<div class="mewyse-fr-header">' +
-        '<span class="mewyse-fr-title">' + t('title') + '</span>' +
-        '<button class="mewyse-fr-close" aria-label="' + t('close') + '" title="' + t('close') + '">' + WYSIWYG_ICONS.close + '</button>' +
+      '<div class="libraeditor-fr-header">' +
+        '<span class="libraeditor-fr-title">' + t('title') + '</span>' +
+        '<button class="libraeditor-fr-close" aria-label="' + t('close') + '" title="' + t('close') + '">' + WYSIWYG_ICONS.close + '</button>' +
       '</div>' +
-      '<div class="mewyse-fr-row">' +
-        '<input type="text" class="mewyse-fr-find-input" placeholder="' + t('findPlaceholder') + '" aria-label="' + t('findPlaceholder') + '">' +
-        '<span class="mewyse-fr-counter" aria-live="polite">0</span>' +
+      '<div class="libraeditor-fr-row">' +
+        '<input type="text" class="libraeditor-fr-find-input" placeholder="' + t('findPlaceholder') + '" aria-label="' + t('findPlaceholder') + '">' +
+        '<span class="libraeditor-fr-counter" aria-live="polite">0</span>' +
       '</div>' +
-      '<div class="mewyse-fr-row">' +
-        '<input type="text" class="mewyse-fr-replace-input" placeholder="' + t('replacePlaceholder') + '" aria-label="' + t('replacePlaceholder') + '">' +
+      '<div class="libraeditor-fr-row">' +
+        '<input type="text" class="libraeditor-fr-replace-input" placeholder="' + t('replacePlaceholder') + '" aria-label="' + t('replacePlaceholder') + '">' +
       '</div>' +
-      '<div class="mewyse-fr-options">' +
-        '<label><input type="checkbox" class="mewyse-fr-case"> ' + t('caseSensitive') + '</label>' +
-        '<label><input type="checkbox" class="mewyse-fr-whole"> ' + t('wholeWord') + '</label>' +
+      '<div class="libraeditor-fr-options">' +
+        '<label><input type="checkbox" class="libraeditor-fr-case"> ' + t('caseSensitive') + '</label>' +
+        '<label><input type="checkbox" class="libraeditor-fr-whole"> ' + t('wholeWord') + '</label>' +
       '</div>' +
-      '<div class="mewyse-fr-actions">' +
-        '<button class="mewyse-fr-btn mewyse-fr-prev" title="' + t('findPrev') + '" aria-label="' + t('findPrev') + '">' + WYSIWYG_ICONS.arrowUp + '</button>' +
-        '<button class="mewyse-fr-btn mewyse-fr-next" title="' + t('findNext') + '" aria-label="' + t('findNext') + '">' + WYSIWYG_ICONS.arrowDown + '</button>' +
-        '<button class="mewyse-fr-btn mewyse-fr-replace">' + t('replace') + '</button>' +
-        '<button class="mewyse-fr-btn mewyse-fr-replace-all">' + t('replaceAll') + '</button>' +
+      '<div class="libraeditor-fr-actions">' +
+        '<button class="libraeditor-fr-btn libraeditor-fr-prev" title="' + t('findPrev') + '" aria-label="' + t('findPrev') + '">' + WYSIWYG_ICONS.arrowUp + '</button>' +
+        '<button class="libraeditor-fr-btn libraeditor-fr-next" title="' + t('findNext') + '" aria-label="' + t('findNext') + '">' + WYSIWYG_ICONS.arrowDown + '</button>' +
+        '<button class="libraeditor-fr-btn libraeditor-fr-replace">' + t('replace') + '</button>' +
+        '<button class="libraeditor-fr-btn libraeditor-fr-replace-all">' + t('replaceAll') + '</button>' +
       '</div>';
 
     document.body.appendChild(dialog);
@@ -18655,10 +18655,10 @@
     this._positionFindReplace();
 
     // Event bindings
-    var findInput = dialog.querySelector('.mewyse-fr-find-input');
-    var replaceInput = dialog.querySelector('.mewyse-fr-replace-input');
-    var caseInput = dialog.querySelector('.mewyse-fr-case');
-    var wholeInput = dialog.querySelector('.mewyse-fr-whole');
+    var findInput = dialog.querySelector('.libraeditor-fr-find-input');
+    var replaceInput = dialog.querySelector('.libraeditor-fr-replace-input');
+    var caseInput = dialog.querySelector('.libraeditor-fr-case');
+    var wholeInput = dialog.querySelector('.libraeditor-fr-whole');
 
     findInput.addEventListener('input', function() { self._searchInEditor(); });
     caseInput.addEventListener('change', function() { self._searchInEditor(); });
@@ -18684,18 +18684,18 @@
       }
     });
 
-    dialog.querySelector('.mewyse-fr-close').onclick = function() { self.closeFindReplace(); };
-    dialog.querySelector('.mewyse-fr-prev').onclick = function() { self._findNavigate(-1); };
-    dialog.querySelector('.mewyse-fr-next').onclick = function() { self._findNavigate(1); };
-    dialog.querySelector('.mewyse-fr-replace').onclick = function() { self._replaceCurrent(); };
-    dialog.querySelector('.mewyse-fr-replace-all').onclick = function() { self._replaceAll(); };
+    dialog.querySelector('.libraeditor-fr-close').onclick = function() { self.closeFindReplace(); };
+    dialog.querySelector('.libraeditor-fr-prev').onclick = function() { self._findNavigate(-1); };
+    dialog.querySelector('.libraeditor-fr-next').onclick = function() { self._findNavigate(1); };
+    dialog.querySelector('.libraeditor-fr-replace').onclick = function() { self._replaceCurrent(); };
+    dialog.querySelector('.libraeditor-fr-replace-all').onclick = function() { self._replaceAll(); };
 
     setTimeout(function() { findInput.focus(); }, 10);
 
     this._showBackdrop('findReplace', function() { self.closeFindReplace(); });
   };
 
-  meWYSE.prototype._positionFindReplace = function() {
+  LibraEditor.prototype._positionFindReplace = function() {
     if (!this.findReplaceDialog || !this.container) return;
     var rect;
     // En fullscreen posicionar respecto al viewport
@@ -18713,7 +18713,7 @@
     this.findReplaceDialog.style.right = 'auto';
   };
 
-  meWYSE.prototype.closeFindReplace = function() {
+  LibraEditor.prototype.closeFindReplace = function() {
     this._clearSearchHighlights();
     if (this.findReplaceDialog) {
       this.findReplaceDialog.remove();
@@ -18723,9 +18723,9 @@
     this._hideBackdrop('findReplace');
   };
 
-  meWYSE.prototype._clearSearchHighlights = function() {
+  LibraEditor.prototype._clearSearchHighlights = function() {
     if (!this.container) return;
-    var highlights = this.container.querySelectorAll('.mewyse-search-highlight');
+    var highlights = this.container.querySelectorAll('.libraeditor-search-highlight');
     for (var i = 0; i < highlights.length; i++) {
       var h = highlights[i];
       var parent = h.parentNode;
@@ -18735,14 +18735,14 @@
     }
   };
 
-  meWYSE.prototype._searchInEditor = function() {
+  LibraEditor.prototype._searchInEditor = function() {
     if (!this.findReplaceDialog) return;
     this._clearSearchHighlights();
 
-    var query = this.findReplaceDialog.querySelector('.mewyse-fr-find-input').value;
-    var caseSensitive = this.findReplaceDialog.querySelector('.mewyse-fr-case').checked;
-    var wholeWord = this.findReplaceDialog.querySelector('.mewyse-fr-whole').checked;
-    var counter = this.findReplaceDialog.querySelector('.mewyse-fr-counter');
+    var query = this.findReplaceDialog.querySelector('.libraeditor-fr-find-input').value;
+    var caseSensitive = this.findReplaceDialog.querySelector('.libraeditor-fr-case').checked;
+    var wholeWord = this.findReplaceDialog.querySelector('.libraeditor-fr-whole').checked;
+    var counter = this.findReplaceDialog.querySelector('.libraeditor-fr-counter');
 
     if (!query) {
       counter.textContent = '0';
@@ -18764,7 +18764,7 @@
     var n;
     while ((n = walker.nextNode())) {
       // No buscar dentro de elementos ya highlight
-      if (n.parentNode && !n.parentNode.closest('.mewyse-search-highlight')) {
+      if (n.parentNode && !n.parentNode.closest('.libraeditor-search-highlight')) {
         textNodes.push(n);
       }
     }
@@ -18787,7 +18787,7 @@
           frag.appendChild(document.createTextNode(text.substring(lastIndex, m.index)));
         }
         var span = document.createElement('span');
-        span.className = 'mewyse-search-highlight';
+        span.className = 'libraeditor-search-highlight';
         span.textContent = m[0];
         frag.appendChild(span);
         matches.push(span);
@@ -18812,7 +18812,7 @@
     this._updateFindCounter();
   };
 
-  meWYSE.prototype._highlightCurrentMatch = function() {
+  LibraEditor.prototype._highlightCurrentMatch = function() {
     if (!this.findReplaceState) return;
     var matches = this.findReplaceState.matches;
     for (var i = 0; i < matches.length; i++) {
@@ -18825,9 +18825,9 @@
     }
   };
 
-  meWYSE.prototype._updateFindCounter = function() {
+  LibraEditor.prototype._updateFindCounter = function() {
     if (!this.findReplaceDialog || !this.findReplaceState) return;
-    var counter = this.findReplaceDialog.querySelector('.mewyse-fr-counter');
+    var counter = this.findReplaceDialog.querySelector('.libraeditor-fr-counter');
     var total = this.findReplaceState.matches.length;
     if (total === 0) {
       counter.textContent = this.t('findReplace.noMatches');
@@ -18839,7 +18839,7 @@
     }
   };
 
-  meWYSE.prototype._findNavigate = function(dir) {
+  LibraEditor.prototype._findNavigate = function(dir) {
     if (!this.findReplaceState || this.findReplaceState.matches.length === 0) return;
     var total = this.findReplaceState.matches.length;
     this.findReplaceState.currentIndex =
@@ -18848,13 +18848,13 @@
     this._updateFindCounter();
   };
 
-  meWYSE.prototype._replaceCurrent = function() {
+  LibraEditor.prototype._replaceCurrent = function() {
     if (!this.findReplaceState || this.findReplaceState.currentIndex < 0) return;
     var idx = this.findReplaceState.currentIndex;
     var span = this.findReplaceState.matches[idx];
     if (!span || !span.parentNode) return;
 
-    var replaceInput = this.findReplaceDialog.querySelector('.mewyse-fr-replace-input');
+    var replaceInput = this.findReplaceDialog.querySelector('.libraeditor-fr-replace-input');
     var replacement = replaceInput ? replaceInput.value : '';
 
     this.pushHistory(true);
@@ -18887,9 +18887,9 @@
     this._searchInEditor();
   };
 
-  meWYSE.prototype._replaceAll = function() {
+  LibraEditor.prototype._replaceAll = function() {
     if (!this.findReplaceState || this.findReplaceState.matches.length === 0) return;
-    var replaceInput = this.findReplaceDialog.querySelector('.mewyse-fr-replace-input');
+    var replaceInput = this.findReplaceDialog.querySelector('.libraeditor-fr-replace-input');
     var replacement = replaceInput ? replaceInput.value : '';
     var count = this.findReplaceState.matches.length;
 
@@ -18925,7 +18925,7 @@
 
     // Feedback al usuario via contador
     if (this.findReplaceDialog) {
-      var counter = this.findReplaceDialog.querySelector('.mewyse-fr-counter');
+      var counter = this.findReplaceDialog.querySelector('.libraeditor-fr-counter');
       counter.textContent = this.t('findReplace.replacedCount', { count: count });
     }
 
@@ -18988,13 +18988,13 @@
     'SOURCE': { 'src': 1, 'type': 1 }
   };
 
-  // Clases CSS permitidas en SPAN (whitelisted por meWYSE)
+  // Clases CSS permitidas en SPAN (whitelisted por LibraEditor)
   var ALLOWED_SPAN_CLASSES = {
-    'mewyse-mention': 1,
-    'mewyse-emoji': 1,
-    'mewyse-tag': 1,
-    'mewyse-mergetag': 1,
-    'mewyse-search-highlight': 1
+    'libraeditor-mention': 1,
+    'libraeditor-emoji': 1,
+    'libraeditor-tag': 1,
+    'libraeditor-mergetag': 1,
+    'libraeditor-search-highlight': 1
   };
 
   // Propiedades CSS permitidas en el atributo style
@@ -19054,7 +19054,7 @@
    * Permite: http(s), mailto, tel, relativos (/, ./, ../), anchors (#), sin protocolo
    * Bloquea: javascript:, vbscript:, data:text/html, file:
    */
-  meWYSE.prototype._isSafeUrl = function(url) {
+  LibraEditor.prototype._isSafeUrl = function(url) {
     if (!url || typeof url !== 'string') return false;
     var trimmed = url.trim().toLowerCase();
     // Bloquear esquemas peligrosos (con o sin espacios/control chars al inicio)
@@ -19074,7 +19074,7 @@
   /**
    * Valida URL de imagen: solo http(s) y data:image/*
    */
-  meWYSE.prototype._isSafeImageUrl = function(url) {
+  LibraEditor.prototype._isSafeImageUrl = function(url) {
     if (!url || typeof url !== 'string') return false;
     var normalized = url.trim().toLowerCase().replace(/[\x00-\x20]/g, '');
     if (normalized.indexOf('http://') === 0) return true;
@@ -19092,7 +19092,7 @@
   /**
    * Sanitiza un string de CSS style, devolviendo solo las propiedades seguras
    */
-  meWYSE.prototype._sanitizeStyle = function(styleStr) {
+  LibraEditor.prototype._sanitizeStyle = function(styleStr) {
     if (!styleStr || typeof styleStr !== 'string') return '';
     var parts = styleStr.split(';');
     var clean = [];
@@ -19136,7 +19136,7 @@
   /**
    * Formatea bytes en una unidad legible (KB/MB).
    */
-  meWYSE.prototype._formatFileSize = function(bytes) {
+  LibraEditor.prototype._formatFileSize = function(bytes) {
     if (bytes >= 1048576) return (bytes / 1048576).toFixed(bytes % 1048576 === 0 ? 0 : 1) + ' MB';
     if (bytes >= 1024) return Math.round(bytes / 1024) + ' KB';
     return bytes + ' B';
@@ -19147,7 +19147,7 @@
    * Si falla, muestra alert con mensaje configurable y devuelve false.
    * @returns {boolean} true si el archivo es válido
    */
-  meWYSE.prototype._validateImageSize = function(file) {
+  LibraEditor.prototype._validateImageSize = function(file) {
     if (!this.imageMaxSize) return true;
     if (!file || typeof file.size !== 'number') return true;
     if (file.size <= this.imageMaxSize) return true;
@@ -19164,7 +19164,7 @@
    * Si options.onImageUpload está definido, se delega el upload al consumidor.
    * Si no, se convierte a base64 inline (comportamiento por defecto).
    */
-  meWYSE.prototype._processImageFile = function(file, callback) {
+  LibraEditor.prototype._processImageFile = function(file, callback) {
     var self = this;
     if (!file) { callback(null); return; }
     if (!this._validateImageSize(file)) { callback(null); return; }
@@ -19229,7 +19229,7 @@
    * Detecta el proveedor y extrae el ID del vídeo desde una URL.
    * @returns {Object|null} { provider: 'youtube'|'vimeo'|'file', videoId: string|null, url: string }
    */
-  meWYSE.prototype._detectVideoProvider = function(url) {
+  LibraEditor.prototype._detectVideoProvider = function(url) {
     if (!url || typeof url !== 'string') return null;
     var trimmed = url.trim();
     if (!trimmed) return null;
@@ -19262,7 +19262,7 @@
    * @returns {Object|null} { url, provider, videoId, width, height } o null si la
    *   URL no es un vídeo reconocible.
    */
-  meWYSE.prototype._videoInfoFromBlock = function(block) {
+  LibraEditor.prototype._videoInfoFromBlock = function(block) {
     if (!block) return null;
     var c = block.content;
     var url = '', srcW, srcH;
@@ -19289,7 +19289,7 @@
   /**
    * Valida URL de iframe embed: debe ser https y host whitelisted.
    */
-  meWYSE.prototype._isSafeEmbedUrl = function(url) {
+  LibraEditor.prototype._isSafeEmbedUrl = function(url) {
     if (!url || typeof url !== 'string') return false;
     var m = url.trim().match(/^https:\/\/([^\/]+)/i);
     if (!m) return false;
@@ -19299,7 +19299,7 @@
   /**
    * Valida URL de media file (video/audio): http(s) o data:video/audio.
    */
-  meWYSE.prototype._isSafeMediaUrl = function(url) {
+  LibraEditor.prototype._isSafeMediaUrl = function(url) {
     if (!url || typeof url !== 'string') return false;
     var normalized = url.trim().toLowerCase().replace(/[\x00-\x20]/g, '');
     if (normalized.indexOf('http://') === 0) return true;
@@ -19312,7 +19312,7 @@
   /**
    * Valida URL de audio file: extensiones comunes + esquema seguro.
    */
-  meWYSE.prototype._isAudioUrl = function(url) {
+  LibraEditor.prototype._isAudioUrl = function(url) {
     if (!this._isSafeMediaUrl(url)) return false;
     return /\.(mp3|ogg|oga|wav|m4a|aac|flac)($|\?|#)/i.test(url);
   };
@@ -19320,31 +19320,31 @@
   /**
    * Muestra un modal pidiendo URL para insertar media (video o audio).
    */
-  meWYSE.prototype.showMediaUrlModal = function(type, onAccept) {
+  LibraEditor.prototype.showMediaUrlModal = function(type, onAccept) {
     var self = this;
     var t = function(key) { return self.t(key); };
 
     var overlay = document.createElement('div');
-    overlay.className = 'mewyse-modal-overlay';
+    overlay.className = 'libraeditor-modal-overlay';
     var modal = document.createElement('div');
-    modal.className = 'mewyse-modal-container';
+    modal.className = 'libraeditor-modal-container';
     self._applyMenuTheme(modal); // dark mode si el editor está en oscuro
 
     var title = document.createElement('h3');
-    title.className = 'mewyse-modal-title';
+    title.className = 'libraeditor-modal-title';
     title.textContent = type === 'audio' ? t('modals.insertAudioTitle') : t('modals.insertVideoTitle');
     modal.appendChild(title);
 
     var inputsContainer = document.createElement('div');
-    inputsContainer.className = 'mewyse-modal-inputs';
+    inputsContainer.className = 'libraeditor-modal-inputs';
 
     var group = document.createElement('div');
-    group.className = 'mewyse-modal-input-group';
+    group.className = 'libraeditor-modal-input-group';
     var label = document.createElement('label');
     label.textContent = type === 'audio' ? t('modals.audioUrl') : t('modals.videoUrl');
     var urlInput = document.createElement('input');
     urlInput.type = 'url';
-    urlInput.className = 'mewyse-modal-input';
+    urlInput.className = 'libraeditor-modal-input';
     urlInput.placeholder = type === 'audio'
       ? 'https://.../audio.mp3'
       : 'https://www.youtube.com/watch?v=...';
@@ -19354,15 +19354,15 @@
     modal.appendChild(inputsContainer);
 
     var buttons = document.createElement('div');
-    buttons.className = 'mewyse-modal-buttons';
+    buttons.className = 'libraeditor-modal-buttons';
     var cancelBtn = document.createElement('button');
     cancelBtn.type = 'button';
-    cancelBtn.className = 'mewyse-modal-button mewyse-modal-button-cancel';
+    cancelBtn.className = 'libraeditor-modal-button libraeditor-modal-button-cancel';
     cancelBtn.textContent = t('modals.cancel');
     cancelBtn.onclick = function() { document.body.removeChild(overlay); };
     var okBtn = document.createElement('button');
     okBtn.type = 'button';
-    okBtn.className = 'mewyse-modal-button mewyse-modal-button-primary';
+    okBtn.className = 'libraeditor-modal-button libraeditor-modal-button-primary';
     okBtn.textContent = t('modals.insert');
     var submit = function() {
       var url = urlInput.value.trim();
@@ -19406,7 +19406,7 @@
   /**
    * Inserta un bloque de vídeo abriendo un modal de URL.
    */
-  meWYSE.prototype.insertVideoBlock = function() {
+  LibraEditor.prototype.insertVideoBlock = function() {
     var self = this;
     var insertIndex = this._getInsertIndexForNewBlock();
     this.showMediaUrlModal('video', function(info) {
@@ -19428,7 +19428,7 @@
   /**
    * Inserta un bloque de audio abriendo un modal de URL.
    */
-  meWYSE.prototype.insertAudioBlock = function() {
+  LibraEditor.prototype.insertAudioBlock = function() {
     var self = this;
     var insertIndex = this._getInsertIndexForNewBlock();
     this.showMediaUrlModal('audio', function(info) {
@@ -19450,7 +19450,7 @@
   /**
    * Calcula el índice donde insertar un nuevo bloque (después del último enfocado).
    */
-  meWYSE.prototype._getInsertIndexForNewBlock = function() {
+  LibraEditor.prototype._getInsertIndexForNewBlock = function() {
     var activeElem = this.lastFocusedElement || document.activeElement;
     if (activeElem && activeElem.closest) {
       var blockElement = activeElem.closest('[data-block-id]');
@@ -19468,10 +19468,10 @@
    * (_loadVideoIframe). El bloque es seleccionable (handle + resize) como una
    * imagen. Dimensiones en block.width/height.
    */
-  meWYSE.prototype.createVideoElement = function(block) {
+  LibraEditor.prototype.createVideoElement = function(block) {
     var self = this;
     var wrapper = document.createElement('div');
-    wrapper.className = 'mewyse-video-wrapper';
+    wrapper.className = 'libraeditor-video-wrapper';
     wrapper.contentEditable = 'false';
     wrapper.setAttribute('data-block-id', block.id);
     wrapper.setAttribute('tabindex', '0');
@@ -19479,7 +19479,7 @@
     var info = this._videoInfoFromBlock(block);
     if (!info) {
       var ph = document.createElement('div');
-      ph.className = 'mewyse-video-placeholder';
+      ph.className = 'libraeditor-video-placeholder';
       ph.textContent = this.t('misc.videoUnavailable');
       wrapper.appendChild(ph);
       return wrapper;
@@ -19494,7 +19494,7 @@
 
     // Botón de editar dimensiones (visible al seleccionar, vía CSS)
     var editBtn = document.createElement('button');
-    editBtn.className = 'mewyse-video-edit-btn';
+    editBtn.className = 'libraeditor-video-edit-btn';
     editBtn.type = 'button';
     editBtn.innerHTML = WYSIWYG_ICONS.gear;
     editBtn.title = self.t('tooltips.editDimensions');
@@ -19524,10 +19524,10 @@
    * @param {number} blockId
    * @returns {HTMLElement}
    */
-  meWYSE.prototype._buildVideoFacade = function(info, blockId) {
+  LibraEditor.prototype._buildVideoFacade = function(info, blockId) {
     var self = this;
     var facade = document.createElement('div');
-    facade.className = 'mewyse-video-facade mewyse-video-facade-' + info.provider;
+    facade.className = 'libraeditor-video-facade libraeditor-video-facade-' + info.provider;
 
     if (info.provider === 'youtube' && info.videoId) {
       // Miniatura ligera (imagen, sin iframe ni tracking). hqdefault siempre existe.
@@ -19536,14 +19536,14 @@
     } else {
       // Genérico: etiqueta con el nombre del proveedor
       var label = document.createElement('span');
-      label.className = 'mewyse-video-facade-label';
+      label.className = 'libraeditor-video-facade-label';
       label.textContent = info.provider === 'vimeo' ? 'Vimeo' : this.t('blockTypes.video');
       facade.appendChild(label);
     }
 
     var play = document.createElement('button');
     play.type = 'button';
-    play.className = 'mewyse-video-play';
+    play.className = 'libraeditor-video-play';
     play.setAttribute('aria-label', self.t('misc.playVideo'));
     play.title = self.t('misc.playVideo');
     play.innerHTML = WYSIWYG_ICONS.play;
@@ -19561,7 +19561,7 @@
    * @param {Object} info
    * @returns {HTMLElement}
    */
-  meWYSE.prototype._buildVideoMedia = function(info) {
+  LibraEditor.prototype._buildVideoMedia = function(info) {
     var media;
     if (info.provider === 'youtube' && info.videoId) {
       media = document.createElement('iframe');
@@ -19581,10 +19581,10 @@
       media.src = info.url;
     } else {
       media = document.createElement('div');
-      media.className = 'mewyse-video-placeholder';
+      media.className = 'libraeditor-video-placeholder';
       media.textContent = this.t('misc.videoUnavailable');
     }
-    media.className = (media.className ? media.className + ' ' : '') + 'mewyse-video-media';
+    media.className = (media.className ? media.className + ' ' : '') + 'libraeditor-video-media';
     return media;
   };
 
@@ -19593,24 +19593,24 @@
    * para volver a la previsualización (descarga el iframe).
    * @param {number} blockId
    */
-  meWYSE.prototype._loadVideoIframe = function(blockId) {
+  LibraEditor.prototype._loadVideoIframe = function(blockId) {
     var self = this;
-    var wrapper = this.container.querySelector('.mewyse-video-wrapper[data-block-id="' + blockId + '"]');
+    var wrapper = this.container.querySelector('.libraeditor-video-wrapper[data-block-id="' + blockId + '"]');
     if (!wrapper) return;
     var block = this.getBlock(blockId);
     var info = this._videoInfoFromBlock(block);
     if (!info) return;
 
-    var facade = wrapper.querySelector('.mewyse-video-facade');
+    var facade = wrapper.querySelector('.libraeditor-video-facade');
     if (facade) wrapper.removeChild(facade);
 
     wrapper.appendChild(this._buildVideoMedia(info));
 
     // Botón para volver a la previsualización (descarga el iframe)
-    if (!wrapper.querySelector('.mewyse-video-restore')) {
+    if (!wrapper.querySelector('.libraeditor-video-restore')) {
       var restore = document.createElement('button');
       restore.type = 'button';
-      restore.className = 'mewyse-video-restore';
+      restore.className = 'libraeditor-video-restore';
       restore.title = self.t('misc.closeVideo');
       restore.setAttribute('aria-label', self.t('misc.closeVideo'));
       restore.innerHTML = WYSIWYG_ICONS.close;
@@ -19627,17 +19627,17 @@
    * Vuelve a la previsualización de un vídeo (descarga el iframe/vídeo).
    * @param {number} blockId
    */
-  meWYSE.prototype._showVideoFacade = function(blockId) {
-    var wrapper = this.container.querySelector('.mewyse-video-wrapper[data-block-id="' + blockId + '"]');
+  LibraEditor.prototype._showVideoFacade = function(blockId) {
+    var wrapper = this.container.querySelector('.libraeditor-video-wrapper[data-block-id="' + blockId + '"]');
     if (!wrapper) return;
     var block = this.getBlock(blockId);
     var info = this._videoInfoFromBlock(block);
     if (!info) return;
-    var media = wrapper.querySelector('.mewyse-video-media');
+    var media = wrapper.querySelector('.libraeditor-video-media');
     if (media) wrapper.removeChild(media);
-    var restore = wrapper.querySelector('.mewyse-video-restore');
+    var restore = wrapper.querySelector('.libraeditor-video-restore');
     if (restore) wrapper.removeChild(restore);
-    if (!wrapper.querySelector('.mewyse-video-facade')) {
+    if (!wrapper.querySelector('.libraeditor-video-facade')) {
       wrapper.insertBefore(this._buildVideoFacade(info, blockId), wrapper.firstChild);
     }
   };
@@ -19648,10 +19648,10 @@
    * @param {HTMLElement} wrapper
    * @param {number} blockId
    */
-  meWYSE.prototype._attachVideoResize = function(wrapper, blockId) {
+  LibraEditor.prototype._attachVideoResize = function(wrapper, blockId) {
     var self = this;
     var handle = document.createElement('div');
-    handle.className = 'mewyse-video-resize-handle';
+    handle.className = 'libraeditor-video-resize-handle';
     handle.title = self.t('tooltips.dragToResize');
 
     var isResizing = false, startX, startY, startWidth, ratio;
@@ -19702,10 +19702,10 @@
    * @param {HTMLElement} wrapper
    * @param {number} blockId
    */
-  meWYSE.prototype.selectVideo = function(wrapper, blockId) {
+  LibraEditor.prototype.selectVideo = function(wrapper, blockId) {
     var self = this;
     if (this.selectedImage) this.deselectImage();
-    var prev = this.container.querySelector('.mewyse-video-wrapper.selected');
+    var prev = this.container.querySelector('.libraeditor-video-wrapper.selected');
     if (prev && prev !== wrapper) prev.classList.remove('selected');
 
     wrapper.classList.add('selected');
@@ -19741,7 +19741,7 @@
   /**
    * Deselecciona el vídeo actual.
    */
-  meWYSE.prototype.deselectVideo = function() {
+  LibraEditor.prototype.deselectVideo = function() {
     if (!this.selectedVideo) return;
     if (this.selectedVideo.element) this.selectedVideo.element.classList.remove('selected');
     this.selectedVideo = null;
@@ -19754,31 +19754,31 @@
    * Modal para editar las dimensiones (ancho) de un vídeo. El alto sigue el ratio.
    * @param {number} blockId
    */
-  meWYSE.prototype.editVideoDimensions = function(blockId) {
+  LibraEditor.prototype.editVideoDimensions = function(blockId) {
     var self = this;
     var block = this.getBlock(blockId);
     var info = this._videoInfoFromBlock(block);
     if (!info) return;
 
     var overlay = document.createElement('div');
-    overlay.className = 'mewyse-modal-overlay';
+    overlay.className = 'libraeditor-modal-overlay';
     var modal = document.createElement('div');
-    modal.className = 'mewyse-modal-container';
+    modal.className = 'libraeditor-modal-container';
     self._applyMenuTheme(modal);
 
     var title = document.createElement('h3');
-    title.className = 'mewyse-modal-title';
+    title.className = 'libraeditor-modal-title';
     title.textContent = self.t('tooltips.editDimensions');
     modal.appendChild(title);
 
     var inputs = document.createElement('div');
-    inputs.className = 'mewyse-modal-inputs';
+    inputs.className = 'libraeditor-modal-inputs';
     var mkField = function(labelText, value) {
       var g = document.createElement('div');
-      g.className = 'mewyse-modal-input-group';
+      g.className = 'libraeditor-modal-input-group';
       var l = document.createElement('label'); l.textContent = labelText;
       var i = document.createElement('input'); i.type = 'number'; i.min = '120';
-      i.className = 'mewyse-modal-input'; i.value = value;
+      i.className = 'libraeditor-modal-input'; i.value = value;
       g.appendChild(l); g.appendChild(i); inputs.appendChild(g);
       return i;
     };
@@ -19793,13 +19793,13 @@
     modal.appendChild(inputs);
 
     var buttons = document.createElement('div');
-    buttons.className = 'mewyse-modal-buttons';
+    buttons.className = 'libraeditor-modal-buttons';
     var cancel = document.createElement('button');
-    cancel.type = 'button'; cancel.className = 'mewyse-modal-button mewyse-modal-button-cancel';
+    cancel.type = 'button'; cancel.className = 'libraeditor-modal-button libraeditor-modal-button-cancel';
     cancel.textContent = self.t('modals.cancel');
     cancel.onclick = function() { document.body.removeChild(overlay); };
     var ok = document.createElement('button');
-    ok.type = 'button'; ok.className = 'mewyse-modal-button mewyse-modal-button-primary';
+    ok.type = 'button'; ok.className = 'libraeditor-modal-button libraeditor-modal-button-primary';
     ok.textContent = self.t('modals.save');
     ok.onclick = function() {
       var nw = parseInt(wInput.value, 10), nh = parseInt(hInput.value, 10);
@@ -19821,9 +19821,9 @@
   /**
    * Crea el elemento DOM para un bloque de audio.
    */
-  meWYSE.prototype.createAudioElement = function(block) {
+  LibraEditor.prototype.createAudioElement = function(block) {
     var wrapper = document.createElement('div');
-    wrapper.className = 'mewyse-audio-wrapper';
+    wrapper.className = 'libraeditor-audio-wrapper';
     wrapper.contentEditable = 'false';
 
     var c = block.content || {};
@@ -19834,7 +19834,7 @@
       wrapper.appendChild(audio);
     } else {
       var placeholder = document.createElement('div');
-      placeholder.className = 'mewyse-audio-placeholder';
+      placeholder.className = 'libraeditor-audio-placeholder';
       placeholder.textContent = this.t('misc.audioUnavailable');
       wrapper.appendChild(placeholder);
     }
@@ -19849,7 +19849,7 @@
    * Elimina todo el formato inline (bold, italic, color, etc.) de la selección actual.
    * Funciona con selección normal y cross-block selection.
    */
-  meWYSE.prototype.removeFormat = function() {
+  LibraEditor.prototype.removeFormat = function() {
     var self = this;
 
     // Caso 0: selección por bloques enteros → quitar formato del contenido completo
@@ -19928,16 +19928,16 @@
    * Desenvuelve spans/fonts/marks residuales tras removeFormat
    * Preserva links (no se consideran "formato")
    */
-  meWYSE.prototype._unwrapResidualFormatting = function(root) {
+  LibraEditor.prototype._unwrapResidualFormatting = function(root) {
     // Seleccionar spans con style, font, mark, code inline (pero NO dentro de bloques de código)
-    var selectors = ['span[style]', 'span.mewyse-search-highlight', 'font', 'mark'];
+    var selectors = ['span[style]', 'span.libraeditor-search-highlight', 'font', 'mark'];
     for (var s = 0; s < selectors.length; s++) {
       var nodes = root.querySelectorAll(selectors[s]);
       for (var n = nodes.length - 1; n >= 0; n--) {
         var node = nodes[n];
         // Preservar mentions/emojis (tienen clase específica)
-        if (node.className && (node.className.indexOf('mewyse-mention') >= 0 ||
-                               node.className.indexOf('mewyse-emoji') >= 0)) continue;
+        if (node.className && (node.className.indexOf('libraeditor-mention') >= 0 ||
+                               node.className.indexOf('libraeditor-emoji') >= 0)) continue;
         // Desenvolver: mover hijos al padre y eliminar el nodo
         var parent = node.parentNode;
         if (!parent) continue;
@@ -19950,12 +19950,12 @@
   // Clases de la UI del editor que NO deben persistir en block.content de tablas
   // (se añaden dinámicamente en createTableElement/addTableControls/enableColumnResizing)
   var EDITOR_UI_CLASSES = [
-    'mewyse-table-row-control',
-    'mewyse-table-col-control',
-    'mewyse-table-resize-handle',
-    'mewyse-table-add-row',
-    'mewyse-table-add-col',
-    'mewyse-cell-selected'
+    'libraeditor-table-row-control',
+    'libraeditor-table-col-control',
+    'libraeditor-table-resize-handle',
+    'libraeditor-table-add-row',
+    'libraeditor-table-add-col',
+    'libraeditor-cell-selected'
   ];
 
   /**
@@ -19964,9 +19964,9 @@
    * block.content contiene solo el markup semántico de la tabla, no la UI del editor.
    *
    * Qué elimina:
-   * - <button class="mewyse-table-*-control"> (botones de fila/columna con SVG hamburger)
-   * - <div class="mewyse-table-resize-handle"> (handles de redimensionado)
-   * - <button class="mewyse-table-add-row|col"> (botones +row/+col)
+   * - <button class="libraeditor-table-*-control"> (botones de fila/columna con SVG hamburger)
+   * - <div class="libraeditor-table-resize-handle"> (handles de redimensionado)
+   * - <button class="libraeditor-table-add-row|col"> (botones +row/+col)
    * - atributos tabindex="-1", contenteditable="false" en controles ya eliminados
    * - style inline generado por el editor en <td>/<th> (position:relative usado por los controles)
    * - contenteditable="true" y data-placeholder en los <p> de las celdas
@@ -19976,7 +19976,7 @@
    * - Contenido de texto e inline formatting
    * - Estilos de usuario (color, background-color, border, width, height) — ver _sanitizeStyle
    */
-  meWYSE.prototype._cleanTableContent = function(html) {
+  LibraEditor.prototype._cleanTableContent = function(html) {
     if (typeof html !== 'string' || !html) return html;
 
     // Envolver directamente en <table> — el navegador genera/normaliza tbody según contenido.
@@ -20061,7 +20061,7 @@
    *   para un documento con <table> completas, dejarlo en false (evita foster parenting).
    * @returns {string} HTML sanitizado seguro para innerHTML
    */
-  meWYSE.prototype._sanitizeBlockContent = function(html, opts) {
+  LibraEditor.prototype._sanitizeBlockContent = function(html, opts) {
     if (typeof html !== 'string') return html; // no string: devolver tal cual
     if (html === '') return '';
     opts = opts || {};
@@ -20082,13 +20082,13 @@
     var doc;
     var wrapperOpen, wrapperClose, rootSelector;
     if (tableInnards) {
-      wrapperOpen = '<table id="__mewyse_root__">';
+      wrapperOpen = '<table id="__libraeditor_root__">';
       wrapperClose = '</table>';
-      rootSelector = 'table#__mewyse_root__';
+      rootSelector = 'table#__libraeditor_root__';
     } else {
-      wrapperOpen = '<div id="__mewyse_root__">';
+      wrapperOpen = '<div id="__libraeditor_root__">';
       wrapperClose = '</div>';
-      rootSelector = '#__mewyse_root__';
+      rootSelector = '#__libraeditor_root__';
     }
     try {
       doc = new DOMParser().parseFromString(
@@ -20287,7 +20287,7 @@
     // textual son residuos típicos de operaciones donde un cursor cayó dentro
     // del span y un split/borrado partió el contenido. Sin texto, la cápsula
     // se ve como un círculo de color suelto. Los eliminamos del output.
-    var emptyAtomic = root.querySelectorAll('span.mewyse-tag, span.mewyse-mention');
+    var emptyAtomic = root.querySelectorAll('span.libraeditor-tag, span.libraeditor-mention');
     for (var ea = 0; ea < emptyAtomic.length; ea++) {
       if (!emptyAtomic[ea].textContent) {
         emptyAtomic[ea].parentNode.removeChild(emptyAtomic[ea]);
@@ -20301,7 +20301,7 @@
    * Sanitiza un bloque individual: valida type, id, content según tipo.
    * @returns {Object|null} bloque sanitizado o null si es inválido
    */
-  meWYSE.prototype._sanitizeBlock = function(block, fallbackId) {
+  LibraEditor.prototype._sanitizeBlock = function(block, fallbackId) {
     if (!block || typeof block !== 'object') return null;
 
     // Validar id (se hace ANTES del tipo: la rama de preservación lo necesita)
@@ -20504,7 +20504,7 @@
   /**
    * Sanitiza un array de bloques. Filtra los inválidos.
    */
-  meWYSE.prototype._sanitizeBlocks = function(blocks) {
+  LibraEditor.prototype._sanitizeBlocks = function(blocks) {
     if (!Array.isArray(blocks)) return [];
     var result = [];
     // Primera pasada: actualizar currentBlockId con todos los ids válidos
@@ -20535,7 +20535,7 @@
   /**
    * Devuelve el HTML de salida ya sanitizado, seguro para insertar en otra app.
    */
-  meWYSE.prototype.getSafeHTML = function() {
+  LibraEditor.prototype.getSafeHTML = function() {
     var raw = this.getHTML();
     return this._sanitizeBlockContent(raw, { allowTable: true, allowImg: true, allowMedia: true });
   };
@@ -20545,7 +20545,7 @@
    * el chrome del editor). Se usa en print() y exportWord().
    * @returns {string} CSS
    */
-  meWYSE.prototype._documentStyles = function() {
+  LibraEditor.prototype._documentStyles = function() {
     return [
       'body{font-family:system-ui,Segoe UI,Arial,sans-serif;color:#111;line-height:1.5;',
       'max-width:800px;margin:24px auto;padding:0 16px;}',
@@ -20556,11 +20556,11 @@
       'ul,ol{margin:0 0 .6em;padding-left:1.5em}',
       'table{border-collapse:collapse;width:100%;margin:0 0 .6em}td,th{border:1px solid #ccc;padding:6px 8px}',
       'img{max-width:100%;height:auto}',
-      '.mewyse-callout{border-left:3px solid #2563eb;background:#eff4ff;border-radius:6px;padding:.6em .9em;margin:0 0 .6em}',
-      '.mewyse-callout-warning{border-left-color:#d97706;background:#fff7ed}',
-      '.mewyse-callout-success{border-left-color:#16a34a;background:#f0fdf4}',
-      '.mewyse-callout-danger{border-left-color:#dc2626;background:#fef2f2}',
-      '.mewyse-page-break{break-after:page;page-break-after:always;border:0}'
+      '.libraeditor-callout{border-left:3px solid #2563eb;background:#eff4ff;border-radius:6px;padding:.6em .9em;margin:0 0 .6em}',
+      '.libraeditor-callout-warning{border-left-color:#d97706;background:#fff7ed}',
+      '.libraeditor-callout-success{border-left-color:#16a34a;background:#f0fdf4}',
+      '.libraeditor-callout-danger{border-left-color:#dc2626;background:#fef2f2}',
+      '.libraeditor-page-break{break-after:page;page-break-after:always;border:0}'
     ].join('');
   };
 
@@ -20579,7 +20579,7 @@
    * aplanaría los wrappers de bloque (salto de pagina, callout, toc) y el
    * divider al re-sanear el documento completo.
    */
-  meWYSE.prototype.print = function() {
+  LibraEditor.prototype.print = function() {
     var v_doc_html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' +
       escapeHtml(document.title || 'Documento') + '</title><style>' +
       this._documentStyles() + '</style></head><body>' + this.getHTML() +
@@ -20593,7 +20593,7 @@
 
     // 3) Ninguna vía disponible: avisar (no fallar en silencio).
     if (window.console && console.warn) {
-      console.warn('meWYSE: no se pudo imprimir (iframe y ventana bloqueados).');
+      console.warn('LibraEditor: no se pudo imprimir (iframe y ventana bloqueados).');
     }
   };
 
@@ -20603,7 +20603,7 @@
    * @param {string} v_doc_html - documento HTML completo a imprimir
    * @returns {boolean} true si pudo lanzar la impresión; false si no fue viable
    */
-  meWYSE.prototype._printWithIframe = function(v_doc_html) {
+  LibraEditor.prototype._printWithIframe = function(v_doc_html) {
     try {
       var v_iframe = document.createElement('iframe');
       // Fuera de pantalla, sin ocupar layout ni ser visible.
@@ -20669,7 +20669,7 @@
    * @param {string} v_doc_html - documento HTML completo a imprimir
    * @returns {boolean} true si pudo abrir la ventana y lanzar print
    */
-  meWYSE.prototype._printWithWindow = function(v_doc_html) {
+  LibraEditor.prototype._printWithWindow = function(v_doc_html) {
     try {
       var v_win = window.open('', '_blank');
       if (!v_win) return false; // popup bloqueado
@@ -20690,7 +20690,7 @@
    * Sin librerías: parte de getSafeHTML() y descarga vía Blob.
    * @param {string} filename - nombre sin extensión (default 'documento')
    */
-  meWYSE.prototype.exportWord = function(filename) {
+  LibraEditor.prototype.exportWord = function(filename) {
     // getHTML (no getSafeHTML): documento fiel desde el modelo ya saneado
     // (ver nota en print). Evita perder salto de pagina/callout/toc/divider.
     var v_html = this.getHTML();
@@ -20727,7 +20727,7 @@
    * @param {string} v_language - id de lenguaje (o vacío = auto)
    * @returns {string} HTML resaltado o escapado
    */
-  meWYSE.prototype._highlightCode = function(v_text, v_language) {
+  LibraEditor.prototype._highlightCode = function(v_text, v_language) {
     var v_source = (typeof v_text === 'string') ? v_text : '';
     if (window.hljs) {
       try {
@@ -20750,7 +20750,7 @@
    * @param {HTMLElement} v_code_el - el elemento <code> del bloque
    * @param {number} v_block_id
    */
-  meWYSE.prototype._rehighlightCodeElement = function(v_code_el, v_block_id) {
+  LibraEditor.prototype._rehighlightCodeElement = function(v_code_el, v_block_id) {
     if (!this.codeHighlight || !v_code_el) return;
     var v_block = this.getBlock(v_block_id);
     if (!v_block || v_block.type !== 'code') return;
@@ -20767,16 +20767,16 @@
    * y aún no está en window. Al terminar, re-pinta todos los bloques de código ya
    * renderizados. Sin lib (o error de carga) los bloques quedan en texto plano.
    */
-  meWYSE.prototype._initCodeHighlight = function() {
+  LibraEditor.prototype._initCodeHighlight = function() {
     if (!this.codeHighlight || !this.codeHighlightUrl) return;
     if (window.hljs) return; // ya disponible: el render inicial ya resaltó
     var self = this;
     this._loadScriptOnce(this.codeHighlightUrl, function(ok) {
       if (!ok || !window.hljs || self._destroyed || !self.container) return;
       // Re-pintar los bloques de código ya presentes en el DOM
-      var v_codes = self.container.querySelectorAll('code[data-mewyse-code="1"]');
+      var v_codes = self.container.querySelectorAll('code[data-libraeditor-code="1"]');
       for (var i = 0; i < v_codes.length; i++) {
-        var v_blk_el = v_codes[i].closest('.mewyse-block');
+        var v_blk_el = v_codes[i].closest('.libraeditor-block');
         if (!v_blk_el) continue;
         var v_id = parseInt(v_blk_el.getAttribute('data-block-id'), 10);
         if (!isNaN(v_id)) self._rehighlightCodeElement(v_codes[i], v_id);
@@ -20784,12 +20784,12 @@
     });
   };
 
-  meWYSE.prototype._loadScriptOnce = function(url, cb) {
+  LibraEditor.prototype._loadScriptOnce = function(url, cb) {
     if (!url) { cb(false); return; }
     if (!this._loadedScripts) this._loadedScripts = {};
     var state = this._loadedScripts[url];
     if (state === 'loaded') { cb(true); return; }
-    var existing = document.querySelector('script[data-mewyse-lib="' + url + '"]');
+    var existing = document.querySelector('script[data-libraeditor-lib="' + url + '"]');
     if (existing) {
       existing.addEventListener('load', function() { cb(true); });
       existing.addEventListener('error', function() { cb(false); });
@@ -20798,7 +20798,7 @@
     var self = this;
     var s = document.createElement('script');
     s.src = url;
-    s.setAttribute('data-mewyse-lib', url);
+    s.setAttribute('data-libraeditor-lib', url);
     s.onload = function() { self._loadedScripts[url] = 'loaded'; cb(true); };
     s.onerror = function() { self._loadedScripts[url] = 'error'; cb(false); };
     this._loadedScripts[url] = 'loading';
@@ -20811,7 +20811,7 @@
    * falla, cae a print() (el usuario elige "Guardar como PDF" del navegador).
    * @param {string} filename - nombre sin extensión (default 'documento')
    */
-  meWYSE.prototype.exportPdf = function(filename) {
+  LibraEditor.prototype.exportPdf = function(filename) {
     var self = this;
     var v_name = (typeof filename === 'string' && filename ? filename : 'documento') + '.pdf';
     var v_fallback = function() { self.print(); };
@@ -20835,7 +20835,7 @@
    * Permite editar: width, height, cell-spacing, cell-padding,
    * border (width/style/color), alignment, background-color
    */
-  meWYSE.prototype.showTablePropertiesModal = function(blockId) {
+  LibraEditor.prototype.showTablePropertiesModal = function(blockId) {
     var self = this;
     var block = this.getBlock(blockId);
     if (!block || block.type !== 'table') return;
@@ -20852,22 +20852,22 @@
 
     // Crear overlay
     var overlay = document.createElement('div');
-    overlay.className = 'mewyse-modal-overlay';
+    overlay.className = 'libraeditor-modal-overlay';
 
     // Contenedor
     var modal = document.createElement('div');
-    modal.className = 'mewyse-modal-container mewyse-table-properties-modal';
+    modal.className = 'libraeditor-modal-container libraeditor-table-properties-modal';
     self._applyMenuTheme(modal); // dark mode si el editor está en oscuro
 
     // Título
     var title = document.createElement('h3');
-    title.className = 'mewyse-modal-title';
+    title.className = 'libraeditor-modal-title';
     title.textContent = t('title');
     modal.appendChild(title);
 
     // Contenedor de campos (grid 2 columnas)
     var grid = document.createElement('div');
-    grid.className = 'mewyse-table-properties-grid';
+    grid.className = 'libraeditor-table-properties-grid';
 
     // --- Ancho / Alto (aceptan px, %, auto o vacío) ---
     var widthInput = self._makeDimensionInput(current.width, '500px / 100% / auto');
@@ -20886,7 +20886,7 @@
     // Vacío = no modificar el borde de las celdas
     var borderWidthInput = self._makeNumberInput(current.borderWidth, 0);
     var borderStyleSelect = document.createElement('select');
-    borderStyleSelect.className = 'mewyse-modal-input';
+    borderStyleSelect.className = 'libraeditor-modal-input';
     var styles = [
       { value: 'solid', label: t('styleSolid') },
       { value: 'dashed', label: t('styleDashed') },
@@ -20904,14 +20904,14 @@
     // Border color con tracking userSet (patrón similar al bg)
     var borderColorInput = document.createElement('input');
     borderColorInput.type = 'color';
-    borderColorInput.className = 'mewyse-modal-input mewyse-modal-color';
+    borderColorInput.className = 'libraeditor-modal-input libraeditor-modal-color';
     borderColorInput.value = current.borderColor || '#dddddd';
     var borderColorWrapper = document.createElement('div');
-    borderColorWrapper.className = 'mewyse-modal-color-wrap';
+    borderColorWrapper.className = 'libraeditor-modal-color-wrap';
     borderColorWrapper.appendChild(borderColorInput);
     var borderColorClearBtn = document.createElement('button');
     borderColorClearBtn.type = 'button';
-    borderColorClearBtn.className = 'mewyse-modal-btn-small';
+    borderColorClearBtn.className = 'libraeditor-modal-btn-small';
     borderColorClearBtn.textContent = t('reset');
     borderColorClearBtn.onclick = function() {
       borderColorInput.value = '#dddddd';
@@ -20929,7 +20929,7 @@
 
     // --- Alineación ---
     var alignSelect = document.createElement('select');
-    alignSelect.className = 'mewyse-modal-input';
+    alignSelect.className = 'libraeditor-modal-input';
     var aligns = [
       { value: 'left', label: t('alignLeft') },
       { value: 'center', label: t('alignCenter') },
@@ -20947,15 +20947,15 @@
     // --- Color de fondo ---
     var bgColorInput = document.createElement('input');
     bgColorInput.type = 'color';
-    bgColorInput.className = 'mewyse-modal-input mewyse-modal-color';
+    bgColorInput.className = 'libraeditor-modal-input libraeditor-modal-color';
     bgColorInput.value = current.backgroundColor || '#ffffff';
     // Checkbox para "sin fondo"
     var bgWrapper = document.createElement('div');
-    bgWrapper.className = 'mewyse-modal-color-wrap';
+    bgWrapper.className = 'libraeditor-modal-color-wrap';
     bgWrapper.appendChild(bgColorInput);
     var bgClearBtn = document.createElement('button');
     bgClearBtn.type = 'button';
-    bgClearBtn.className = 'mewyse-modal-btn-small';
+    bgClearBtn.className = 'libraeditor-modal-btn-small';
     bgClearBtn.textContent = t('reset');
     bgClearBtn.onclick = function() {
       bgColorInput.value = '#ffffff';
@@ -20974,7 +20974,7 @@
 
     // --- Botones Aplicar / Cancelar ---
     var buttons = document.createElement('div');
-    buttons.className = 'mewyse-modal-buttons';
+    buttons.className = 'libraeditor-modal-buttons';
 
     // Cierre unificado: quita el overlay del DOM y desregistra el listener de
     // Escape, sea cual sea la vía de cierre (Cancelar/Aplicar/overlay/Escape).
@@ -20985,13 +20985,13 @@
 
     var cancelBtn = document.createElement('button');
     cancelBtn.type = 'button';
-    cancelBtn.className = 'mewyse-modal-button mewyse-modal-button-cancel';
+    cancelBtn.className = 'libraeditor-modal-button libraeditor-modal-button-cancel';
     cancelBtn.textContent = t('cancel');
     cancelBtn.onclick = function() { cerrar_modal(); };
 
     var applyBtn = document.createElement('button');
     applyBtn.type = 'button';
-    applyBtn.className = 'mewyse-modal-button mewyse-modal-button-primary';
+    applyBtn.className = 'libraeditor-modal-button libraeditor-modal-button-primary';
     applyBtn.textContent = t('apply');
     applyBtn.onclick = function() {
       self.pushHistory(true);
@@ -21034,10 +21034,10 @@
   /**
    * Helper: crea un <input type="number"> con valor inicial
    */
-  meWYSE.prototype._makeNumberInput = function(value, min) {
+  LibraEditor.prototype._makeNumberInput = function(value, min) {
     var input = document.createElement('input');
     input.type = 'number';
-    input.className = 'mewyse-modal-input';
+    input.className = 'libraeditor-modal-input';
     if (typeof min === 'number') input.min = String(min);
     if (value !== undefined && value !== null && value !== '') {
       input.value = String(value);
@@ -21049,10 +21049,10 @@
    * Helper: crea un <input type="text"> para dimensiones CSS (px/%/auto/vacío)
    * Acepta: "500", "500px", "100%", "auto", "" (vacío = sin declaración)
    */
-  meWYSE.prototype._makeDimensionInput = function(value, placeholder) {
+  LibraEditor.prototype._makeDimensionInput = function(value, placeholder) {
     var input = document.createElement('input');
     input.type = 'text';
-    input.className = 'mewyse-modal-input';
+    input.className = 'libraeditor-modal-input';
     if (placeholder) input.placeholder = placeholder;
     if (value !== undefined && value !== null && value !== '') {
       input.value = String(value);
@@ -21067,7 +21067,7 @@
    * - "500px", "100%", "auto" → tal cual
    * - "abc" → null (inválido)
    */
-  meWYSE.prototype._normalizeDimension = function(value) {
+  LibraEditor.prototype._normalizeDimension = function(value) {
     if (value === undefined || value === null) return null;
     var trimmed = String(value).trim();
     if (trimmed === '') return null;
@@ -21081,9 +21081,9 @@
   /**
    * Helper: crea un <div> con label + input
    */
-  meWYSE.prototype._makeField = function(labelText, inputEl) {
+  LibraEditor.prototype._makeField = function(labelText, inputEl) {
     var wrap = document.createElement('div');
-    wrap.className = 'mewyse-modal-input-group';
+    wrap.className = 'libraeditor-modal-input-group';
     var label = document.createElement('label');
     label.textContent = labelText;
     wrap.appendChild(label);
@@ -21097,7 +21097,7 @@
    *                     borderWidth, borderStyle, borderColor,
    *                     alignment, backgroundColor }
    */
-  meWYSE.prototype._readTableProperties = function(table) {
+  LibraEditor.prototype._readTableProperties = function(table) {
     var self = this;
     var result = {
       width: '', height: '',
@@ -21183,7 +21183,7 @@
   /**
    * Convierte color CSS (rgb, nombre, hex3) a hex6
    */
-  meWYSE.prototype._colorToHex = function(color) {
+  LibraEditor.prototype._colorToHex = function(color) {
     if (!color) return '';
     color = color.trim();
     if (color.indexOf('#') === 0) {
@@ -21223,7 +21223,7 @@
    * Los estilos del <table> se guardan en block.tableStyle (persistido en el modelo);
    * los estilos de las celdas van en el innerHTML como hasta ahora.
    */
-  meWYSE.prototype._applyTableProperties = function(blockId, table, props) {
+  LibraEditor.prototype._applyTableProperties = function(blockId, table, props) {
     // Construir style string para la tabla (se guarda en block.tableStyle)
     // Reglas: si un campo está vacío, se omite la declaración CSS correspondiente.
     var tableStyles = [];
@@ -21332,7 +21332,7 @@
    * Parsea un string CSS inline a un objeto { prop: value }.
    * Las keys se guardan en lowercase para comparación consistente.
    */
-  meWYSE.prototype._parseStyleMap = function(styleStr) {
+  LibraEditor.prototype._parseStyleMap = function(styleStr) {
     var map = {};
     if (!styleStr) return map;
     var parts = styleStr.split(';');
@@ -21350,7 +21350,7 @@
   /**
    * Serializa un objeto { prop: value } a un string CSS inline.
    */
-  meWYSE.prototype._serializeStyleMap = function(map) {
+  LibraEditor.prototype._serializeStyleMap = function(map) {
     var parts = [];
     for (var prop in map) {
       if (map.hasOwnProperty(prop)) {
@@ -21363,7 +21363,7 @@
   /**
    * Extrae el width de una declaración border shorthand (ej. "2px dashed #ff0000")
    */
-  meWYSE.prototype._extractBorderWidth = function(borderValue) {
+  LibraEditor.prototype._extractBorderWidth = function(borderValue) {
     if (!borderValue) return null;
     var m = borderValue.match(/(\d+)px/);
     return m ? parseInt(m[1], 10) : null;
@@ -21372,7 +21372,7 @@
   /**
    * Extrae el color de una declaración border shorthand
    */
-  meWYSE.prototype._extractBorderColor = function(borderValue) {
+  LibraEditor.prototype._extractBorderColor = function(borderValue) {
     if (!borderValue) return null;
     var m = borderValue.match(/#[0-9a-fA-F]{3,6}|rgb\([^)]+\)/);
     return m ? m[0] : null;
@@ -21386,7 +21386,7 @@
    * Lo usa `_mergeBlockIntoPrevious` para situar el cursor en la frontera entre
    * el contenido previo y el contenido recién concatenado.
    */
-  meWYSE.prototype._setCursorAtTextOffset = function(element, offset) {
+  LibraEditor.prototype._setCursorAtTextOffset = function(element, offset) {
     if (!element) return;
     try {
       element.focus();
@@ -21432,7 +21432,7 @@
    * Síncrono dentro del gesto del usuario para no perder el teclado virtual
    * en móvil (mismo motivo que en `_focusBlockSync`).
    */
-  meWYSE.prototype._mergeBlockIntoPrevious = function(blockId) {
+  LibraEditor.prototype._mergeBlockIntoPrevious = function(blockId) {
     var index = this.getBlockIndex(blockId);
     if (index <= 0) return;
     var currentBlock = this.getBlock(blockId);
@@ -21497,7 +21497,7 @@
    * Enter handler, en combinación con el flag `_skipAutoFocus` que evita el
    * focus asíncrono de fondo cuando ya hicimos el síncrono.
    */
-  meWYSE.prototype._focusBlockSync = function(blockId) {
+  LibraEditor.prototype._focusBlockSync = function(blockId) {
     if (!blockId || !this.container) return;
     var blockElement = this.container.querySelector('[data-block-id="' + blockId + '"]');
     if (!blockElement) return;
@@ -21525,7 +21525,7 @@
    * Backdrop / overlay invisible para menús flotantes y modales.
    *
    * Cuando un menú/modal se abre, llama a `_showBackdrop(name, closeFn)`. Si era el
-   * primero del stack, se inserta un <div.mewyse-overlay> en body que intercepta
+   * primero del stack, se inserta un <div.libraeditor-overlay> en body que intercepta
    * clicks y la tecla Escape. Click u Escape llaman al `closeFn` del top del stack.
    *
    * Cuando el menú se cierra por sus propios medios, debe llamar `_hideBackdrop(name)`
@@ -21534,10 +21534,10 @@
    * El overlay es transparente (z-index 10000) — se sitúa por encima del wrapper
    * de fullscreen (9998) para que los menús (10001+, insertados en <body>) no
    * queden tapados en pantalla completa, y por debajo de los propios menús y de
-   * los modales (10020+). Ver la "ESCALERA DE CAPAS" documentada en mewyse.css
-   * (regla .mewyse-overlay).
+   * los modales (10020+). Ver la "ESCALERA DE CAPAS" documentada en libraeditor.css
+   * (regla .libraeditor-overlay).
    */
-  meWYSE.prototype._showBackdrop = function(name, closeFn) {
+  LibraEditor.prototype._showBackdrop = function(name, closeFn) {
     if (!name || typeof closeFn !== 'function') return;
     // Eliminar entrada previa con el mismo nombre (re-aperturas no apilan).
     for (var i = this._activeBackdropModals.length - 1; i >= 0; i--) {
@@ -21549,7 +21549,7 @@
     this._ensureBackdrop();
   };
 
-  meWYSE.prototype._hideBackdrop = function(name) {
+  LibraEditor.prototype._hideBackdrop = function(name) {
     if (!name || !this._activeBackdropModals) return;
     for (var i = this._activeBackdropModals.length - 1; i >= 0; i--) {
       if (this._activeBackdropModals[i].name === name) {
@@ -21560,12 +21560,12 @@
     if (!this._activeBackdropModals.length) this._removeBackdrop();
   };
 
-  meWYSE.prototype._ensureBackdrop = function() {
+  LibraEditor.prototype._ensureBackdrop = function() {
     if (this._backdropEl) return;
     var self = this;
 
     var el = document.createElement('div');
-    el.className = 'mewyse-overlay';
+    el.className = 'libraeditor-overlay';
     // mousedown (no click) para ganar la carrera contra otros listeners que
     // pudieran inspeccionar selección o foco al click. preventDefault evita que
     // el editor pierda la selección al hacer click en el overlay.
@@ -21589,7 +21589,7 @@
     document.addEventListener('keydown', this._backdropEscHandler, true);
   };
 
-  meWYSE.prototype._removeBackdrop = function() {
+  LibraEditor.prototype._removeBackdrop = function() {
     if (this._backdropEl && this._backdropEl.parentNode) {
       this._backdropEl.parentNode.removeChild(this._backdropEl);
     }
@@ -21601,7 +21601,7 @@
     }
   };
 
-  meWYSE.prototype._closeTopmostBackdropModal = function() {
+  LibraEditor.prototype._closeTopmostBackdropModal = function() {
     if (!this._activeBackdropModals || !this._activeBackdropModals.length) return;
     var entry = this._activeBackdropModals[this._activeBackdropModals.length - 1];
     // Llamar al closeFn primero. Se espera que limpie llamando _hideBackdrop;
@@ -21619,7 +21619,7 @@
   /**
    * Configura el comportamiento de scroll horizontal de la toolbar cuando se
    * usa toolbarOverflow: 'scroll'. Cablea:
-   *  - Indicadores de overflow (clases has-overflow-start/end en .mewyse-toolbar-scroll-area)
+   *  - Indicadores de overflow (clases has-overflow-start/end en .libraeditor-toolbar-scroll-area)
    *  - Wheel vertical → scroll horizontal
    *  - focusin → scrollIntoView del botón con foco
    *  - Click en flechas prev/next → scroll suave por ~70% del ancho visible
@@ -21628,7 +21628,7 @@
    * Las referencias a los elementos viven en this._toolbarScroll (creado en createToolbar).
    * Los listeners se guardan en this._toolbarScrollListeners para poder limpiarlos en destroy().
    */
-  meWYSE.prototype._setupToolbarScroll = function() {
+  LibraEditor.prototype._setupToolbarScroll = function() {
     var ts = this._toolbarScroll;
     if (!ts || !ts.track) return;
     var self = this;
@@ -21748,18 +21748,18 @@
    * NO escapa `"` ni `'` en text nodes (sólo en atributos), así que este
    * serializador escribe el HTML manualmente para forzar las cinco entidades.
    */
-  meWYSE.prototype._emitInlineHTMLWithEscape = function(html) {
+  LibraEditor.prototype._emitInlineHTMLWithEscape = function(html) {
     if (typeof html !== 'string' || html === '') return html || '';
     var doc;
     try {
       doc = new DOMParser().parseFromString(
-        '<!DOCTYPE html><html><body><div id="__mewyse_root__">' + html + '</div></body></html>',
+        '<!DOCTYPE html><html><body><div id="__libraeditor_root__">' + html + '</div></body></html>',
         'text/html'
       );
     } catch (e) {
       return html;
     }
-    var root = doc.querySelector('#__mewyse_root__');
+    var root = doc.querySelector('#__libraeditor_root__');
     if (!root) return html;
     var out = '';
     var c = root.firstChild;
@@ -21776,7 +21776,7 @@
     INPUT: 1, LINK: 1, META: 1, PARAM: 1, SOURCE: 1, TRACK: 1, WBR: 1
   };
 
-  meWYSE.prototype._serializeNodeWithEntityEscape = function(node) {
+  LibraEditor.prototype._serializeNodeWithEntityEscape = function(node) {
     if (!node) return '';
     if (node.nodeType === 3) {
       // text node — escape los 5 entities
@@ -21808,7 +21808,7 @@
     return '<' + tagLower + attrs + '>' + inner + '</' + tagLower + '>';
   };
 
-  meWYSE.prototype._escapeTextEntities = function(text) {
+  LibraEditor.prototype._escapeTextEntities = function(text) {
     if (text == null) return '';
     var s = String(text);
 
@@ -21871,11 +21871,11 @@
     'font-family': 1, 'font-size': 1, 'line-height': 1
   };
 
-  meWYSE.prototype._isStyleNativeElement = function(el) {
+  LibraEditor.prototype._isStyleNativeElement = function(el) {
     if (!el || el.nodeType !== 1) return false;
     if (STYLE_NATIVE_TAGS[el.tagName]) return true;
     // Spans atómicos del editor: la cápsula del tag lleva su color en style.
-    if (el.tagName === 'SPAN' && el.classList && el.classList.contains('mewyse-tag')) {
+    if (el.tagName === 'SPAN' && el.classList && el.classList.contains('libraeditor-tag')) {
       return true;
     }
     return false;
@@ -21892,7 +21892,7 @@
    *   envuelto en <table> para que tr/td/th no sean descartados por DOMParser.
    * @returns {string}
    */
-  meWYSE.prototype._stripNonNativeStyles = function(html, opts) {
+  LibraEditor.prototype._stripNonNativeStyles = function(html, opts) {
     if (typeof html !== 'string' || !html) return html || '';
     var allowTable = !!(opts && opts.allowTable);
     var open = allowTable ? '<table id="__root__">' : '<div id="__root__">';
@@ -21926,7 +21926,7 @@
    * @param {string} styleStr
    * @returns {string} style filtrado (o '' si no queda nada seguro)
    */
-  meWYSE.prototype._filterContentStyle = function(styleStr) {
+  LibraEditor.prototype._filterContentStyle = function(styleStr) {
     if (!styleStr || typeof styleStr !== 'string') return '';
     var v_parts = styleStr.split(';');
     var v_kept = [];
@@ -21952,7 +21952,7 @@
    * tienen prioridad sobre la selección cross-block (arrastre de texto).
    * @returns {{mode: 'blocks'|'cross'|'none', ids: number[]}}
    */
-  meWYSE.prototype._getActiveBlockSelection = function() {
+  LibraEditor.prototype._getActiveBlockSelection = function() {
     var self = this;
     if (this.selectedBlocks && this.selectedBlocks.length > 0) {
       // Ordenar por posición en el documento para un recorrido coherente
@@ -21972,7 +21972,7 @@
    * Re-aplica la clase visual de selección a los bloques seleccionados.
    * Necesario tras un render(), que no la conserva.
    */
-  meWYSE.prototype._reapplyBlockSelectionVisuals = function() {
+  LibraEditor.prototype._reapplyBlockSelectionVisuals = function() {
     if (!this.selectedBlocks) return;
     for (var i = 0; i < this.selectedBlocks.length; i++) {
       this.updateBlockSelectionVisual(this.selectedBlocks[i], true);
@@ -21987,7 +21987,7 @@
    * @param {Function} transformer - (text) => text
    * @returns {string}
    */
-  meWYSE.prototype._transformTextNodesHtml = function(html, transformer) {
+  LibraEditor.prototype._transformTextNodesHtml = function(html, transformer) {
     var tmp = document.createElement('div');
     tmp.innerHTML = html;
     var walker = document.createTreeWalker(tmp, NodeFilter.SHOW_TEXT, null, false);
@@ -22009,7 +22009,7 @@
    * @param {Function} applyFn - p.ej. function(){ document.execCommand('bold'); }
    * @returns {boolean} true si actuó (había multi-selección); false si no.
    */
-  meWYSE.prototype._applyInlineAcrossSelection = function(applyFn) {
+  LibraEditor.prototype._applyInlineAcrossSelection = function(applyFn) {
     var info = this._getActiveBlockSelection();
     if (info.mode === 'none') return false;
 
@@ -22062,7 +22062,7 @@
    * Omite bloques no convertibles (tabla/imagen/divider/media).
    * @returns {boolean} true si actuó; false si no había multi-selección.
    */
-  meWYSE.prototype.applyBlockTypeToSelection = function(type, customClass) {
+  LibraEditor.prototype.applyBlockTypeToSelection = function(type, customClass) {
     var info = this._getActiveBlockSelection();
     if (info.mode === 'none') return false;
 
@@ -22109,7 +22109,7 @@
    * múltiple, vía el modelo (block.alignment) para que persista en el render.
    * @returns {boolean} true si actuó; false si no había multi-selección.
    */
-  meWYSE.prototype.applyAlignmentToSelection = function(alignment) {
+  LibraEditor.prototype.applyAlignmentToSelection = function(alignment) {
     var info = this._getActiveBlockSelection();
     if (info.mode === 'none') return false;
 
@@ -22150,7 +22150,7 @@
    *    atajo queda anulado.
    * El array se recorre en orden (anclaje determinista de los customs).
    */
-  meWYSE.prototype._initActionRegistry = function() {
+  LibraEditor.prototype._initActionRegistry = function() {
     this._customActions = [];        // defs custom, en orden de declaración
     this._customActionsByName = {};  // nombre → def custom
     this._actionOverrides = {};      // nombre estándar → def override
@@ -22177,22 +22177,22 @@
    * @param {Object} def
    * @returns {boolean}
    */
-  meWYSE.prototype._registerActionDef = function(def) {
+  LibraEditor.prototype._registerActionDef = function(def) {
     if (!def || typeof def.name !== 'string' || !def.name) {
-      console.warn('meWYSE: acción sin `name` válido', def);
+      console.warn('LibraEditor: acción sin `name` válido', def);
       return false;
     }
     var v_name = def.name;
     if (STANDARD_ACTION_NAMES[v_name]) {
       if (v_name === 'fontsize') {
-        console.warn('meWYSE: la acción `fontsize` (stepper) no admite override; usa disabledActions');
+        console.warn('LibraEditor: la acción `fontsize` (stepper) no admite override; usa disabledActions');
         return false;
       }
       this._actionOverrides[v_name] = def;
       return true;
     }
     if (typeof def.onClick !== 'function') {
-      console.warn('meWYSE: la acción custom `' + v_name + '` necesita `onClick`');
+      console.warn('LibraEditor: la acción custom `' + v_name + '` necesita `onClick`');
       return false;
     }
     var v_pl = def.placement;
@@ -22230,7 +22230,7 @@
    * @param {Object} v_opts - { source, event, button }
    * @returns {Object}
    */
-  meWYSE.prototype._makeActionContext = function(v_name, v_opts) {
+  LibraEditor.prototype._makeActionContext = function(v_name, v_opts) {
     v_opts = v_opts || {};
     var v_active = document.activeElement;
     var v_focused = (v_active && this.container && this.container.contains(v_active)) ? v_active : null;
@@ -22267,7 +22267,7 @@
    * @param {Object} v_opts - { source, event, button }
    * @returns {boolean} false si estaba desactivada o el editor destruido
    */
-  meWYSE.prototype._runAction = function(v_name, v_opts) {
+  LibraEditor.prototype._runAction = function(v_name, v_opts) {
     if (this._destroyed) return false;
     if (this._disabledActions && this._disabledActions[v_name]) return false;
     var self = this;
@@ -22279,7 +22279,7 @@
       ctx.callDefault = function() { self._runDefaultAction(v_name, ctx); };
       if (typeof v_override.onClick === 'function') {
         try { v_override.onClick(ctx); }
-        catch (e) { console.error('meWYSE: error en el override de `' + v_name + '`', e); }
+        catch (e) { console.error('LibraEditor: error en el override de `' + v_name + '`', e); }
       } else {
         this._runDefaultAction(v_name, ctx);
       }
@@ -22287,7 +22287,7 @@
     }
     if (v_custom) {
       try { v_custom.onClick(ctx); }
-      catch (e2) { console.error('meWYSE: error en la acción `' + v_name + '`', e2); }
+      catch (e2) { console.error('LibraEditor: error en la acción `' + v_name + '`', e2); }
       return true;
     }
     this._runDefaultAction(v_name, ctx);
@@ -22301,7 +22301,7 @@
    * @param {string} v_name
    * @param {Object} ctx
    */
-  meWYSE.prototype._runDefaultAction = function(v_name, ctx) {
+  LibraEditor.prototype._runDefaultAction = function(v_name, ctx) {
     var v_btn = ctx && ctx.button ? ctx.button : null;
     var v_id;
     switch (v_name) {
@@ -22370,7 +22370,7 @@
    * nativa y persistencia del bloque activo (cubre toolbar, flotante y atajos).
    * @param {string} v_cmd
    */
-  meWYSE.prototype._applyInlineFormatCommand = function(v_cmd) {
+  LibraEditor.prototype._applyInlineFormatCommand = function(v_cmd) {
     var v_applied = this._applyInlineAcrossSelection(function() { document.execCommand(v_cmd, false, null); });
     if (!v_applied) {
       document.execCommand(v_cmd, false, null);
@@ -22383,7 +22383,7 @@
    * misma estrategia cross-block → inline que _applyInlineFormatCommand.
    * @param {string} v_tag
    */
-  meWYSE.prototype._applyInlineWrapTag = function(v_tag) {
+  LibraEditor.prototype._applyInlineWrapTag = function(v_tag) {
     var self = this;
     var v_applied = this._applyInlineAcrossSelection(function() { self._wrapSelectionInTag(v_tag); });
     if (!v_applied) {
@@ -22396,12 +22396,12 @@
    * Abre el menú de merge tags para el bloque que contiene la selección (antes
    * inline en el botón `mergetags` de la toolbar).
    */
-  meWYSE.prototype._openMergeTagMenuFromSelection = function() {
+  LibraEditor.prototype._openMergeTagMenuFromSelection = function() {
     var sel = window.getSelection();
     if (!sel || !sel.rangeCount) return;
     var v_node = sel.getRangeAt(0).commonAncestorContainer;
     var v_el = (v_node.nodeType === 1) ? v_node : v_node.parentElement;
-    var v_block_el = (v_el && v_el.closest) ? v_el.closest('.mewyse-block[data-block-id]') : null;
+    var v_block_el = (v_el && v_el.closest) ? v_el.closest('.libraeditor-block[data-block-id]') : null;
     if (!v_block_el) return;
     var v_editable = this.getEditableElement(v_block_el);
     var v_bid = parseInt(v_block_el.getAttribute('data-block-id'), 10);
@@ -22421,7 +22421,7 @@
    * @param {Array} v_rows
    * @param {string} v_surface - 'toolbar' | 'floating'
    */
-  meWYSE.prototype._insertCustomActionsIntoRows = function(v_rows, v_surface) {
+  LibraEditor.prototype._insertCustomActionsIntoRows = function(v_rows, v_surface) {
     if (!this._customActions || !this._customActions.length || !v_rows || !v_rows.length) return;
     var v_created = {}; // clave de anclaje → grupo (array) ya creado, para compartirlo
     var v_find = function(v_name) {
@@ -22481,32 +22481,32 @@
    * @param {string} v_fallback
    * @returns {string}
    */
-  meWYSE.prototype._resolveActionIcon = function(v_icon, v_fallback) {
+  LibraEditor.prototype._resolveActionIcon = function(v_icon, v_fallback) {
     if (typeof v_icon === 'string' && v_icon) {
       if (v_icon.charAt(0) === '<') return v_icon;
       if (WYSIWYG_ICONS[v_icon]) return WYSIWYG_ICONS[v_icon];
-      return '<span class="mewyse-action-label">' + escapeHtml(v_icon) + '</span>';
+      return '<span class="libraeditor-action-label">' + escapeHtml(v_icon) + '</span>';
     }
-    return '<span class="mewyse-action-label">' + escapeHtml(v_fallback || '?') + '</span>';
+    return '<span class="libraeditor-action-label">' + escapeHtml(v_fallback || '?') + '</span>';
   };
 
   /**
    * Construye el botón de una acción CUSTOM para una superficie: en la toolbar
-   * es un .mewyse-toolbar-button (onmousedown+preventDefault para no perder el
+   * es un .libraeditor-toolbar-button (onmousedown+preventDefault para no perder el
    * caret) y se registra para el estado dinámico; en el flotante es un
-   * .mewyse-format-button con el estado evaluado al construir.
+   * .libraeditor-format-button con el estado evaluado al construir.
    * @param {Object} def
    * @param {string} v_source - 'toolbar' | 'floating'
    * @returns {HTMLButtonElement}
    */
-  meWYSE.prototype._buildCustomActionButton = function(def, v_source) {
+  LibraEditor.prototype._buildCustomActionButton = function(def, v_source) {
     var self = this;
     var v_icon = this._resolveActionIcon(def.icon, def.tooltip);
     var v_safe = String(def.name).replace(/[^a-zA-Z0-9_-]/g, '');
     var btn;
     if (v_source === 'floating') {
       btn = document.createElement('button');
-      btn.className = 'mewyse-format-button mewyse-custom-action';
+      btn.className = 'libraeditor-format-button libraeditor-custom-action';
       btn.innerHTML = v_icon;
       btn.title = def.tooltip;
       btn.setAttribute('aria-label', def.tooltip);
@@ -22518,7 +22518,7 @@
       this._applyCustomActionState(btn, def);
     } else {
       btn = this._makeToolbarButton({
-        icon: v_icon, title: def.tooltip, className: 'mewyse-custom-action',
+        icon: v_icon, title: def.tooltip, className: 'libraeditor-custom-action',
         onmousedown: function(e) { e.preventDefault(); },
         onclick: function(e) {
           e.preventDefault();
@@ -22532,7 +22532,7 @@
       }
     }
     btn.setAttribute('data-action', def.name);
-    if (v_safe) btn.classList.add('mewyse-action-' + v_safe);
+    if (v_safe) btn.classList.add('libraeditor-action-' + v_safe);
     return btn;
   };
 
@@ -22543,7 +22543,7 @@
    * @param {HTMLElement} v_el
    * @param {Object} def
    */
-  meWYSE.prototype._applyCustomActionState = function(v_el, def) {
+  LibraEditor.prototype._applyCustomActionState = function(v_el, def) {
     var v_enabled = true;
     if (def.requiresSelection && !this._hasUsableSelection()) v_enabled = false;
     var ctx = null;
@@ -22551,14 +22551,14 @@
       try {
         ctx = this._makeActionContext(def.name, { source: 'state' });
         v_enabled = !!def.isEnabled(ctx);
-      } catch (e) { console.error('meWYSE: error en isEnabled de `' + def.name + '`', e); }
+      } catch (e) { console.error('LibraEditor: error en isEnabled de `' + def.name + '`', e); }
     }
     v_el.disabled = !v_enabled;
     if (def.isActive) {
       try {
         if (!ctx) ctx = this._makeActionContext(def.name, { source: 'state' });
         v_el.classList.toggle('active', !!def.isActive(ctx));
-      } catch (e2) { console.error('meWYSE: error en isActive de `' + def.name + '`', e2); }
+      } catch (e2) { console.error('LibraEditor: error en isActive de `' + def.name + '`', e2); }
     }
   };
 
@@ -22567,7 +22567,7 @@
    * llama en focusin, en cada onSelectionChange, tras pulsar un custom y al
    * crear la toolbar. (Los del flotante se evalúan al construir el menú.)
    */
-  meWYSE.prototype._updateCustomActionStates = function() {
+  LibraEditor.prototype._updateCustomActionStates = function() {
     if (!this._customStateButtons || !this._customStateButtons.length) return;
     for (var i = 0; i < this._customStateButtons.length; i++) {
       var v_it = this._customStateButtons[i];
@@ -22583,7 +22583,7 @@
    * @param {string} v_name
    * @param {HTMLElement} v_el
    */
-  meWYSE.prototype._applyOverrideAppearance = function(v_name, v_el) {
+  LibraEditor.prototype._applyOverrideAppearance = function(v_name, v_el) {
     var def = this._actionOverrides ? this._actionOverrides[v_name] : null;
     if (!def || !v_el || v_name === 'fontsize' || v_name === 'blocktype') return;
     if (v_el.tagName !== 'BUTTON') return;
@@ -22593,9 +22593,9 @@
     if (typeof def.tooltip === 'string' && def.tooltip) {
       v_el.title = def.tooltip;
       v_el.setAttribute('aria-label', def.tooltip);
-      // El tooltip propio migra `title` a data-mewyse-tip en el primer hover;
+      // El tooltip propio migra `title` a data-libraeditor-tip en el primer hover;
       // si ya se migró, refrescarlo para que no quede el texto antiguo.
-      if (v_el.getAttribute('data-mewyse-tip')) v_el.setAttribute('data-mewyse-tip', def.tooltip);
+      if (v_el.getAttribute('data-libraeditor-tip')) v_el.setAttribute('data-libraeditor-tip', def.tooltip);
     }
   };
 
@@ -22605,7 +22605,7 @@
    * sustituye el nodo anterior y reaplica los estados por foco. No hace nada si
    * el editor no tiene toolbar.
    */
-  meWYSE.prototype._rebuildToolbar = function() {
+  LibraEditor.prototype._rebuildToolbar = function() {
     if (!this.showToolbar || !this.toolbar || !this.toolbar.parentNode) return;
     // Cerrar menús/tooltips que apunten a botones de la toolbar vieja.
     this._detachTooltips(this.toolbar);
@@ -22637,7 +22637,7 @@
    * @param {Object} def - misma forma que los ítems de la opción `actions`
    * @returns {boolean} true si se registró
    */
-  meWYSE.prototype.registerAction = function(def) {
+  LibraEditor.prototype.registerAction = function(def) {
     if (this._destroyed) return false;
     if (!this._registerActionDef(def)) return false;
     this._rebuildToolbar();
@@ -22652,7 +22652,7 @@
    * @param {string} v_name
    * @returns {boolean} true si existía
    */
-  meWYSE.prototype.unregisterAction = function(v_name) {
+  LibraEditor.prototype.unregisterAction = function(v_name) {
     if (this._destroyed || typeof v_name !== 'string') return false;
     var v_found = false;
     if (this._actionOverrides[v_name]) { delete this._actionOverrides[v_name]; v_found = true; }
@@ -22675,7 +22675,7 @@
    * @param {boolean} v_disabled - true desactiva, false reactiva
    * @returns {boolean}
    */
-  meWYSE.prototype.setActionDisabled = function(v_name, v_disabled) {
+  LibraEditor.prototype.setActionDisabled = function(v_name, v_disabled) {
     if (this._destroyed || typeof v_name !== 'string' || !v_name) return false;
     if (v_disabled === false) delete this._disabledActions[v_name];
     else this._disabledActions[v_name] = true;
@@ -22714,12 +22714,12 @@
 
   // Exportar el constructor. UMD-lite + SSR-safe:
   //  - CommonJS/bundlers (React, Next, Vite, webpack): module.exports
-  //  - Navegador clásico (<script>): global window.meWYSE
+  //  - Navegador clásico (<script>): global window.LibraEditor
   // En SSR (import en servidor) no hay window; no debe petar en tiempo de import.
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = meWYSE;
+    module.exports = LibraEditor;
   } else if (typeof window !== 'undefined') {
-    window.meWYSE = meWYSE;
+    window.LibraEditor = LibraEditor;
   }
 
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : this));

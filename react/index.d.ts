@@ -1,37 +1,37 @@
 import * as React from 'react';
-import meWYSE, { MeWyseOptions, MeWyseBlock, MeWyseChangePayload } from '../mewyse';
+import LibraEditor, { LibraEditorOptions, LibraEditorBlock, LibraEditorChangePayload } from '../libraeditor';
 
-/** Props del componente <MeWyse> (wrapper NO controlado). Acepta todas las
+/** Props del componente <LibraEditor> (wrapper NO controlado). Acepta todas las
  *  opciones del núcleo excepto `target`/`blocks` (gestionadas por el wrapper). */
-export interface MeWyseProps
-  extends Partial<Omit<MeWyseOptions, 'target' | 'blocks' | 'onChange' | 'onFocus' | 'onBlur'>> {
+export interface LibraEditorProps
+  extends Partial<Omit<LibraEditorOptions, 'target' | 'blocks' | 'onChange' | 'onFocus' | 'onBlur'>> {
   /** Contenido inicial: array de bloques o string JSON. No controlado. */
-  defaultValue?: MeWyseBlock[] | string;
-  onChange?: (data: MeWyseChangePayload) => void;
-  onFocus?: (data: MeWyseChangePayload) => void;
-  onBlur?: (data: MeWyseChangePayload) => void;
+  defaultValue?: LibraEditorBlock[] | string;
+  onChange?: (data: LibraEditorChangePayload) => void;
+  onFocus?: (data: LibraEditorChangePayload) => void;
+  onBlur?: (data: LibraEditorChangePayload) => void;
   className?: string;
   style?: React.CSSProperties;
 }
 
 /** API imperativa expuesta por el ref del componente. */
-export interface MeWyseHandle {
-  getEditor(): meWYSE | null;
+export interface LibraEditorHandle {
+  getEditor(): LibraEditor | null;
   getHTML(): string;
   getSafeHTML(): string;
   getJSON(): string;
   getMarkdown(): string;
   getPlainText(): string;
-  loadFromJSON(value: string | MeWyseBlock[]): void;
+  loadFromJSON(value: string | LibraEditorBlock[]): void;
   loadFromHTML(html: string): void;
   loadFromMarkdown(md: string): void;
   clear(): void;
   focus(): void;
 }
 
-export declare const MeWyse: React.ForwardRefExoticComponent<
-  MeWyseProps & React.RefAttributes<MeWyseHandle>
+export declare const LibraEditor: React.ForwardRefExoticComponent<
+  LibraEditorProps & React.RefAttributes<LibraEditorHandle>
 >;
-export default MeWyse;
+export default LibraEditor;
 
-export { MeWyseBlock, MeWyseChangePayload } from '../mewyse';
+export { LibraEditorBlock, LibraEditorChangePayload } from '../libraeditor';

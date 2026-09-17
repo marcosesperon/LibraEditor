@@ -8,76 +8,76 @@
    ======================================== */
 :root {
   /* Text colors */
-  --mewyse-text-primary: #333;
-  --mewyse-text-secondary: #666;
-  --mewyse-text-muted: #999;
-  --mewyse-text-light: #aaa;
-  --mewyse-text-inverse: #fff;
+  --libraeditor-text-primary: #333;
+  --libraeditor-text-secondary: #666;
+  --libraeditor-text-muted: #999;
+  --libraeditor-text-light: #aaa;
+  --libraeditor-text-inverse: #fff;
 
   /* Background colors */
-  --mewyse-bg-primary: #fff;
-  --mewyse-bg-secondary: #f8f9fa;
-  --mewyse-bg-hover: #f0f0f0;
-  --mewyse-bg-active: #e8e8e8;
-  --mewyse-bg-code: #f5f5f5;
-  --mewyse-bg-overlay: rgba(0, 0, 0, 0.5);
+  --libraeditor-bg-primary: #fff;
+  --libraeditor-bg-secondary: #f8f9fa;
+  --libraeditor-bg-hover: #f0f0f0;
+  --libraeditor-bg-active: #e8e8e8;
+  --libraeditor-bg-code: #f5f5f5;
+  --libraeditor-bg-overlay: rgba(0, 0, 0, 0.5);
 
   /* Syntax highlight (tokens de highlight.js) — paleta tema claro */
-  --mewyse-hl-keyword: #d73a49;
-  --mewyse-hl-string: #032f62;
-  --mewyse-hl-number: #005cc5;
-  --mewyse-hl-comment: #6a737d;
-  --mewyse-hl-function: #6f42c1;
-  --mewyse-hl-title: #22863a;
-  --mewyse-hl-attr: #005cc5;
-  --mewyse-hl-tag: #22863a;
-  --mewyse-hl-meta: #6a737d;
+  --libraeditor-hl-keyword: #d73a49;
+  --libraeditor-hl-string: #032f62;
+  --libraeditor-hl-number: #005cc5;
+  --libraeditor-hl-comment: #6a737d;
+  --libraeditor-hl-function: #6f42c1;
+  --libraeditor-hl-title: #22863a;
+  --libraeditor-hl-attr: #005cc5;
+  --libraeditor-hl-tag: #22863a;
+  --libraeditor-hl-meta: #6a737d;
 
   /* Border colors */
-  --mewyse-border-light: #e0e0e0;
-  --mewyse-border-medium: #ddd;
-  --mewyse-border-dark: #ccc;
+  --libraeditor-border-light: #e0e0e0;
+  --libraeditor-border-medium: #ddd;
+  --libraeditor-border-dark: #ccc;
 
   /* Accent / brand */
-  --mewyse-accent: #667eea;
-  --mewyse-accent-hover: #5a6fd6;
-  --mewyse-accent-text: #fff;
+  --libraeditor-accent: #667eea;
+  --libraeditor-accent-hover: #5a6fd6;
+  --libraeditor-accent-text: #fff;
 
   /* Status colors */
-  --mewyse-danger: #e74c3c;
-  --mewyse-danger-hover: #d63031;
-  --mewyse-danger-bg: #fff5f5;
+  --libraeditor-danger: #e74c3c;
+  --libraeditor-danger-hover: #d63031;
+  --libraeditor-danger-bg: #fff5f5;
 
   /* Selection */
-  --mewyse-selection-bg: rgba(59, 130, 246, 0.3);
-  --mewyse-selection-cell: rgba(59, 130, 246, 0.15);
+  --libraeditor-selection-bg: rgba(59, 130, 246, 0.3);
+  --libraeditor-selection-cell: rgba(59, 130, 246, 0.15);
 
   /* Shadows */
-  --mewyse-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.1);
-  --mewyse-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-  --mewyse-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+  --libraeditor-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --libraeditor-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --libraeditor-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
 
   /* Border radius */
-  --mewyse-radius-sm: 3px;
-  --mewyse-radius-md: 4px;
-  --mewyse-radius-lg: 6px;
-  --mewyse-radius-xl: 8px;
-  --mewyse-radius-2xl: 12px;
+  --libraeditor-radius-sm: 3px;
+  --libraeditor-radius-md: 4px;
+  --libraeditor-radius-lg: 6px;
+  --libraeditor-radius-xl: 8px;
+  --libraeditor-radius-2xl: 12px;
 
-  --mewyse-padding-handle: 20px;
+  --libraeditor-padding-handle: 20px;
 }
 
 /* Regla global para iconos SVG inline */
-.mewyse-editor-wrapper svg,
-.mewyse-editor svg,
-.mewyse-format-menu svg,
-.mewyse-options-menu svg,
-.mewyse-type-menu svg,
-.mewyse-slash-menu svg,
-.mewyse-table-toolbar svg,
-.mewyse-summary-button svg,
-.mewyse-summary-close svg,
-.mewyse-floating-handle svg {
+.libraeditor-editor-wrapper svg,
+.libraeditor-editor svg,
+.libraeditor-format-menu svg,
+.libraeditor-options-menu svg,
+.libraeditor-type-menu svg,
+.libraeditor-slash-menu svg,
+.libraeditor-table-toolbar svg,
+.libraeditor-summary-button svg,
+.libraeditor-summary-close svg,
+.libraeditor-floating-handle svg {
   display: inline-block;
   vertical-align: middle;
 }
@@ -85,7 +85,7 @@
 /* Wrapper que contiene toolbar + editor */
 /* Estilos visuales (background, color, border) inyectados por JS via _injectContentStyles */
 /* Cuando contentStyles: false, el wrapper hereda los estilos de la página */
-.mewyse-editor-wrapper {
+.libraeditor-editor-wrapper {
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -93,18 +93,18 @@
 }
 
 /* Barra de herramientas (solo modo completo) */
-.mewyse-toolbar {
+.libraeditor-toolbar {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 4px;
-  background: var(--mewyse-bg-secondary);
-  border-bottom: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-xl);
+  background: var(--libraeditor-bg-secondary);
+  border-bottom: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-xl);
   flex-wrap: wrap;
 }
 
-.mewyse-toolbar-group {
+.libraeditor-toolbar-group {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -112,17 +112,17 @@
 
 /* Salto de fila de la toolbar declarativa (array de filas, solo en modo wrap):
    fuerza que los grupos siguientes bajen a una nueva línea. */
-.mewyse-toolbar-row-break {
+.libraeditor-toolbar-row-break {
   flex-basis: 100%;
   width: 100%;
   height: 0;
 }
 
-.mewyse-toolbar-button {
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-medium);
-  border-radius: var(--mewyse-radius-md);
+.libraeditor-toolbar-button {
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-medium);
+  border-radius: var(--libraeditor-radius-md);
   padding: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -133,73 +133,73 @@
   justify-content: center;
 }
 
-.mewyse-toolbar-button svg {
+.libraeditor-toolbar-button svg {
   width: 16px;
   height: 16px;
 }
 
 /* Etiqueta de texto de una acción custom sin SVG (icon = texto / sin icon). */
-.mewyse-action-label {
+.libraeditor-action-label {
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
 }
 
-.mewyse-toolbar-button:hover {
-  background: var(--mewyse-bg-active);
-  border-color: var(--mewyse-text-muted);
+.libraeditor-toolbar-button:hover {
+  background: var(--libraeditor-bg-active);
+  border-color: var(--libraeditor-text-muted);
 }
 
-.mewyse-toolbar-button:active {
-  background: var(--mewyse-bg-active);
+.libraeditor-toolbar-button:active {
+  background: var(--libraeditor-bg-active);
 }
 
-.mewyse-toolbar-button:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-toolbar-button:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: 1px;
 }
 
-.mewyse-toolbar-button:disabled {
+.libraeditor-toolbar-button:disabled {
   opacity: 0.35;
   cursor: not-allowed;
   pointer-events: none;
 }
 
-.mewyse-toolbar-button .icon {
+.libraeditor-toolbar-button .icon {
   font-weight: 600;
 }
 
 /* Dropdown icon-only (Aa, fuente, interlineado...): ancho de botón normal + lo
    justo para la flecha; no crece más. */
-.mewyse-toolbar-dropdown {
+.libraeditor-toolbar-dropdown {
   justify-content: center;
   gap: 4px;
 }
 
 /* Dropdown ANCHO (selector de tipo de bloque "Texto"): reserva ancho para el
    nombre del tipo y separa la flecha a la derecha. */
-.mewyse-toolbar-dropdown-wide {
+.libraeditor-toolbar-dropdown-wide {
   min-width: 100px;
   justify-content: space-between;
   gap: 8px;
 }
 
-.mewyse-toolbar-dropdown .dropdown-arrow {
-  color: var(--mewyse-text-secondary);
+.libraeditor-toolbar-dropdown .dropdown-arrow {
+  color: var(--libraeditor-text-secondary);
   margin-left: 4px;
   display: inline-flex;
   align-items: center;
 }
 
-.mewyse-toolbar-dropdown .dropdown-arrow svg {
+.libraeditor-toolbar-dropdown .dropdown-arrow svg {
   width: 10px;
   height: 10px;
 }
 
-.mewyse-toolbar-separator {
+.libraeditor-toolbar-separator {
   width: 1px;
   height: 24px;
-  background: var(--mewyse-border-medium);
+  background: var(--libraeditor-border-medium);
   margin: 0 4px;
 }
 
@@ -216,7 +216,7 @@
      10020 = modales (modal-overlay, summary-overlay)
      10021 = summary tooltip
      2147483000 = toolbar tooltip (siempre arriba del todo) */
-.mewyse-overlay {
+.libraeditor-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -228,25 +228,25 @@
 
 /* ============================================
    readOnly — visualización sin edición
-   El JS pone `mewyse-readonly` en container (y wrapper si hay) y deja todos
+   El JS pone `libraeditor-readonly` en container (y wrapper si hay) y deja todos
    los descendientes con contenteditable="false". CSS oculta placeholders de
    bloques vacíos (sin sentido en read-only) y restablece el cursor a default.
    ============================================ */
-.mewyse-editor.mewyse-readonly {
+.libraeditor-editor.libraeditor-readonly {
   padding: 0.5em;
   min-height: auto;
 }
-.mewyse-readonly [data-placeholder]:empty:before,
-.mewyse-readonly .mewyse-block:empty:before {
+.libraeditor-readonly [data-placeholder]:empty:before,
+.libraeditor-readonly .libraeditor-block:empty:before {
   content: none !important;
 }
-.mewyse-readonly,
-.mewyse-readonly .mewyse-block {
+.libraeditor-readonly,
+.libraeditor-readonly .libraeditor-block {
   cursor: default;
 }
 /* Permitir selección nativa para copiar texto */
-.mewyse-readonly,
-.mewyse-readonly .mewyse-block {
+.libraeditor-readonly,
+.libraeditor-readonly .libraeditor-block {
   user-select: text;
   -webkit-user-select: text;
 }
@@ -257,12 +257,12 @@
    - Zona derecha (mover bloque) anclada y sin scroll.
    - Indicadores: gradiente de fade + flechas chevron + scrollbar nativa fina.
    ============================================ */
-.mewyse-toolbar.mewyse-toolbar-mode-scroll {
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll {
   flex-wrap: nowrap;
   align-items: center;
 }
 
-.mewyse-toolbar-scroll-area {
+.libraeditor-toolbar-scroll-area {
   position: relative;
   flex: 1 1 auto;
   min-width: 0; /* permite que el flex item encoja por debajo de su contenido */
@@ -270,7 +270,7 @@
   align-items: center;
 }
 
-.mewyse-toolbar-scroll-track {
+.libraeditor-toolbar-scroll-track {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -286,7 +286,7 @@
 }
 
 /* Webkit (Chrome, Safari, nuevos Edge): ocultar scrollbar manteniendo el scroll */
-.mewyse-toolbar-scroll-track::-webkit-scrollbar {
+.libraeditor-toolbar-scroll-track::-webkit-scrollbar {
   display: none;
   width: 0;
   height: 0;
@@ -294,7 +294,7 @@
 
 /* Las flechas y fades NO añaden hueco al track: van por encima en absoluto.
    El fade nace pegado al borde y se hace algo más ancho para integrar la flecha. */
-.mewyse-toolbar-fade {
+.libraeditor-toolbar-fade {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -304,36 +304,36 @@
   transition: opacity 0.15s ease;
   z-index: 1;
 }
-.mewyse-toolbar-fade-start {
+.libraeditor-toolbar-fade-start {
   inset-inline-start: 0;
-  background: linear-gradient(to right, var(--mewyse-bg-secondary) 40%, transparent 100%);
+  background: linear-gradient(to right, var(--libraeditor-bg-secondary) 40%, transparent 100%);
 }
-.mewyse-toolbar-fade-end {
+.libraeditor-toolbar-fade-end {
   inset-inline-end: 0;
-  background: linear-gradient(to left, var(--mewyse-bg-secondary) 40%, transparent 100%);
+  background: linear-gradient(to left, var(--libraeditor-bg-secondary) 40%, transparent 100%);
 }
 /* En RTL los gradientes deben invertir el sentido visual del degradado para que
    el lado opaco quede pegado al borde correcto. inset-inline-start ya posiciona bien. */
-.mewyse-toolbar-scroll-area[dir="rtl"] .mewyse-toolbar-fade-start {
-  background: linear-gradient(to left, var(--mewyse-bg-secondary) 40%, transparent 100%);
+.libraeditor-toolbar-scroll-area[dir="rtl"] .libraeditor-toolbar-fade-start {
+  background: linear-gradient(to left, var(--libraeditor-bg-secondary) 40%, transparent 100%);
 }
-.mewyse-toolbar-scroll-area[dir="rtl"] .mewyse-toolbar-fade-end {
-  background: linear-gradient(to right, var(--mewyse-bg-secondary) 40%, transparent 100%);
+.libraeditor-toolbar-scroll-area[dir="rtl"] .libraeditor-toolbar-fade-end {
+  background: linear-gradient(to right, var(--libraeditor-bg-secondary) 40%, transparent 100%);
 }
 
-.mewyse-toolbar-scroll-area.has-overflow-start .mewyse-toolbar-fade-start { opacity: 1; }
-.mewyse-toolbar-scroll-area.has-overflow-end   .mewyse-toolbar-fade-end   { opacity: 1; }
+.libraeditor-toolbar-scroll-area.has-overflow-start .libraeditor-toolbar-fade-start { opacity: 1; }
+.libraeditor-toolbar-scroll-area.has-overflow-end   .libraeditor-toolbar-fade-end   { opacity: 1; }
 
 /* Flechas de scroll: integradas en el fade en lugar de ser píldoras flotantes.
    Mismo lenguaje visual que los botones de la toolbar (ghost + hover suave). */
-.mewyse-toolbar-scroll-arrow {
+.libraeditor-toolbar-scroll-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
   border: none;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
   width: 24px;
   height: 24px;
   padding: 0;
@@ -345,24 +345,24 @@
   box-shadow: none;
   transition: background 0.15s ease, color 0.15s ease;
 }
-.mewyse-toolbar-scroll-arrow svg {
+.libraeditor-toolbar-scroll-arrow svg {
   width: 14px;
   height: 14px;
 }
-.mewyse-toolbar-scroll-arrow:hover {
-  background: var(--mewyse-bg-active);
-  color: var(--mewyse-text-primary);
+.libraeditor-toolbar-scroll-arrow:hover {
+  background: var(--libraeditor-bg-active);
+  color: var(--libraeditor-text-primary);
 }
-.mewyse-toolbar-scroll-arrow-prev { inset-inline-start: 2px; }
-.mewyse-toolbar-scroll-arrow-next { inset-inline-end: 2px; }
-.mewyse-toolbar-scroll-area.has-overflow-start .mewyse-toolbar-scroll-arrow-prev { display: flex; }
-.mewyse-toolbar-scroll-area.has-overflow-end   .mewyse-toolbar-scroll-arrow-next { display: flex; }
+.libraeditor-toolbar-scroll-arrow-prev { inset-inline-start: 2px; }
+.libraeditor-toolbar-scroll-arrow-next { inset-inline-end: 2px; }
+.libraeditor-toolbar-scroll-area.has-overflow-start .libraeditor-toolbar-scroll-arrow-prev { display: flex; }
+.libraeditor-toolbar-scroll-area.has-overflow-end   .libraeditor-toolbar-scroll-arrow-next { display: flex; }
 
 /* Zona fija a la derecha (solo modo scroll): segunda sección visualmente
    independiente, fuera del área de scroll y de la flecha `→`. Ancla moveup/
    movedown/fullscreen para que sigan siempre accesibles aunque la toolbar
    desborde. */
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-fixed-end {
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-fixed-end {
   display: flex;
   align-items: center;
   flex-shrink: 0;
@@ -370,7 +370,7 @@
   margin-inline-start: 0;
   padding-inline-start: 6px;
   /* Línea divisoria más marcada — delimita las dos zonas. */
-  border-inline-start: 1px solid var(--mewyse-border-medium);
+  border-inline-start: 1px solid var(--libraeditor-border-medium);
 }
 
 /* ===== Refinamientos visuales del modo scroll =====
@@ -379,42 +379,42 @@
    de verlos como botones sueltos.
    Solo tocamos color/borde para no chocar con themes que ajusten el tamaño
    (ej. compact con altura 22px). */
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-button {
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-button {
   background: transparent;
   border-color: transparent;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
 }
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-button:hover {
-  background: var(--mewyse-bg-active);
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-button:hover {
+  background: var(--libraeditor-bg-active);
   border-color: transparent;
 }
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-button:active {
-  background: var(--mewyse-border-medium);
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-button:active {
+  background: var(--libraeditor-border-medium);
 }
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-button.active {
-  background: var(--mewyse-bg-active);
-  color: var(--mewyse-accent);
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-button.active {
+  background: var(--libraeditor-bg-active);
+  color: var(--libraeditor-accent);
 }
 
 /* Reduce el tamaño de los grupos para una densidad más agradable. */
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-scroll-track {
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-scroll-track {
   gap: 2px;
 }
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-group {
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-group {
   gap: 0;
 }
 
 /* Separadores: más sutiles y cortos para encajar con los botones ghost. */
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-separator {
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-separator {
   height: 16px;
   margin: 0 6px;
-  background: var(--mewyse-border-light);
+  background: var(--libraeditor-border-light);
 }
 
 /* En modo scroll los grupos NO se encogen: queremos overflow real, no botones aplastados. */
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-group,
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-button,
-.mewyse-toolbar.mewyse-toolbar-mode-scroll .mewyse-toolbar-separator {
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-group,
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-button,
+.libraeditor-toolbar.libraeditor-toolbar-mode-scroll .libraeditor-toolbar-separator {
   flex-shrink: 0;
 }
 
@@ -423,52 +423,52 @@
    Es la regla base — los estilos inyectados (cuando contentStyles:true) lo replican; con
    contentStyles:false, esta regla sigue vigente y garantiza que el handle no se solape con
    el texto del primer bloque ni quede recortado por un parent con `overflow: hidden`. */
-.mewyse-editor {
+.libraeditor-editor {
   position: relative;
   width: 100%;
-  padding-left: var(--mewyse-padding-handle);
+  padding-left: var(--libraeditor-padding-handle);
   line-height: 1.5em;
 }
 
 /* ============================================================================
    ESTILOS DE CONTENIDO (default).
-   Aplican cuando JS añade `mewyse-editor-styled` al wrapper y al container —
+   Aplican cuando JS añade `libraeditor-editor-styled` al wrapper y al container —
    es decir, cuando NO se pasó `contentStyles: false`. Si la opción está
    desactivada, la página consumidora controla todos los estilos del editor.
    ============================================================================ */
-.mewyse-editor-wrapper.mewyse-editor-styled {
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-xl);
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
+.libraeditor-editor-wrapper.libraeditor-editor-styled {
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-xl);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
 }
 
-.mewyse-editor.mewyse-editor-styled {
-  padding: 1em 1em 1em var(--mewyse-padding-handle);
+.libraeditor-editor.libraeditor-editor-styled {
+  padding: 1em 1em 1em var(--libraeditor-padding-handle);
   min-height: 200px;
   max-height: 500px;
   overflow-y: auto;
   margin-left: 0;
 }
-.mewyse-editor.mewyse-editor-styled.mewyse-minimal {
-  border-radius: var(--mewyse-radius-xl);
-  padding: 1em 1em 1em var(--mewyse-padding-handle);
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
+.libraeditor-editor.libraeditor-editor-styled.libraeditor-minimal {
+  border-radius: var(--libraeditor-radius-xl);
+  padding: 1em 1em 1em var(--libraeditor-padding-handle);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
   min-height: 150px;
   max-height: 400px;
   overflow-y: auto;
 }
-/* Readonly con estilos de contenido: gana a .mewyse-editor-styled (misma
-   especificidad, iba después) añadiendo .mewyse-readonly al selector. Cubre
+/* Readonly con estilos de contenido: gana a .libraeditor-editor-styled (misma
+   especificidad, iba después) añadiendo .libraeditor-readonly al selector. Cubre
    tanto el modo minimal como el que tiene toolbar. */
-.mewyse-editor.mewyse-editor-styled.mewyse-readonly {
+.libraeditor-editor.libraeditor-editor-styled.libraeditor-readonly {
   padding: 0.5em;
   min-height: auto;
 }
 
 /* Bloques. Espaciados en em para que escalen con la tipografía. */
-.mewyse-editor-styled .mewyse-block {
+.libraeditor-editor-styled .libraeditor-block {
   display: block;
   position: relative;
   margin: 0 0 0.5em 0;
@@ -476,7 +476,7 @@
   outline: none;
   box-sizing: border-box;
 }
-.mewyse-editor-styled p.mewyse-block {
+.libraeditor-editor-styled p.libraeditor-block {
   margin: 0 0 0.5em 0;
   padding: 0;
 }
@@ -484,49 +484,49 @@
    El `color` se fija explícitamente (no solo por herencia del container): así una
    regla de la página anfitriona sobre el elemento (p.ej. `.seccion h2 {color:#000}`)
    no pisa el color del tema y deja los títulos invisibles en modo oscuro. */
-.mewyse-editor-styled h1.mewyse-block {
+.libraeditor-editor-styled h1.libraeditor-block {
   margin: 1em 0 .5em;
   padding: 0;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
-.mewyse-editor-styled h2.mewyse-block {
+.libraeditor-editor-styled h2.libraeditor-block {
   margin: 1em 0 .5em;
   padding: 0;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
-.mewyse-editor-styled h3.mewyse-block {
+.libraeditor-editor-styled h3.libraeditor-block {
   margin: .75em 0 .25em;
   padding: 0;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 /* El primer bloque del editor nunca lleva margen superior. */
-.mewyse-editor-styled .mewyse-block:first-child {
+.libraeditor-editor-styled .libraeditor-block:first-child {
   margin-top: 0;
 }
 /* En editores SIN toolbar, el botón de resumen flotante es el primer hijo del
    container, así que el primer bloque real deja de ser :first-child y recuperaría
    su margen superior (hueco excesivo arriba). Anularlo también en ese caso. */
-.mewyse-editor-styled .mewyse-summary-button + .mewyse-block,
-.mewyse-editor-styled .mewyse-summary-button + .mewyse-list-group {
+.libraeditor-editor-styled .libraeditor-summary-button + .libraeditor-block,
+.libraeditor-editor-styled .libraeditor-summary-button + .libraeditor-list-group {
   margin-top: 0;
 }
-.mewyse-editor-styled blockquote.mewyse-block {
+.libraeditor-editor-styled blockquote.libraeditor-block {
   margin: 0 0 0.5em 0;
   padding: 0.5em 1em;
-  border-left: 3px solid var(--mewyse-border-medium);
+  border-left: 3px solid var(--libraeditor-border-medium);
   /* Color explícito (no solo heredado): una regla `blockquote {color:…}` de la
      página anfitriona no debe dejar la cita invisible en modo oscuro. */
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
-.mewyse-editor-styled hr.mewyse-block {
+.libraeditor-editor-styled hr.libraeditor-block {
   margin: 0 0 0.5em 0;
   padding: 0;
 }
 /* Salto de página: marcador visible solo en el editor (una línea discontinua con
    una etiqueta). Al imprimir/exportar fuerza el corte de página y se oculta. */
-.mewyse-page-break {
+.libraeditor-page-break {
   margin: 0.75em 0;
-  border-top: 2px dashed var(--mewyse-border-medium);
+  border-top: 2px dashed var(--libraeditor-border-medium);
   text-align: center;
   user-select: none;
   position: relative;
@@ -535,62 +535,62 @@
 /* Bloque de tipo desconocido (preservado para no perder datos): placeholder de
    solo lectura, discreto, que indica que hay contenido no representable pero
    conservado (íntegro en getJSON). */
-.mewyse-unknown-block {
+.libraeditor-unknown-block {
   margin: 0.5em 0;
   padding: 6px 10px;
-  border: 1px dashed var(--mewyse-border-medium);
-  border-radius: var(--mewyse-radius-md, 6px);
-  background: var(--mewyse-bg-hover);
-  color: var(--mewyse-text-muted);
+  border: 1px dashed var(--libraeditor-border-medium);
+  border-radius: var(--libraeditor-radius-md, 6px);
+  background: var(--libraeditor-bg-hover);
+  color: var(--libraeditor-text-muted);
   font-size: 0.8em;
   user-select: none;
   cursor: default;
 }
-.mewyse-unknown-block-label::before {
+.libraeditor-unknown-block-label::before {
   content: '\26A0\FE0F';
   margin-right: 6px;
 }
-.mewyse-page-break-label {
+.libraeditor-page-break-label {
   display: inline-block;
   transform: translateY(-50%);
   padding: 0 8px;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-muted);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-muted);
   font-size: 0.7em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 @media print {
-  .mewyse-page-break {
+  .libraeditor-page-break {
     border-top: 0;
     break-after: page;
     page-break-after: always;
     margin: 0;
     height: 0;
   }
-  .mewyse-page-break-label { display: none; }
+  .libraeditor-page-break-label { display: none; }
 }
 
 /* Callout / aviso: fondo translúcido (funciona en claro y oscuro) + borde e
    icono con el color de la variante. El texto usa el color primario del tema
    (explícito, para que no lo deje invisible una regla de la página anfitriona). */
-.mewyse-callout {
+.libraeditor-callout {
   display: flex;
   gap: 10px;
   margin: 0 0 0.5em 0;
   padding: 0.6em 0.9em;
-  border-radius: var(--mewyse-radius-lg);
-  border-left: 3px solid var(--mewyse-c--callout, #3b82f6);
-  background: var(--mewyse-cbg, rgba(59, 130, 246, 0.10));
+  border-radius: var(--libraeditor-radius-lg);
+  border-left: 3px solid var(--libraeditor-c--callout, #3b82f6);
+  background: var(--libraeditor-cbg, rgba(59, 130, 246, 0.10));
   align-items: flex-start;
 }
-.mewyse-callout-content {
+.libraeditor-callout-content {
   flex: 1;
   outline: none;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
   min-width: 0;
 }
-.mewyse-callout-variant {
+.libraeditor-callout-variant {
   flex-shrink: 0;
   width: 22px;
   height: 22px;
@@ -601,39 +601,39 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--mewyse-cc, #3b82f6);
+  color: var(--libraeditor-cc, #3b82f6);
 }
-.mewyse-callout-variant:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-callout-variant:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: 1px;
-  border-radius: var(--mewyse-radius-sm, 4px);
+  border-radius: var(--libraeditor-radius-sm, 4px);
 }
-.mewyse-callout-info    { --mewyse-cc: #2563eb; --mewyse-cbg: rgba(37, 99, 235, 0.10);  border-left-color: #2563eb; }
-.mewyse-callout-warning { --mewyse-cc: #d97706; --mewyse-cbg: rgba(217, 119, 6, 0.12);  border-left-color: #d97706; }
-.mewyse-callout-success { --mewyse-cc: #16a34a; --mewyse-cbg: rgba(22, 163, 74, 0.12);  border-left-color: #16a34a; }
-.mewyse-callout-danger  { --mewyse-cc: #dc2626; --mewyse-cbg: rgba(220, 38, 38, 0.10);  border-left-color: #dc2626; }
+.libraeditor-callout-info    { --libraeditor-cc: #2563eb; --libraeditor-cbg: rgba(37, 99, 235, 0.10);  border-left-color: #2563eb; }
+.libraeditor-callout-warning { --libraeditor-cc: #d97706; --libraeditor-cbg: rgba(217, 119, 6, 0.12);  border-left-color: #d97706; }
+.libraeditor-callout-success { --libraeditor-cc: #16a34a; --libraeditor-cbg: rgba(22, 163, 74, 0.12);  border-left-color: #16a34a; }
+.libraeditor-callout-danger  { --libraeditor-cc: #dc2626; --libraeditor-cbg: rgba(220, 38, 38, 0.10);  border-left-color: #dc2626; }
 /* Swatch del menú de variante */
-.mewyse-callout-swatch {
+.libraeditor-callout-swatch {
   display: inline-block;
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--mewyse-cc, #3b82f6);
+  background: var(--libraeditor-cc, #3b82f6);
 }
 
 /* ============================================================================
    TOGGLE / DESPLEGABLE (bloque `toggle`). Cabecera con triángulo (rota al abrir)
    + título editable; cuerpo editable indentado que se oculta al colapsar.
    ============================================================================ */
-.mewyse-toggle {
+.libraeditor-toggle {
   margin: 0 0 0.5em 0;
 }
-.mewyse-toggle-head {
+.libraeditor-toggle-head {
   display: flex;
   align-items: flex-start;
   gap: 6px;
 }
-.mewyse-toggle-caret {
+.libraeditor-toggle-caret {
   flex-shrink: 0;
   width: 20px;
   height: 20px;
@@ -645,39 +645,39 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
   transform: rotate(90deg); /* expandido: apunta hacia abajo */
   transition: transform 0.15s ease;
 }
-.mewyse-toggle-collapsed .mewyse-toggle-caret {
+.libraeditor-toggle-collapsed .libraeditor-toggle-caret {
   transform: rotate(0deg); /* colapsado: apunta a la derecha */
 }
-.mewyse-toggle-caret:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-toggle-caret:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: 1px;
-  border-radius: var(--mewyse-radius-sm, 4px);
+  border-radius: var(--libraeditor-radius-sm, 4px);
 }
-.mewyse-toggle-title {
+.libraeditor-toggle-title {
   flex: 1;
   min-width: 0;
   outline: none;
   font-weight: 600;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
-.mewyse-toggle-body {
+.libraeditor-toggle-body {
   outline: none;
   margin-left: 26px; /* alinea con el título (ancho del caret + gap) */
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
-.mewyse-toggle-collapsed .mewyse-toggle-body {
+.libraeditor-toggle-collapsed .libraeditor-toggle-body {
   display: none;
 }
-/* Placeholders del toggle: sus editables NO son .mewyse-block, así que se
+/* Placeholders del toggle: sus editables NO son .libraeditor-block, así que se
    gestionan aparte (solo al enfocar y estar vacíos). */
-.mewyse-toggle-title:empty:focus:before,
-.mewyse-toggle-body:empty:focus:before {
+.libraeditor-toggle-title:empty:focus:before,
+.libraeditor-toggle-body:empty:focus:before {
   content: attr(data-placeholder);
-  color: var(--mewyse-text-light);
+  color: var(--libraeditor-text-light);
   pointer-events: none;
 }
 
@@ -685,82 +685,82 @@
    TABLA DE CONTENIDOS (bloque `toc`). No editable; el índice se deriva de los
    títulos y se refresca en vivo. Indentación por nivel de título.
    ============================================================================ */
-.mewyse-toc {
+.libraeditor-toc {
   margin: 0 0 0.5em 0;
   padding: 0.6em 0.9em;
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-lg);
-  background: var(--mewyse-bg-secondary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-lg);
+  background: var(--libraeditor-bg-secondary);
 }
-.mewyse-toc-title {
+.libraeditor-toc-title {
   font-weight: 600;
   font-size: 0.9em;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
   margin-bottom: 0.4em;
 }
-.mewyse-toc-empty {
+.libraeditor-toc-empty {
   font-size: 0.85em;
-  color: var(--mewyse-text-light);
+  color: var(--libraeditor-text-light);
   font-style: italic;
 }
-.mewyse-toc-list {
+.libraeditor-toc-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.mewyse-toc-item {
+.libraeditor-toc-item {
   margin: 2px 0;
   line-height: 1.5;
 }
-.mewyse-toc-heading2 { padding-left: 16px; }
-.mewyse-toc-heading3 { padding-left: 32px; }
-.mewyse-toc-link {
-  color: var(--mewyse-accent);
+.libraeditor-toc-heading2 { padding-left: 16px; }
+.libraeditor-toc-heading3 { padding-left: 32px; }
+.libraeditor-toc-link {
+  color: var(--libraeditor-accent);
   text-decoration: none;
   cursor: pointer;
   font-size: 0.9em;
 }
-.mewyse-toc-link:hover {
+.libraeditor-toc-link:hover {
   text-decoration: underline;
 }
 
-.mewyse-editor-styled .mewyse-block-selected {
+.libraeditor-editor-styled .libraeditor-block-selected {
   background-color: rgba(59, 130, 246, 0.1);
   border-radius: 4px;
 }
 /* Placeholder: solo en el bloque vacío ENFOCADO o cuando es el ÚNICO bloque.
    Así los bloques vacíos intermedios (separación intencionada) quedan en blanco
    en lugar de mostrar el texto del placeholder en cada línea. */
-.mewyse-editor-styled .mewyse-block:empty:focus:before,
-.mewyse-editor-styled .mewyse-block[data-placeholder]:empty:focus:before,
-.mewyse-editor-styled .mewyse-block:only-child:empty:before,
-.mewyse-editor-styled .mewyse-block[data-placeholder]:only-child:empty:before {
+.libraeditor-editor-styled .libraeditor-block:empty:focus:before,
+.libraeditor-editor-styled .libraeditor-block[data-placeholder]:empty:focus:before,
+.libraeditor-editor-styled .libraeditor-block:only-child:empty:before,
+.libraeditor-editor-styled .libraeditor-block[data-placeholder]:only-child:empty:before {
   content: attr(data-placeholder);
-  color: var(--mewyse-text-light);
+  color: var(--libraeditor-text-light);
   pointer-events: none;
 }
 /* Bloque de código: estilo tipo .docs-code (adaptado al tema). */
-.mewyse-editor-styled pre.mewyse-block {
+.libraeditor-editor-styled pre.libraeditor-block {
   margin: 0 0 0.5em 0;
   padding: 0.75em 1em;
-  background: var(--mewyse-bg-code);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-xl);
+  background: var(--libraeditor-bg-code);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-xl);
   overflow-x: auto;
   position: relative; /* ancla del selector de lenguaje */
 }
-.mewyse-editor-styled pre.mewyse-block code {
+.libraeditor-editor-styled pre.libraeditor-block code {
   display: block;
   outline: none;
   background: none;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
   font-size: 0.8125em;
   line-height: 1.6;
 }
 
 /* Selector de lenguaje del bloque de código (esquina superior derecha). Solo se
    inserta cuando la opción codeHighlight está activa. */
-.mewyse-code-lang {
+.libraeditor-code-lang {
   position: absolute;
   top: 4px;
   right: 4px;
@@ -768,50 +768,50 @@
   font-size: 11px;
   line-height: 1;
   padding: 2px 4px;
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-sm);
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-secondary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-sm);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-secondary);
   opacity: 0.6;
   cursor: pointer;
 }
-.mewyse-code-lang:hover,
-.mewyse-code-lang:focus {
+.libraeditor-code-lang:hover,
+.libraeditor-code-lang:focus {
   opacity: 1;
 }
 
 /* Tokens de highlight.js mapeados a las variables del tema (claro/oscuro). Así
    el resaltado es self-contained: no requiere cargar una hoja de estilos externa
    de la librería. */
-.mewyse-block .hljs-keyword,
-.mewyse-block .hljs-built_in,
-.mewyse-block .hljs-literal,
-.mewyse-block .hljs-selector-tag { color: var(--mewyse-hl-keyword); }
-.mewyse-block .hljs-string,
-.mewyse-block .hljs-regexp,
-.mewyse-block .hljs-symbol { color: var(--mewyse-hl-string); }
-.mewyse-block .hljs-number,
-.mewyse-block .hljs-variable,
-.mewyse-block .hljs-template-variable { color: var(--mewyse-hl-number); }
-.mewyse-block .hljs-comment,
-.mewyse-block .hljs-quote { color: var(--mewyse-hl-comment); font-style: italic; }
-.mewyse-block .hljs-function .hljs-title,
-.mewyse-block .hljs-title.function_,
-.mewyse-block .hljs-section { color: var(--mewyse-hl-function); }
-.mewyse-block .hljs-title,
-.mewyse-block .hljs-class .hljs-title,
-.mewyse-block .hljs-type { color: var(--mewyse-hl-title); }
-.mewyse-block .hljs-attr,
-.mewyse-block .hljs-attribute,
-.mewyse-block .hljs-property { color: var(--mewyse-hl-attr); }
-.mewyse-block .hljs-tag,
-.mewyse-block .hljs-name,
-.mewyse-block .hljs-selector-id,
-.mewyse-block .hljs-selector-class { color: var(--mewyse-hl-tag); }
-.mewyse-block .hljs-meta,
-.mewyse-block .hljs-comment.hljs-doctag { color: var(--mewyse-hl-meta); }
-.mewyse-editor-styled div.mewyse-block.mewyse-table-wrapper,
-.mewyse-editor-styled div.mewyse-block.mewyse-image-wrapper {
+.libraeditor-block .hljs-keyword,
+.libraeditor-block .hljs-built_in,
+.libraeditor-block .hljs-literal,
+.libraeditor-block .hljs-selector-tag { color: var(--libraeditor-hl-keyword); }
+.libraeditor-block .hljs-string,
+.libraeditor-block .hljs-regexp,
+.libraeditor-block .hljs-symbol { color: var(--libraeditor-hl-string); }
+.libraeditor-block .hljs-number,
+.libraeditor-block .hljs-variable,
+.libraeditor-block .hljs-template-variable { color: var(--libraeditor-hl-number); }
+.libraeditor-block .hljs-comment,
+.libraeditor-block .hljs-quote { color: var(--libraeditor-hl-comment); font-style: italic; }
+.libraeditor-block .hljs-function .hljs-title,
+.libraeditor-block .hljs-title.function_,
+.libraeditor-block .hljs-section { color: var(--libraeditor-hl-function); }
+.libraeditor-block .hljs-title,
+.libraeditor-block .hljs-class .hljs-title,
+.libraeditor-block .hljs-type { color: var(--libraeditor-hl-title); }
+.libraeditor-block .hljs-attr,
+.libraeditor-block .hljs-attribute,
+.libraeditor-block .hljs-property { color: var(--libraeditor-hl-attr); }
+.libraeditor-block .hljs-tag,
+.libraeditor-block .hljs-name,
+.libraeditor-block .hljs-selector-id,
+.libraeditor-block .hljs-selector-class { color: var(--libraeditor-hl-tag); }
+.libraeditor-block .hljs-meta,
+.libraeditor-block .hljs-comment.hljs-doctag { color: var(--libraeditor-hl-meta); }
+.libraeditor-editor-styled div.libraeditor-block.libraeditor-table-wrapper,
+.libraeditor-editor-styled div.libraeditor-block.libraeditor-image-wrapper {
   display: block;
 }
 
@@ -819,7 +819,7 @@
    AJUSTE DE TEXTO (wordWrap). Comportamiento: el contenido largo (URLs/cadenas
    sin espacios, líneas de código) envuelve DENTRO del mismo bloque en vez de
    desbordar horizontalmente. Activado salvo wordWrap:false (clase la pone JS).
-   Independiente de mewyse-editor-styled (es comportamiento, no estética).
+   Independiente de libraeditor-editor-styled (es comportamiento, no estética).
 
    `white-space` es imprescindible: overflow-wrap/word-break solo actúan si el
    white-space permite el salto. Como el editor se integra en páginas con sus
@@ -827,28 +827,28 @@
    !important para garantizar el ajuste con independencia de la especificidad
    del CSS anfitrión. `word-wrap` es el alias para IE11.
    ============================================================================ */
-.mewyse-editor.mewyse-word-wrap .mewyse-block,
-.mewyse-word-wrap .mewyse-block {
+.libraeditor-editor.libraeditor-word-wrap .libraeditor-block,
+.libraeditor-word-wrap .libraeditor-block {
   white-space: normal !important;
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
   word-break: break-word !important;
 }
 /* Código: preservar saltos/indentación pero envolviendo líneas largas. */
-.mewyse-editor.mewyse-word-wrap pre.mewyse-block,
-.mewyse-editor.mewyse-word-wrap pre.mewyse-block code,
-.mewyse-word-wrap pre.mewyse-block,
-.mewyse-word-wrap pre.mewyse-block code {
+.libraeditor-editor.libraeditor-word-wrap pre.libraeditor-block,
+.libraeditor-editor.libraeditor-word-wrap pre.libraeditor-block code,
+.libraeditor-word-wrap pre.libraeditor-block,
+.libraeditor-word-wrap pre.libraeditor-block code {
   white-space: pre-wrap !important;
   overflow-x: visible !important;
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
   word-break: break-word !important;
 }
-.mewyse-editor.mewyse-word-wrap .mewyse-table-wrapper td,
-.mewyse-editor.mewyse-word-wrap .mewyse-table-wrapper th,
-.mewyse-word-wrap .mewyse-table-wrapper td,
-.mewyse-word-wrap .mewyse-table-wrapper th {
+.libraeditor-editor.libraeditor-word-wrap .libraeditor-table-wrapper td,
+.libraeditor-editor.libraeditor-word-wrap .libraeditor-table-wrapper th,
+.libraeditor-word-wrap .libraeditor-table-wrapper td,
+.libraeditor-word-wrap .libraeditor-table-wrapper th {
   white-space: normal !important;
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
@@ -856,70 +856,70 @@
 }
 
 /* Tablas */
-.mewyse-editor-styled .mewyse-table-wrapper {
+.libraeditor-editor-styled .libraeditor-table-wrapper {
   position: relative;
   display: inline-block;
   width: 100%;
 }
-.mewyse-editor-styled .mewyse-table-wrapper table {
+.libraeditor-editor-styled .libraeditor-table-wrapper table {
   width: 100%;
   border-collapse: collapse;
   margin: 0.25em 0;
   position: relative;
 }
-.mewyse-editor-styled .mewyse-table-wrapper table td,
-.mewyse-editor-styled .mewyse-table-wrapper table th {
-  border: 1px solid var(--mewyse-border-medium);
+.libraeditor-editor-styled .libraeditor-table-wrapper table td,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th {
+  border: 1px solid var(--libraeditor-border-medium);
   padding: 0.5em;
   min-width: 50px;
   outline: none;
   position: relative;
   vertical-align: top;
 }
-.mewyse-editor-styled .mewyse-table-wrapper table td:focus,
-.mewyse-editor-styled .mewyse-table-wrapper table th:focus {
-  background-color: var(--mewyse-bg-hover);
+.libraeditor-editor-styled .libraeditor-table-wrapper table td:focus,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th:focus {
+  background-color: var(--libraeditor-bg-hover);
 }
-.mewyse-editor-styled .mewyse-table-wrapper table td:empty:before,
-.mewyse-editor-styled .mewyse-table-wrapper table th:empty:before {
+.libraeditor-editor-styled .libraeditor-table-wrapper table td:empty:before,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th:empty:before {
   content: "";
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
 }
-.mewyse-editor-styled .mewyse-table-wrapper table td > p,
-.mewyse-editor-styled .mewyse-table-wrapper table td > h1,
-.mewyse-editor-styled .mewyse-table-wrapper table td > h2,
-.mewyse-editor-styled .mewyse-table-wrapper table td > h3,
-.mewyse-editor-styled .mewyse-table-wrapper table td > blockquote,
-.mewyse-editor-styled .mewyse-table-wrapper table td > pre,
-.mewyse-editor-styled .mewyse-table-wrapper table td > ul,
-.mewyse-editor-styled .mewyse-table-wrapper table td > ol,
-.mewyse-editor-styled .mewyse-table-wrapper table th > p,
-.mewyse-editor-styled .mewyse-table-wrapper table th > h1,
-.mewyse-editor-styled .mewyse-table-wrapper table th > h2,
-.mewyse-editor-styled .mewyse-table-wrapper table th > h3,
-.mewyse-editor-styled .mewyse-table-wrapper table th > blockquote,
-.mewyse-editor-styled .mewyse-table-wrapper table th > pre,
-.mewyse-editor-styled .mewyse-table-wrapper table th > ul,
-.mewyse-editor-styled .mewyse-table-wrapper table th > ol {
+.libraeditor-editor-styled .libraeditor-table-wrapper table td > p,
+.libraeditor-editor-styled .libraeditor-table-wrapper table td > h1,
+.libraeditor-editor-styled .libraeditor-table-wrapper table td > h2,
+.libraeditor-editor-styled .libraeditor-table-wrapper table td > h3,
+.libraeditor-editor-styled .libraeditor-table-wrapper table td > blockquote,
+.libraeditor-editor-styled .libraeditor-table-wrapper table td > pre,
+.libraeditor-editor-styled .libraeditor-table-wrapper table td > ul,
+.libraeditor-editor-styled .libraeditor-table-wrapper table td > ol,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th > p,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th > h1,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th > h2,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th > h3,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th > blockquote,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th > pre,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th > ul,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th > ol {
   outline: none;
   width: 100%;
   min-height: 1em;
   margin: 0;
 }
-.mewyse-editor-styled .mewyse-table-wrapper table td > p:focus,
-.mewyse-editor-styled .mewyse-table-wrapper table th > p:focus {
+.libraeditor-editor-styled .libraeditor-table-wrapper table td > p:focus,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th > p:focus {
   background-color: transparent;
 }
-.mewyse-editor-styled .mewyse-table-wrapper table td > p:empty:before,
-.mewyse-editor-styled .mewyse-table-wrapper table th > p:empty:before {
+.libraeditor-editor-styled .libraeditor-table-wrapper table td > p:empty:before,
+.libraeditor-editor-styled .libraeditor-table-wrapper table th > p:empty:before {
   content: attr(data-placeholder);
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
   pointer-events: none;
 }
 
 /* Mention y emoji (la cápsula del tag se estila ya en su sección dedicada arriba) */
-.mewyse-editor-styled .mewyse-mention {
-  background-color: var(--mewyse-bg-hover);
+.libraeditor-editor-styled .libraeditor-mention {
+  background-color: var(--libraeditor-bg-hover);
   color: #1a73e8;
   padding: 0.125em 0.375em;
   border-radius: 4px;
@@ -929,109 +929,109 @@
   display: inline;
   white-space: nowrap;
 }
-.mewyse-editor-styled .mewyse-mention:hover {
+.libraeditor-editor-styled .libraeditor-mention:hover {
   background-color: #d2e3fc;
 }
-.mewyse-editor-styled .mewyse-emoji {
+.libraeditor-editor-styled .libraeditor-emoji {
   display: inline;
   cursor: default;
   user-select: all;
 }
 
 /* Listas (anidadas) y checklist */
-.mewyse-editor-styled .mewyse-list-group {
+.libraeditor-editor-styled .libraeditor-list-group {
   margin: 0;
   padding-left: 1.5em;
 }
-.mewyse-editor-styled .mewyse-list-group .mewyse-list-group {
+.libraeditor-editor-styled .libraeditor-list-group .libraeditor-list-group {
   padding-left: 1.5em;
   margin-top: 0.25em;
 }
-.mewyse-editor-styled .mewyse-list-group > li.mewyse-block {
+.libraeditor-editor-styled .libraeditor-list-group > li.libraeditor-block {
   display: list-item;
   margin-bottom: 0.25em;
 }
-.mewyse-editor-styled .mewyse-list-group > li.mewyse-block:focus {
+.libraeditor-editor-styled .libraeditor-list-group > li.libraeditor-block:focus {
   outline: none;
 }
-.mewyse-editor-styled ul.mewyse-checklist-group {
+.libraeditor-editor-styled ul.libraeditor-checklist-group {
   list-style: none;
   padding-left: 0;
 }
-.mewyse-editor-styled ul.mewyse-checklist-group > li.mewyse-block {
+.libraeditor-editor-styled ul.libraeditor-checklist-group > li.libraeditor-block {
   display: flex;
   align-items: flex-start;
   gap: 0.5em;
 }
-.mewyse-editor-styled ul.mewyse-checklist-group > li.mewyse-block input[type="checkbox"] {
+.libraeditor-editor-styled ul.libraeditor-checklist-group > li.libraeditor-block input[type="checkbox"] {
   margin-top: 0.25em;
   flex-shrink: 0;
 }
-.mewyse-editor-styled ul.mewyse-checklist-group > li.mewyse-block .mewyse-checklist-content {
+.libraeditor-editor-styled ul.libraeditor-checklist-group > li.libraeditor-block .libraeditor-checklist-content {
   flex: 1;
   outline: none;
 }
-.mewyse-editor-styled ul.mewyse-checklist-group > li.mewyse-block.checked .mewyse-checklist-content {
+.libraeditor-editor-styled ul.libraeditor-checklist-group > li.libraeditor-block.checked .libraeditor-checklist-content {
   text-decoration: line-through;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
 }
 
 /* ----------------------------------------------------------------------------
    Marcadores de lista robustos frente a los estilos de la página anfitriona.
    Un reset común (`ul, ol { list-style: none }`) o `li { display: block }`
    dejaría las listas del editor sin viñetas/números. Se fuerzan con !important
-   y especificidad compuesta (`.mewyse-editor.mewyse-editor-styled`, ambas clases
+   y especificidad compuesta (`.libraeditor-editor.libraeditor-editor-styled`, ambas clases
    en el mismo elemento — el container) para ganar a los estilos habituales.
    Las reglas base (disc/decimal) aplican a TODOS los niveles, así que aunque la
    variación por nivel (circle/square/alpha) pierda, los marcadores siguen visibles.
    ---------------------------------------------------------------------------- */
-.mewyse-editor.mewyse-editor-styled ul.mewyse-list-group,
-.mewyse-editor-styled ul.mewyse-list-group {
+.libraeditor-editor.libraeditor-editor-styled ul.libraeditor-list-group,
+.libraeditor-editor-styled ul.libraeditor-list-group {
   list-style-type: disc !important;
 }
-.mewyse-editor.mewyse-editor-styled ol.mewyse-list-group,
-.mewyse-editor-styled ol.mewyse-list-group {
+.libraeditor-editor.libraeditor-editor-styled ol.libraeditor-list-group,
+.libraeditor-editor-styled ol.libraeditor-list-group {
   list-style-type: decimal !important;
 }
 /* Variación por nivel de anidamiento (cosmético; degrada a disc/decimal). */
-.mewyse-editor-styled ul.mewyse-list-group ul.mewyse-list-group {
+.libraeditor-editor-styled ul.libraeditor-list-group ul.libraeditor-list-group {
   list-style-type: circle !important;
 }
-.mewyse-editor-styled ul.mewyse-list-group ul.mewyse-list-group ul.mewyse-list-group {
+.libraeditor-editor-styled ul.libraeditor-list-group ul.libraeditor-list-group ul.libraeditor-list-group {
   list-style-type: square !important;
 }
-.mewyse-editor-styled ol.mewyse-list-group ol.mewyse-list-group {
+.libraeditor-editor-styled ol.libraeditor-list-group ol.libraeditor-list-group {
   list-style-type: lower-alpha !important;
 }
-.mewyse-editor-styled ol.mewyse-list-group ol.mewyse-list-group ol.mewyse-list-group {
+.libraeditor-editor-styled ol.libraeditor-list-group ol.libraeditor-list-group ol.libraeditor-list-group {
   list-style-type: lower-roman !important;
 }
 /* El <li> debe seguir siendo list-item (con marcador fuera) pase lo que pase. */
-.mewyse-editor.mewyse-editor-styled .mewyse-list-group > li.mewyse-block,
-.mewyse-editor-styled .mewyse-list-group > li.mewyse-block {
+.libraeditor-editor.libraeditor-editor-styled .libraeditor-list-group > li.libraeditor-block,
+.libraeditor-editor-styled .libraeditor-list-group > li.libraeditor-block {
   display: list-item !important;
   list-style-position: outside !important;
 }
 /* Checklist: nunca lleva marcador, aunque la página los fuerce. */
-.mewyse-editor.mewyse-editor-styled ul.mewyse-checklist-group,
-.mewyse-editor-styled ul.mewyse-checklist-group {
+.libraeditor-editor.libraeditor-editor-styled ul.libraeditor-checklist-group,
+.libraeditor-editor-styled ul.libraeditor-checklist-group {
   list-style: none !important;
 }
-.mewyse-editor-styled ul.mewyse-checklist-group > li.mewyse-block {
+.libraeditor-editor-styled ul.libraeditor-checklist-group > li.libraeditor-block {
   list-style: none !important;
 }
 
 /* Imagen */
-.mewyse-editor-styled .mewyse-image-wrapper {
+.libraeditor-editor-styled .libraeditor-image-wrapper {
   display: inline-block;
   max-width: 100%;
   margin: 0.75em 0;
 }
-.mewyse-editor-styled .mewyse-image-container {
+.libraeditor-editor-styled .libraeditor-image-container {
   position: relative;
   display: inline-block;
 }
-.mewyse-editor-styled .mewyse-image {
+.libraeditor-editor-styled .libraeditor-image {
   display: block;
   max-width: 100%;
   height: auto;
@@ -1040,20 +1040,20 @@
   border: 2px solid transparent;
   transition: border-color 0.2s ease;
 }
-.mewyse-editor-styled .mewyse-image-container:hover .mewyse-image {
-  border-color: var(--mewyse-accent);
+.libraeditor-editor-styled .libraeditor-image-container:hover .libraeditor-image {
+  border-color: var(--libraeditor-accent);
 }
-.mewyse-editor-styled .mewyse-image.selected {
-  border-color: var(--mewyse-accent) !important;
+.libraeditor-editor-styled .libraeditor-image.selected {
+  border-color: var(--libraeditor-accent) !important;
   box-shadow: 0 4px 16px rgba(74,158,255,0.3);
   cursor: pointer;
 }
-.mewyse-editor-styled .mewyse-image-edit-btn {
+.libraeditor-editor-styled .libraeditor-image-edit-btn {
   position: absolute;
   top: 8px;
   right: 8px;
   background: rgba(255,255,255,0.95);
-  border: 1px solid var(--mewyse-border-medium);
+  border: 1px solid var(--libraeditor-border-medium);
   border-radius: 4px;
   padding: 6px 10px;
   cursor: pointer;
@@ -1066,24 +1066,24 @@
   justify-content: center;
   color: #555;
 }
-.mewyse-editor-styled .mewyse-image-edit-btn svg {
+.libraeditor-editor-styled .libraeditor-image-edit-btn svg {
   width: 16px;
   height: 16px;
 }
-.mewyse-editor-styled .mewyse-image-container:hover .mewyse-image-edit-btn {
+.libraeditor-editor-styled .libraeditor-image-container:hover .libraeditor-image-edit-btn {
   opacity: 1;
 }
-.mewyse-editor-styled .mewyse-image-edit-btn:hover {
+.libraeditor-editor-styled .libraeditor-image-edit-btn:hover {
   background: #fff;
   color: #333;
   border-color: #999;
   transform: scale(1.05);
 }
-.mewyse-editor-styled .mewyse-image-resize-handle {
+.libraeditor-editor-styled .libraeditor-image-resize-handle {
   position: absolute;
   width: 16px;
   height: 16px;
-  background: var(--mewyse-accent);
+  background: var(--libraeditor-accent);
   border: 2px solid #fff;
   border-radius: 2px;
   cursor: nwse-resize;
@@ -1094,32 +1094,32 @@
 }
 /* Esquinas del handle de redimensionado: la inferior-derecha (existente) y la
    superior-izquierda (nueva), ambas sobre la diagonal → cursor nwse-resize. */
-.mewyse-editor-styled .mewyse-image-resize-handle-se { bottom: 0; right: 0; }
-.mewyse-editor-styled .mewyse-image-resize-handle-nw { top: 0; left: 0; }
-.mewyse-editor-styled .mewyse-image-container:hover .mewyse-image-resize-handle {
+.libraeditor-editor-styled .libraeditor-image-resize-handle-se { bottom: 0; right: 0; }
+.libraeditor-editor-styled .libraeditor-image-resize-handle-nw { top: 0; left: 0; }
+.libraeditor-editor-styled .libraeditor-image-container:hover .libraeditor-image-resize-handle {
   opacity: 1;
 }
-.mewyse-editor-styled .mewyse-image-resize-handle:hover {
-  background: var(--mewyse-accent-hover);
+.libraeditor-editor-styled .libraeditor-image-resize-handle:hover {
+  background: var(--libraeditor-accent-hover);
   transform: scale(1.1);
 }
-.mewyse-editor-styled .mewyse-image-resizing {
+.libraeditor-editor-styled .libraeditor-image-resizing {
   user-select: none;
 }
-.mewyse-editor-styled .mewyse-image-resizing .mewyse-image {
+.libraeditor-editor-styled .libraeditor-image-resizing .libraeditor-image {
   pointer-events: none;
 }
 
 /* Estilos de contenido de bloques: inyectados dinámicamente por JS (ver _injectContentStyles) */
-/* Si contentStyles: false, la página define sus propios estilos para .mewyse-block */
+/* Si contentStyles: false, la página define sus propios estilos para .libraeditor-block */
 
 /* Handle para arrastrar (estilos base, usados por el handle flotante) */
-.mewyse-handle {
+.libraeditor-handle {
   cursor: grab;
   user-select: none;
   background: none;
   border: none;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
   padding: 2px;
   transition: all 0.15s ease;
   display: flex;
@@ -1127,27 +1127,27 @@
   justify-content: center;
 }
 
-.mewyse-handle svg {
+.libraeditor-handle svg {
   width: 14px;
   height: 14px;
 }
 
-.mewyse-handle:hover {
-  color: var(--mewyse-text-primary);
-  background: var(--mewyse-bg-hover);
-  border-radius: var(--mewyse-radius-sm);
+.libraeditor-handle:hover {
+  color: var(--libraeditor-text-primary);
+  background: var(--libraeditor-bg-hover);
+  border-radius: var(--libraeditor-radius-sm);
 }
 
-.mewyse-handle:active {
+.libraeditor-handle:active {
   cursor: grabbing;
-  color: var(--mewyse-text-primary);
-  background: var(--mewyse-bg-active);
+  color: var(--libraeditor-text-primary);
+  background: var(--libraeditor-bg-active);
 }
 
 
 
 /* Handle de redimensionamiento de columnas */
-.mewyse-table-resize-handle {
+.libraeditor-table-resize-handle {
   position: absolute;
   top: 0;
   right: -3px;
@@ -1159,25 +1159,25 @@
   user-select: none;
 }
 
-.mewyse-table-resize-handle:hover {
-  background: var(--mewyse-accent);
+.libraeditor-table-resize-handle:hover {
+  background: var(--libraeditor-accent);
 }
 
-.mewyse-table-resize-handle:active {
-  background: var(--mewyse-accent-hover);
+.libraeditor-table-resize-handle:active {
+  background: var(--libraeditor-accent-hover);
 }
 
 /* Tabla durante redimensionamiento */
-.mewyse-table-resizing {
+.libraeditor-table-resizing {
   user-select: none;
 }
 
-.mewyse-table-resizing * {
+.libraeditor-table-resizing * {
   cursor: col-resize !important;
 }
 
 /* Toolbar contextual de tabla (estilo TinyMCE): flota encima de la tabla */
-.mewyse-table-toolbar {
+.libraeditor-table-toolbar {
   position: fixed;
   display: flex;
   align-items: center;
@@ -1193,24 +1193,24 @@
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: thin;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-lg);
-  box-shadow: var(--mewyse-shadow-md);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-lg);
+  box-shadow: var(--libraeditor-shadow-md);
   padding: 4px 6px;
   z-index: 10001;
   animation: fadeIn 0.15s ease;
 }
 /* Los ítems no se comprimen: cuando no caben, se hace scroll. */
-.mewyse-table-toolbar > * { flex-shrink: 0; }
-.mewyse-table-toolbar::-webkit-scrollbar { height: 6px; }
-.mewyse-table-toolbar::-webkit-scrollbar-thumb {
-  background: var(--mewyse-border-medium);
+.libraeditor-table-toolbar > * { flex-shrink: 0; }
+.libraeditor-table-toolbar::-webkit-scrollbar { height: 6px; }
+.libraeditor-table-toolbar::-webkit-scrollbar-thumb {
+  background: var(--libraeditor-border-medium);
   border-radius: 3px;
 }
 
-.mewyse-table-toolbar-btn {
+.libraeditor-table-toolbar-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1219,184 +1219,184 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--mewyse-text-primary);
-  border-radius: var(--mewyse-radius-md);
+  color: var(--libraeditor-text-primary);
+  border-radius: var(--libraeditor-radius-md);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.mewyse-table-toolbar-btn svg {
+.libraeditor-table-toolbar-btn svg {
   width: 16px;
   height: 16px;
 }
 
-.mewyse-table-toolbar-btn:hover {
-  background-color: var(--mewyse-bg-hover);
+.libraeditor-table-toolbar-btn:hover {
+  background-color: var(--libraeditor-bg-hover);
 }
 
-.mewyse-table-toolbar-btn:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-table-toolbar-btn:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: -1px;
 }
 
-.mewyse-table-toolbar-btn.danger:hover {
+.libraeditor-table-toolbar-btn.danger:hover {
   background-color: rgba(211, 51, 51, 0.12);
-  color: var(--mewyse-danger, #d33);
+  color: var(--libraeditor-danger, #d33);
 }
 
-.mewyse-table-toolbar-btn.disabled,
-.mewyse-table-toolbar-btn:disabled {
+.libraeditor-table-toolbar-btn.disabled,
+.libraeditor-table-toolbar-btn:disabled {
   opacity: 0.35;
   cursor: default;
   pointer-events: none;
 }
 
-.mewyse-table-toolbar-sep {
+.libraeditor-table-toolbar-sep {
   width: 1px;
   align-self: stretch;
   margin: 2px 4px;
-  background: var(--mewyse-border-light);
+  background: var(--libraeditor-border-light);
 }
 
 /* Celdas de tabla seleccionadas */
-.mewyse-cell-selected {
-  background-color: var(--mewyse-selection-cell) !important;
+.libraeditor-cell-selected {
+  background-color: var(--libraeditor-selection-cell) !important;
   outline: 2px solid rgba(59, 130, 246, 0.5);
   outline-offset: -2px;
 }
 
 /* Prevenir selección de texto durante selección de celdas */
-.mewyse-table-selecting {
+.libraeditor-table-selecting {
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
 }
 
-.mewyse-table-selecting * {
+.libraeditor-table-selecting * {
   user-select: none;
   -webkit-user-select: none;
   cursor: cell;
 }
 
 /* Menú de opciones del bloque */
-.mewyse-options-menu {
+.libraeditor-options-menu {
   position: fixed;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-lg);
-  box-shadow: var(--mewyse-shadow-md);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-lg);
+  box-shadow: var(--libraeditor-shadow-md);
   padding: 6px;
   min-width: 220px;
   z-index: 10001;
   font-size: 12px;
 }
 
-.mewyse-options-menu-item {
+.libraeditor-options-menu-item {
   padding: 8px;
   cursor: pointer;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
   display: flex;
   align-items: center;
   gap: 10px;
   transition: background-color 0.15s ease;
 }
 
-.mewyse-options-menu-item:hover {
-  background-color: var(--mewyse-bg-hover);
+.libraeditor-options-menu-item:hover {
+  background-color: var(--libraeditor-bg-hover);
 }
 
 /* Ítem activo (valor actual, p. ej. interlineado seleccionado) + check a la derecha. */
-.mewyse-options-menu-item.active {
-  color: var(--mewyse-accent);
+.libraeditor-options-menu-item.active {
+  color: var(--libraeditor-accent);
   font-weight: 600;
 }
-.mewyse-menu-check {
+.libraeditor-menu-check {
   margin-left: auto;
   display: inline-flex;
   align-items: center;
-  color: var(--mewyse-accent);
+  color: var(--libraeditor-accent);
 }
 
-.mewyse-options-menu-item.danger:hover {
-  background-color: var(--mewyse-danger-bg);
-  color: var(--mewyse-danger);
+.libraeditor-options-menu-item.danger:hover {
+  background-color: var(--libraeditor-danger-bg);
+  color: var(--libraeditor-danger);
 }
 
-.mewyse-options-menu-item .icon {
+.libraeditor-options-menu-item .icon {
   min-width: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.mewyse-options-menu-item .icon svg {
+.libraeditor-options-menu-item .icon svg {
   width: 16px;
   height: 16px;
 }
 
 /* Menú de fuente (familia/tamaño/interlineado) */
-.mewyse-font-menu {
+.libraeditor-font-menu {
   min-width: 180px;
 }
-.mewyse-font-menu-label {
+.libraeditor-font-menu-label {
   padding: 6px 12px 2px;
   font-size: 0.7em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
 }
-.mewyse-font-size-row {
+.libraeditor-font-size-row {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   padding: 4px 12px 8px;
 }
-.mewyse-font-size-btn {
+.libraeditor-font-size-btn {
   min-width: 34px;
   padding: 4px 6px;
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-md);
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-md);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
   cursor: pointer;
   font-size: 0.85em;
 }
-.mewyse-font-size-btn:hover {
-  background: var(--mewyse-bg-hover);
-  border-color: var(--mewyse-text-muted);
+.libraeditor-font-size-btn:hover {
+  background: var(--libraeditor-bg-hover);
+  border-color: var(--libraeditor-text-muted);
 }
 
 /* Stepper de tamaño de fuente en la toolbar: [−] [valor] [+] */
-.mewyse-font-size-stepper {
+.libraeditor-font-size-stepper {
   display: inline-flex;
   align-items: center;
   gap: 2px;
 }
-.mewyse-font-size-stepper .mewyse-font-size-step {
+.libraeditor-font-size-stepper .libraeditor-font-size-step {
   min-width: 22px;
   width: 22px;
   padding: 0;
   height: 22px;
   border: 0;
 }
-.mewyse-font-size-stepper .mewyse-font-size-step svg {
+.libraeditor-font-size-stepper .libraeditor-font-size-step svg {
   width: 12px;
   height: 12px;
 }
-.mewyse-font-size-value {
+.libraeditor-font-size-value {
   min-width: 32px;
   text-align: center;
   font-size: 0.7125rem;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
   font-variant-numeric: tabular-nums;
   user-select: none;
   white-space: nowrap;
 }
 
 /* Picker de caracteres especiales */
-.mewyse-special-chars-menu {
+.libraeditor-special-chars-menu {
   position: fixed;
   z-index: 10002;
   display: grid;
@@ -1404,39 +1404,39 @@
   gap: 2px;
   padding: 8px;
   max-width: 280px;
-  background: var(--mewyse-bg-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-lg);
-  box-shadow: var(--mewyse-shadow-md);
+  background: var(--libraeditor-bg-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-lg);
+  box-shadow: var(--libraeditor-shadow-md);
   animation: fadeIn 0.2s ease;
 }
-.mewyse-special-char {
+.libraeditor-special-char {
   width: 30px;
   height: 30px;
   border: none;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
   background: transparent;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
   cursor: pointer;
   font-size: 15px;
   line-height: 1;
 }
-.mewyse-special-char:hover {
-  background: var(--mewyse-bg-hover);
+.libraeditor-special-char:hover {
+  background: var(--libraeditor-bg-hover);
 }
-.mewyse-special-char:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-special-char:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: 1px;
 }
 
 /* Menú de tipo de bloque */
-.mewyse-type-menu {
+.libraeditor-type-menu {
   position: fixed;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-lg);
-  box-shadow: var(--mewyse-shadow-md);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-lg);
+  box-shadow: var(--libraeditor-shadow-md);
   padding: 6px;
   min-width: 200px;
   z-index: 10001;
@@ -1445,48 +1445,48 @@
   font-size: 12px;
 }
 
-.mewyse-type-menu-item {
+.libraeditor-type-menu-item {
   padding: 8px;
   cursor: pointer;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
   display: flex;
   align-items: center;
   gap: 10px;
   transition: background-color 0.15s ease;
 }
 
-.mewyse-type-menu-item:hover {
-  background-color: var(--mewyse-bg-hover);
+.libraeditor-type-menu-item:hover {
+  background-color: var(--libraeditor-bg-hover);
 }
 
-.mewyse-type-menu-item .icon {
-  color: var(--mewyse-text-secondary);
+.libraeditor-type-menu-item .icon {
+  color: var(--libraeditor-text-secondary);
   min-width: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--mewyse-bg-code);
+  background-color: var(--libraeditor-bg-code);
   padding: 4px 6px;
-  border-radius: var(--mewyse-radius-sm);
+  border-radius: var(--libraeditor-radius-sm);
 }
 
-.mewyse-type-menu-item .icon svg {
+.libraeditor-type-menu-item .icon svg {
   width: 16px;
   height: 16px;
 }
 
 /* Menú desplegable de la toolbar */
-.mewyse-toolbar-menu {
+.libraeditor-toolbar-menu {
   margin-top: 4px;
 }
 
 /* Menú slash (/) */
-.mewyse-slash-menu {
+.libraeditor-slash-menu {
   position: fixed;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-xl);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-xl);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   padding: 6px;
   min-width: 280px;
@@ -1496,72 +1496,72 @@
   font-size: 12px;
 }
 
-.mewyse-slash-menu-item {
+.libraeditor-slash-menu-item {
   padding: 8px;
   cursor: pointer;
-  border-radius: var(--mewyse-radius-lg);
+  border-radius: var(--libraeditor-radius-lg);
   display: flex;
   align-items: center;
   gap: 12px;
   transition: background-color 0.15s ease;
 }
 
-.mewyse-slash-menu-item:hover {
-  background-color: var(--mewyse-bg-hover);
+.libraeditor-slash-menu-item:hover {
+  background-color: var(--libraeditor-bg-hover);
 }
-.mewyse-slash-menu-item.selected {
-  background-color: var(--mewyse-accent);
+.libraeditor-slash-menu-item.selected {
+  background-color: var(--libraeditor-accent);
 }
 
-.mewyse-slash-menu-item:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-slash-menu-item:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: -2px;
 }
 
-.mewyse-slash-menu-item .icon {
-  color: var(--mewyse-text-secondary);
+.libraeditor-slash-menu-item .icon {
+  color: var(--libraeditor-text-secondary);
   min-width: 36px;
   height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--mewyse-bg-hover);
-  border-radius: var(--mewyse-radius-lg);
+  background-color: var(--libraeditor-bg-hover);
+  border-radius: var(--libraeditor-radius-lg);
   flex-shrink: 0;
 }
 
-.mewyse-slash-menu-item .icon svg {
+.libraeditor-slash-menu-item .icon svg {
   width: 18px;
   height: 18px;
 }
 
-.mewyse-slash-menu-item .info {
+.libraeditor-slash-menu-item .info {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.mewyse-slash-menu-item .label {
+.libraeditor-slash-menu-item .label {
   font-weight: 600;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
-.mewyse-slash-menu-item .description {
-  color: var(--mewyse-text-muted);
+.libraeditor-slash-menu-item .description {
+  color: var(--libraeditor-text-muted);
 }
 
-.mewyse-slash-menu-item.selected .label, .mewyse-slash-menu-item.selected .description {
-  color: var(--mewyse-text-inverse);
+.libraeditor-slash-menu-item.selected .label, .libraeditor-slash-menu-item.selected .description {
+  color: var(--libraeditor-text-inverse);
 }
 
 /* Menú de menciones (@mentions) */
-.mewyse-mention-menu {
+.libraeditor-mention-menu {
   position: fixed;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-xl);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-xl);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   padding: 8px;
   min-width: 220px;
@@ -1571,27 +1571,27 @@
   overflow-y: auto;
 }
 
-.mewyse-mention-menu-item {
+.libraeditor-mention-menu-item {
   padding: 8px 12px;
   cursor: pointer;
-  border-radius: var(--mewyse-radius-lg);
+  border-radius: var(--libraeditor-radius-lg);
   display: flex;
   align-items: center;
   gap: 10px;
   transition: background-color 0.15s ease;
 }
 
-.mewyse-mention-menu-item:hover,
-.mewyse-mention-menu-item.selected {
-  background-color: var(--mewyse-bg-hover);
+.libraeditor-mention-menu-item:hover,
+.libraeditor-mention-menu-item.selected {
+  background-color: var(--libraeditor-bg-hover);
 }
 
-.mewyse-mention-menu-item:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-mention-menu-item:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: -2px;
 }
 
-.mewyse-mention-avatar {
+.libraeditor-mention-avatar {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -1599,11 +1599,11 @@
   flex-shrink: 0;
 }
 
-.mewyse-mention-avatar-placeholder {
+.libraeditor-mention-avatar-placeholder {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--mewyse-accent) 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--libraeditor-accent) 0%, #764ba2 100%);
   color: #fff;
   display: flex;
   align-items: center;
@@ -1612,24 +1612,24 @@
   flex-shrink: 0;
 }
 
-.mewyse-mention-name {
+.libraeditor-mention-name {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
 /* Mención insertada en el contenido */
 /* ============================================ */
 /* MENÚ DE ETIQUETAS (#tags) */
 /* ============================================ */
-.mewyse-tag-menu {
+.libraeditor-tag-menu {
   position: fixed;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-xl);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-xl);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   padding: 8px;
   min-width: 200px;
@@ -1640,53 +1640,53 @@
   font-size: 12px;
 }
 
-.mewyse-tag-menu-item {
+.libraeditor-tag-menu-item {
   padding: 8px;
   cursor: pointer;
-  border-radius: var(--mewyse-radius-lg);
+  border-radius: var(--libraeditor-radius-lg);
   display: flex;
   align-items: center;
   gap: 10px;
   transition: background-color 0.15s ease;
 }
 
-.mewyse-tag-menu-item:hover,
-.mewyse-tag-menu-item.selected {
-  background-color: var(--mewyse-bg-active);
+.libraeditor-tag-menu-item:hover,
+.libraeditor-tag-menu-item.selected {
+  background-color: var(--libraeditor-bg-active);
 }
 
-.mewyse-tag-menu-item:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-tag-menu-item:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: -2px;
 }
 
 /* Swatch del color del tag dentro del menú. Si el tag no trae color, hereda
    el color genérico (mismo que la cápsula sin color). */
-.mewyse-tag-menu-swatch {
+.libraeditor-tag-menu-swatch {
   width: 14px;
   height: 14px;
   border-radius: 4px;
   flex-shrink: 0;
-  background-color: var(--mewyse-tag-default-bg, #6b7280);
+  background-color: var(--libraeditor-tag-default-bg, #6b7280);
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.mewyse-tag-menu-name {
+.libraeditor-tag-menu-name {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
 /* Cápsula del tag insertado en el contenido. Si el tag no llevaba color,
-   se aplica el color genérico --mewyse-tag-default-bg / -fg. Si lo llevaba,
+   se aplica el color genérico --libraeditor-tag-default-bg / -fg. Si lo llevaba,
    el JS pone background-color y color inline (con contraste calculado). */
-.mewyse-tag {
+.libraeditor-tag {
   display: inline;
   white-space: nowrap;
-  background-color: var(--mewyse-tag-default-bg, #6b7280);
-  color: var(--mewyse-tag-default-fg, #fff);
+  background-color: var(--libraeditor-tag-default-bg, #6b7280);
+  color: var(--libraeditor-tag-default-fg, #fff);
   padding: 1px 8px;
   border-radius: 999px;
   font-size: 0.92em;
@@ -1696,21 +1696,21 @@
   line-height: 1.4;
 }
 
-.mewyse-editor-dark .mewyse-tag {
+.libraeditor-editor-dark .libraeditor-tag {
   /* En dark mode el genérico cambia ligeramente para mejor contraste (gris neutro) */
-  --mewyse-tag-default-bg: #404040;
-  --mewyse-tag-default-fg: #e6e6e6;
+  --libraeditor-tag-default-bg: #404040;
+  --libraeditor-tag-default-fg: #e6e6e6;
 }
 
 /* ============================================ */
 /* VARIABLES / MERGE TAGS ({{campo}}) */
 /* ============================================ */
-.mewyse-mergetag-menu {
+.libraeditor-mergetag-menu {
   position: fixed;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-xl);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-xl);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   padding: 8px;
   min-width: 220px;
@@ -1719,40 +1719,40 @@
   max-height: 300px;
   overflow-y: auto;
 }
-.mewyse-mergetag-menu-item {
+.libraeditor-mergetag-menu-item {
   padding: 8px 12px;
   cursor: pointer;
-  border-radius: var(--mewyse-radius-lg);
+  border-radius: var(--libraeditor-radius-lg);
   display: flex;
   align-items: baseline;
   gap: 10px;
   transition: background-color 0.15s ease;
 }
-.mewyse-mergetag-menu-item:hover,
-.mewyse-mergetag-menu-item.selected { background-color: var(--mewyse-bg-active); }
-.mewyse-mergetag-menu-item:focus-visible { outline: 2px solid var(--mewyse-accent); outline-offset: -2px; }
-.mewyse-mergetag-menu-name {
-  font-family: var(--mewyse-font-mono, ui-monospace, 'SF Mono', monospace);
-  color: var(--mewyse-text-primary);
+.libraeditor-mergetag-menu-item:hover,
+.libraeditor-mergetag-menu-item.selected { background-color: var(--libraeditor-bg-active); }
+.libraeditor-mergetag-menu-item:focus-visible { outline: 2px solid var(--libraeditor-accent); outline-offset: -2px; }
+.libraeditor-mergetag-menu-name {
+  font-family: var(--libraeditor-font-mono, ui-monospace, 'SF Mono', monospace);
+  color: var(--libraeditor-text-primary);
   white-space: nowrap;
 }
-.mewyse-mergetag-menu-label {
+.libraeditor-mergetag-menu-label {
   flex: 1;
   font-size: 0.85em;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 /* Cápsula de la variable insertada en el contenido (aspecto de "chip" de código). */
-.mewyse-mergetag {
+.libraeditor-mergetag {
   display: inline;
   white-space: nowrap;
-  background-color: var(--mewyse-bg-active);
-  color: var(--mewyse-text-primary);
+  background-color: var(--libraeditor-bg-active);
+  color: var(--libraeditor-text-primary);
   padding: 1px 6px;
   border-radius: 4px;
-  font-family: var(--mewyse-font-mono, ui-monospace, 'SF Mono', monospace);
+  font-family: var(--libraeditor-font-mono, ui-monospace, 'SF Mono', monospace);
   font-size: 0.9em;
   cursor: default;
   user-select: all;
@@ -1762,12 +1762,12 @@
 /* MENÚ DE EMOJI PICKER */
 /* ============================================ */
 
-.mewyse-emoji-menu {
+.libraeditor-emoji-menu {
   position: fixed;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-xl);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-xl);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   padding: 8px;
   min-width: 250px;
@@ -1777,36 +1777,36 @@
   overflow-y: auto;
 }
 
-.mewyse-emoji-menu-item {
+.libraeditor-emoji-menu-item {
   padding: 6px 10px;
   cursor: pointer;
-  border-radius: var(--mewyse-radius-lg);
+  border-radius: var(--libraeditor-radius-lg);
   display: flex;
   align-items: center;
   gap: 10px;
   transition: background-color 0.15s ease;
 }
 
-.mewyse-emoji-menu-item:hover,
-.mewyse-emoji-menu-item.selected {
-  background-color: var(--mewyse-bg-hover);
+.libraeditor-emoji-menu-item:hover,
+.libraeditor-emoji-menu-item.selected {
+  background-color: var(--libraeditor-bg-hover);
 }
 
-.mewyse-emoji-menu-item:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-emoji-menu-item:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: -2px;
 }
 
-.mewyse-emoji-menu-item .emoji {
+.libraeditor-emoji-menu-item .emoji {
   font-size: 2em;
   width: 28px;
   text-align: center;
   flex-shrink: 0;
 }
 
-.mewyse-emoji-menu-item .name {
+.libraeditor-emoji-menu-item .name {
   flex: 1;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1814,24 +1814,24 @@
 
 
 /* Botón añadir bloque */
-.mewyse-add-block {
+.libraeditor-add-block {
   display: block;
   width: 100%;
   padding: 10px;
   margin-top: 12px;
-  background: var(--mewyse-bg-secondary);
-  border: 2px dashed var(--mewyse-border-medium);
-  border-radius: var(--mewyse-radius-lg);
-  color: var(--mewyse-text-secondary);
+  background: var(--libraeditor-bg-secondary);
+  border: 2px dashed var(--libraeditor-border-medium);
+  border-radius: var(--libraeditor-radius-lg);
+  color: var(--libraeditor-text-secondary);
   cursor: pointer;
   font-weight: 500;
   transition: all 0.15s ease;
 }
 
-.mewyse-add-block:hover {
-  background: var(--mewyse-bg-active);
-  border-color: var(--mewyse-text-muted);
-  color: var(--mewyse-text-primary);
+.libraeditor-add-block:hover {
+  background: var(--libraeditor-bg-active);
+  border-color: var(--libraeditor-text-muted);
+  color: var(--libraeditor-text-primary);
 }
 
 /* (Reglas ::-webkit-scrollbar vacías eliminadas: usaban la scrollbar del
@@ -1849,18 +1849,18 @@
   }
 }
 
-.mewyse-type-menu {
+.libraeditor-type-menu {
   animation: fadeIn 0.2s ease;
 }
 
 /* Estados de arrastre */
-.mewyse-block.dragging {
+.libraeditor-block.dragging {
   opacity: 0.4;
-  background: var(--mewyse-bg-hover);
+  background: var(--libraeditor-bg-hover);
 }
 
-.mewyse-block.drag-over {
-  border-top: 3px solid var(--mewyse-accent);
+.libraeditor-block.drag-over {
+  border-top: 3px solid var(--libraeditor-accent);
   padding-top: 8px;
   margin-top: -3px;
 }
@@ -1869,7 +1869,7 @@
 /* HANDLE FLOTANTE */
 /* ============================================ */
 
-.mewyse-floating-handle {
+.libraeditor-floating-handle {
   position: absolute;
   display: flex;
   align-items: center;
@@ -1880,18 +1880,18 @@
   pointer-events: none;
 }
 
-.mewyse-floating-handle.visible {
+.libraeditor-floating-handle.visible {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
 }
 
-.mewyse-floating-handle .mewyse-handle {
+.libraeditor-floating-handle .libraeditor-handle {
   cursor: grab;
   user-select: none;
   background: none;
   border: none;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
   padding: 2px;
   transition: all 0.15s ease;
   display: flex;
@@ -1899,16 +1899,16 @@
   justify-content: center;
 }
 
-.mewyse-floating-handle .mewyse-handle:hover {
-  color: var(--mewyse-text-primary);
-  background: var(--mewyse-bg-hover);
-  border-radius: var(--mewyse-radius-sm);
+.libraeditor-floating-handle .libraeditor-handle:hover {
+  color: var(--libraeditor-text-primary);
+  background: var(--libraeditor-bg-hover);
+  border-radius: var(--libraeditor-radius-sm);
 }
 
-.mewyse-floating-handle .mewyse-handle:active {
+.libraeditor-floating-handle .libraeditor-handle:active {
   cursor: grabbing;
-  color: var(--mewyse-text-primary);
-  background: var(--mewyse-bg-active);
+  color: var(--libraeditor-text-primary);
+  background: var(--libraeditor-bg-active);
 }
 
 /* ============================================ */
@@ -1916,12 +1916,12 @@
 /* ============================================ */
 
 /* Menú de formato (flotante sobre selección) */
-.mewyse-format-menu {
+.libraeditor-format-menu {
   position: fixed;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-xl);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-xl);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   padding: 4px;
   display: flex;
@@ -1941,20 +1941,20 @@
   scrollbar-width: thin;
 }
 /* Los ítems no se comprimen: cuando no caben, se hace scroll (no se encogen). */
-.mewyse-format-menu > * { flex-shrink: 0; }
-.mewyse-format-menu::-webkit-scrollbar { height: 6px; }
-.mewyse-format-menu::-webkit-scrollbar-thumb {
-  background: var(--mewyse-border-medium);
+.libraeditor-format-menu > * { flex-shrink: 0; }
+.libraeditor-format-menu::-webkit-scrollbar { height: 6px; }
+.libraeditor-format-menu::-webkit-scrollbar-thumb {
+  background: var(--libraeditor-border-medium);
   border-radius: 3px;
 }
 
-.mewyse-format-button {
+.libraeditor-format-button {
   background: none;
   border: none;
   padding: 8px 10px;
   cursor: pointer;
-  border-radius: var(--mewyse-radius-md);
-  color: var(--mewyse-text-primary);
+  border-radius: var(--libraeditor-radius-md);
+  color: var(--libraeditor-text-primary);
   transition: background-color 0.15s ease;
   min-width: 32px;
   height: 32px;
@@ -1963,38 +1963,38 @@
   justify-content: center;
 }
 
-.mewyse-format-button svg {
+.libraeditor-format-button svg {
   width: 16px;
   height: 16px;
 }
 
-.mewyse-format-button:hover {
-  background-color: var(--mewyse-bg-hover);
+.libraeditor-format-button:hover {
+  background-color: var(--libraeditor-bg-hover);
 }
 
-.mewyse-format-button:active {
-  background-color: var(--mewyse-bg-active);
+.libraeditor-format-button:active {
+  background-color: var(--libraeditor-bg-active);
 }
 
-.mewyse-format-button:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-format-button:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: 1px;
 }
 
-.mewyse-format-separator {
+.libraeditor-format-separator {
   width: 1px;
   height: 24px;
-  background-color: var(--mewyse-border-medium);
+  background-color: var(--libraeditor-border-medium);
   margin: 0 4px;
 }
 
 /* Selector de color */
-.mewyse-color-picker {
+.libraeditor-color-picker {
   position: fixed;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-xl);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-xl);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   padding: 8px;
   display: grid;
@@ -2004,69 +2004,69 @@
   animation: fadeIn 0.2s ease;
 }
 
-.mewyse-color-button {
+.libraeditor-color-button {
   width: 28px;
   height: 28px;
-  border: 2px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-md);
+  border: 2px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-md);
   cursor: pointer;
   transition: all 0.15s ease;
   padding: 0;
 }
 
-.mewyse-color-button:hover {
+.libraeditor-color-button:hover {
   transform: scale(1.1);
-  border-color: var(--mewyse-text-muted);
+  border-color: var(--libraeditor-text-muted);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.mewyse-color-remove {
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-danger);
+.libraeditor-color-remove {
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-danger);
   display: flex;
   align-items: center;
   justify-content: center;
   grid-column: span 7;
 }
 
-.mewyse-color-remove svg {
+.libraeditor-color-remove svg {
   width: 14px;
   height: 14px;
 }
 
 /* Unified Color Picker */
-.mewyse-unified-color-picker {
+.libraeditor-unified-color-picker {
   display: block;
   grid-template-columns: none;
   padding: 12px;
   min-width: 240px;
 }
 
-.mewyse-color-section {
+.libraeditor-color-section {
   margin-bottom: 12px;
 }
 
-.mewyse-color-section:last-child {
+.libraeditor-color-section:last-child {
   margin-bottom: 0;
 }
 
-.mewyse-color-section-label {
+.libraeditor-color-section-label {
   font-size: .9em;
   font-weight: 600;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.mewyse-color-grid {
+.libraeditor-color-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
 }
 
-/* (Bloque .mewyse-color-grid .mewyse-color-* eliminado: era redundante — los
-   botones ya están dentro de .mewyse-color-grid y matchean las reglas base.) */
+/* (Bloque .libraeditor-color-grid .libraeditor-color-* eliminado: era redundante — los
+   botones ya están dentro de .libraeditor-color-grid y matchean las reglas base.) */
 
 /* ============================================ */
 /* BLOQUE DE IMAGEN */
@@ -2076,13 +2076,13 @@
 /* MODAL DE DIMENSIONES */
 /* ============================================ */
 
-.mewyse-modal-overlay {
+.libraeditor-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--mewyse-bg-overlay);
+  background: var(--libraeditor-bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2090,10 +2090,10 @@
   animation: fadeIn 0.2s ease;
 }
 
-.mewyse-modal-container {
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border-radius: var(--mewyse-radius-xl);
+.libraeditor-modal-container {
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border-radius: var(--libraeditor-radius-xl);
   padding: 12px;
   font-size: 12px;
   max-width: 500px;
@@ -2105,117 +2105,117 @@
 }
 
 /* Bloqueo de scroll de la página cuando hay un modal de código abierto. */
-body.mewyse-scroll-lock { overflow: hidden !important; }
+body.libraeditor-scroll-lock { overflow: hidden !important; }
 
 /* Modal de código fuente / Markdown: más ancho, mini editor con gutter de líneas. */
-.mewyse-code-modal {
+.libraeditor-code-modal {
   max-width: 920px;
   display: flex;
   flex-direction: column;
 }
-.mewyse-code-header {
+.libraeditor-code-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
-.mewyse-code-close {
+.libraeditor-code-close {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
   padding: 4px;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
   display: inline-flex;
   line-height: 0;
   font-size: 20px;
 }
-.mewyse-code-close:hover { background: var(--mewyse-bg-hover); color: var(--mewyse-text-primary); }
-.mewyse-modal-note {
+.libraeditor-code-close:hover { background: var(--libraeditor-bg-hover); color: var(--libraeditor-text-primary); }
+.libraeditor-modal-note {
   margin: 8px 0 0;
   font-size: 0.8125rem;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
 }
 
 /* Área de edición: gutter (números) + textarea, en una caja con borde común. */
-.mewyse-code-editor {
+.libraeditor-code-editor {
   position: relative;
   display: flex;
   margin-top: 12px;
   min-height: 340px;
   max-height: 60vh;
-  border: 1px solid var(--mewyse-border-medium);
-  border-radius: var(--mewyse-radius-md);
+  border: 1px solid var(--libraeditor-border-medium);
+  border-radius: var(--libraeditor-radius-md);
   overflow: hidden;
-  background: var(--mewyse-bg-code);
+  background: var(--libraeditor-bg-code);
 }
-.mewyse-code-editor:focus-within { border-color: var(--mewyse-accent); }
+.libraeditor-code-editor:focus-within { border-color: var(--libraeditor-accent); }
 
-.mewyse-code-gutter {
+.libraeditor-code-gutter {
   flex: 0 0 auto;
   min-width: 3ch;
   padding: 12px 8px 12px 12px;
   text-align: right;
-  color: var(--mewyse-text-muted);
-  background: var(--mewyse-bg-secondary);
-  border-right: 1px solid var(--mewyse-border-light);
-  font-family: var(--mewyse-font-mono, Consolas, Monaco, monospace);
+  color: var(--libraeditor-text-muted);
+  background: var(--libraeditor-bg-secondary);
+  border-right: 1px solid var(--libraeditor-border-light);
+  font-family: var(--libraeditor-font-mono, Consolas, Monaco, monospace);
   overflow: hidden;
   user-select: none;
   white-space: pre;
 }
 
-.mewyse-code-textarea {
+.libraeditor-code-textarea {
   flex: 1 1 auto;
   box-sizing: border-box;
   resize: none;
   padding: 12px;
   border: none;
   background: transparent;
-  color: var(--mewyse-text-primary);
-  font-family: var(--mewyse-font-mono, Consolas, Monaco, monospace);
+  color: var(--libraeditor-text-primary);
+  font-family: var(--libraeditor-font-mono, Consolas, Monaco, monospace);
   font-size: 13px;
   line-height: 1.55;
   white-space: pre;
   overflow: auto;
   tab-size: 2;
 }
-.mewyse-code-textarea:focus { outline: none; }
+.libraeditor-code-textarea:focus { outline: none; }
 
 /* Espejo oculto para medir la altura de cada línea (alinear los números con wrap). */
-.mewyse-code-mirror {
+.libraeditor-code-mirror {
   position: absolute;
   visibility: hidden;
   pointer-events: none;
   top: 0; left: -9999px;
   box-sizing: content-box;
   padding: 0;
-  font-family: var(--mewyse-font-mono, Consolas, Monaco, monospace);
+  font-family: var(--libraeditor-font-mono, Consolas, Monaco, monospace);
   overflow-wrap: break-word;
 }
 
 /* Modo oscuro del editor de código (independiente del tema del editor). */
-.mewyse-code-modal.mewyse-code-dark .mewyse-code-editor { background: #1e1e1e; border-color: #333; }
-.mewyse-code-modal.mewyse-code-dark .mewyse-code-gutter { background: #252526; color: #858585; border-right-color: #333; }
-.mewyse-code-modal.mewyse-code-dark .mewyse-code-textarea { color: #d4d4d4; }
+.libraeditor-code-modal.libraeditor-code-dark .libraeditor-code-editor { background: #1e1e1e; border-color: #333; }
+.libraeditor-code-modal.libraeditor-code-dark .libraeditor-code-gutter { background: #252526; color: #858585; border-right-color: #333; }
+.libraeditor-code-modal.libraeditor-code-dark .libraeditor-code-textarea { color: #d4d4d4; }
 
 /* Pie: herramientas (izq) + Cancelar/Guardar (der). */
-.mewyse-code-footer {
+.libraeditor-code-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-top: 14px;
 }
-.mewyse-code-tools { display: flex; gap: 4px; }
-.mewyse-code-tool-btn {
+.libraeditor-code-tools { display: flex; gap: 4px; }
+.libraeditor-code-tool-btn {
   min-width: 32px;
   height: 32px;
   padding: 0 8px;
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-md);
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-md);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -2223,12 +2223,12 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   font-size: 13px;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
-.mewyse-code-tool-btn:hover { background: var(--mewyse-bg-hover); border-color: var(--mewyse-text-muted); }
-.mewyse-code-tool-btn.active { background: var(--mewyse-bg-active); border-color: var(--mewyse-accent); }
-.mewyse-code-tool-btn svg { width: 16px; height: 16px; }
-.mewyse-code-sup { font-size: 0.7em; vertical-align: super; margin-left: 1px; }
-.mewyse-code-sub { font-size: 0.7em; vertical-align: sub; margin-left: 1px; }
-.mewyse-code-modal .mewyse-modal-buttons { margin: 0; }
+.libraeditor-code-tool-btn:hover { background: var(--libraeditor-bg-hover); border-color: var(--libraeditor-text-muted); }
+.libraeditor-code-tool-btn.active { background: var(--libraeditor-bg-active); border-color: var(--libraeditor-accent); }
+.libraeditor-code-tool-btn svg { width: 16px; height: 16px; }
+.libraeditor-code-sup { font-size: 0.7em; vertical-align: super; margin-left: 1px; }
+.libraeditor-code-sub { font-size: 0.7em; vertical-align: sub; margin-left: 1px; }
+.libraeditor-code-modal .libraeditor-modal-buttons { margin: 0; }
 
 @keyframes slideUp {
   from {
@@ -2241,136 +2241,136 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   }
 }
 
-.mewyse-modal-title {
+.libraeditor-modal-title {
   margin: 0 0 16px 0;
   font-size: 2em;
   font-weight: 600;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
-.mewyse-modal-preview {
+.libraeditor-modal-preview {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 16px;
   padding: 16px;
-  background: var(--mewyse-bg-secondary);
-  border-radius: var(--mewyse-radius-lg);
+  background: var(--libraeditor-bg-secondary);
+  border-radius: var(--libraeditor-radius-lg);
   min-height: 120px;
 }
 
-.mewyse-modal-preview img {
+.libraeditor-modal-preview img {
   max-width: 100%;
   max-height: 200px;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
 }
 
-.mewyse-modal-info {
+.libraeditor-modal-info {
   margin: 0 0 16px 0;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
 }
 
-.mewyse-modal-inputs {
+.libraeditor-modal-inputs {
   display: flex;
   gap: 12px;
   margin-bottom: 16px;
 }
 
-.mewyse-modal-input-group {
+.libraeditor-modal-input-group {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.mewyse-modal-input-group label {
+.libraeditor-modal-input-group label {
   font-weight: 500;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
-.mewyse-modal-input {
+.libraeditor-modal-input {
   padding: 8px 12px;
-  border: 1px solid var(--mewyse-border-medium);
-  border-radius: var(--mewyse-radius-md);
+  border: 1px solid var(--libraeditor-border-medium);
+  border-radius: var(--libraeditor-radius-md);
   transition: all 0.15s ease;
 }
 
-.mewyse-modal-input:focus {
+.libraeditor-modal-input:focus {
   outline: none;
-  border-color: var(--mewyse-accent);
+  border-color: var(--libraeditor-accent);
   box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
 }
 
-.mewyse-modal-checkbox-group {
+.libraeditor-modal-checkbox-group {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 24px;
 }
 
-.mewyse-modal-checkbox-group input[type="checkbox"] {
+.libraeditor-modal-checkbox-group input[type="checkbox"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
 }
 
-.mewyse-modal-checkbox-group label {
+.libraeditor-modal-checkbox-group label {
   cursor: pointer;
   user-select: none;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
-.mewyse-modal-buttons {
+.libraeditor-modal-buttons {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
 }
 
-.mewyse-modal-button {
+.libraeditor-modal-button {
   padding: 10px 20px;
-  border: 1px solid var(--mewyse-border-medium);
-  border-radius: var(--mewyse-radius-md);
+  border: 1px solid var(--libraeditor-border-medium);
+  border-radius: var(--libraeditor-radius-md);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.mewyse-modal-button-cancel {
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-secondary);
+.libraeditor-modal-button-cancel {
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-secondary);
 }
 
-.mewyse-modal-button-cancel:hover {
-  background: var(--mewyse-bg-secondary);
-  border-color: var(--mewyse-text-muted);
+.libraeditor-modal-button-cancel:hover {
+  background: var(--libraeditor-bg-secondary);
+  border-color: var(--libraeditor-text-muted);
 }
 
-.mewyse-modal-button-primary {
-  background: var(--mewyse-accent);
+.libraeditor-modal-button-primary {
+  background: var(--libraeditor-accent);
   color: #fff;
-  border-color: var(--mewyse-accent);
+  border-color: var(--libraeditor-accent);
 }
 
-.mewyse-modal-button-primary:hover {
-  background: var(--mewyse-accent-hover);
-  border-color: var(--mewyse-accent-hover);
+.libraeditor-modal-button-primary:hover {
+  background: var(--libraeditor-accent-hover);
+  border-color: var(--libraeditor-accent-hover);
 }
 
 /* Acción destructiva (p.ej. "Quitar enlace"): se alinea a la izquierda, separada
    de cancelar/aceptar. */
-.mewyse-modal-button-danger {
+.libraeditor-modal-button-danger {
   margin-right: auto;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-danger);
-  border-color: var(--mewyse-danger);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-danger);
+  border-color: var(--libraeditor-danger);
 }
 
-.mewyse-modal-button-danger:hover {
-  background: var(--mewyse-danger-bg);
+.libraeditor-modal-button-danger:hover {
+  background: var(--libraeditor-danger-bg);
 }
 
-.mewyse-modal-button:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-modal-button:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: 2px;
 }
 
@@ -2378,7 +2378,7 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
 /* Botón de resumen flotante (solo en editores SIN toolbar): minimalista para no
    competir con el contenido. Por defecto sin caja (transparente, sin borde ni
    sombra) e icono atenuado; al pasar el cursor aparece un fondo sutil. */
-.mewyse-summary-button {
+.libraeditor-summary-button {
   position: sticky;
   /* top:0 lo alinea con el primer bloque (el padding del editor ya da el aire
      superior). Con un top>0, el sticky lo empujaría por debajo del título. */
@@ -2388,9 +2388,9 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   height: 30px;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: var(--mewyse-radius-md, 6px);
+  border-radius: var(--libraeditor-radius-md, 6px);
   cursor: pointer;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
   opacity: 0.6;
   display: flex;
   align-items: center;
@@ -2402,15 +2402,15 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   margin-bottom: 8px;
 }
 
-.mewyse-summary-button svg {
+.libraeditor-summary-button svg {
   width: 16px;
   height: 16px;
 }
 
-.mewyse-summary-button:hover {
-  background: var(--mewyse-bg-hover);
-  border-color: var(--mewyse-border-light);
-  color: var(--mewyse-text-secondary);
+.libraeditor-summary-button:hover {
+  background: var(--libraeditor-bg-hover);
+  border-color: var(--libraeditor-border-light);
+  color: var(--libraeditor-text-secondary);
   opacity: 1;
 }
 
@@ -2420,7 +2420,7 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
    Las propiedades críticas van con !important: el editor se embebe en apps con su
    propio CSS (p. ej. reglas sobre [role="tooltip"], resets de div, display/opacity/
    visibility) que no deben poder ocultar ni descolocar el tooltip. */
-.mewyse-toolbar-tooltip {
+.libraeditor-toolbar-tooltip {
   position: fixed !important;
   z-index: 2147483000 !important;
   display: block !important;
@@ -2429,7 +2429,7 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   margin: 0 !important;
   max-width: 260px;
   padding: 6px 10px !important;
-  border-radius: var(--mewyse-radius-md, 6px);
+  border-radius: var(--libraeditor-radius-md, 6px);
   font-size: 12px !important;
   font-weight: 500 !important;
   line-height: 1.35 !important;
@@ -2443,75 +2443,75 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   transition: opacity 0.12s ease, transform 0.12s ease;
 }
 
-.mewyse-toolbar-tooltip.mewyse-tooltip-visible {
+.libraeditor-toolbar-tooltip.libraeditor-tooltip-visible {
   opacity: 1 !important;
   transform: translateY(0);
 }
 
-.mewyse-toolbar-tooltip.mewyse-dark {
+.libraeditor-toolbar-tooltip.libraeditor-dark {
   background: #ececec !important;
   color: #1a1a1a !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-.mewyse-summary-tooltip {
+.libraeditor-summary-tooltip {
   position: fixed;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border: 1px solid var(--mewyse-border-medium);
-  border-radius: var(--mewyse-radius-lg);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border: 1px solid var(--libraeditor-border-medium);
+  border-radius: var(--libraeditor-radius-lg);
   padding: 8px 0;
   min-width: 200px;
   max-width: 300px;
   max-height: 400px;
   overflow-y: auto;
-  box-shadow: var(--mewyse-shadow-md);
+  box-shadow: var(--libraeditor-shadow-md);
   z-index: 10021;
 }
 
-.mewyse-summary-tooltip-item {
+.libraeditor-summary-tooltip-item {
   padding: 8px 16px;
   cursor: pointer;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
   transition: background 0.15s ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.mewyse-summary-tooltip-item:hover {
-  background: var(--mewyse-bg-hover);
+.libraeditor-summary-tooltip-item:hover {
+  background: var(--libraeditor-bg-hover);
 }
 
 /* Items del tooltip de resumen: tamaños moderados (viven en un tooltip de
    ~250px; antes eran 2em/1.75em/1.5em y desproporcionaban el tooltip). La
    indentación por nivel se conserva. */
-.mewyse-summary-heading1 {
+.libraeditor-summary-heading1 {
   font-weight: 600;
   font-size: 1.1em;
   padding-left: 16px;
 }
 
-.mewyse-summary-heading2 {
+.libraeditor-summary-heading2 {
   font-weight: 500;
   font-size: 1em;
   padding-left: 28px;
 }
 
-.mewyse-summary-heading3 {
+.libraeditor-summary-heading3 {
   font-weight: 400;
   font-size: 0.9em;
   padding-left: 40px;
 }
 
 /* Overlay del modal de resumen */
-.mewyse-summary-overlay {
+.libraeditor-summary-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--mewyse-bg-overlay);
+  background: var(--libraeditor-bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2522,10 +2522,10 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
 /* (fadeIn duplicado eliminado: se usa el definido arriba, con deslizamiento) */
 
 /* Modal de resumen */
-.mewyse-summary-modal {
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border-radius: var(--mewyse-radius-2xl);
+.libraeditor-summary-modal {
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border-radius: var(--libraeditor-radius-2xl);
   width: 90%;
   max-width: 600px;
   max-height: 80vh;
@@ -2539,48 +2539,48 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
 /* (slideUp duplicado eliminado: idéntico al definido arriba) */
 
 /* Header del modal */
-.mewyse-summary-modal-header {
+.libraeditor-summary-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid var(--mewyse-border-light);
+  border-bottom: 1px solid var(--libraeditor-border-light);
 }
 
-.mewyse-summary-modal-header h3 {
+.libraeditor-summary-modal-header h3 {
   margin: 0;
   font-size: 2em;
   font-weight: 600;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
 /* Botón cerrar */
-.mewyse-summary-close {
+.libraeditor-summary-close {
   background: transparent;
   border: none;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
   cursor: pointer;
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
   transition: all 0.15s ease;
 }
 
-.mewyse-summary-close svg {
+.libraeditor-summary-close svg {
   width: 20px;
   height: 20px;
 }
 
-.mewyse-summary-close:hover {
-  background: var(--mewyse-bg-hover);
-  color: var(--mewyse-text-secondary);
+.libraeditor-summary-close:hover {
+  background: var(--libraeditor-bg-hover);
+  color: var(--libraeditor-text-secondary);
 }
 
 /* Contenido del modal */
-.mewyse-summary-modal-content {
+.libraeditor-summary-modal-content {
   padding: 24px;
   overflow-y: auto;
   flex: 1;
@@ -2589,85 +2589,85 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
 }
 
 /* Bloque de estadísticas */
-.mewyse-summary-stats {
-  background: var(--mewyse-bg-secondary);
-  border-radius: var(--mewyse-radius-xl);
+.libraeditor-summary-stats {
+  background: var(--libraeditor-bg-secondary);
+  border-radius: var(--libraeditor-radius-xl);
   padding: 20px;
   margin-bottom: 24px;
 }
 
-.mewyse-summary-stats-grid {
+.libraeditor-summary-stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 
-.mewyse-summary-stat {
+.libraeditor-summary-stat {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.mewyse-summary-stat-label {
+.libraeditor-summary-stat-label {
   font-size: 0.85em;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
   font-weight: 500;
 }
 
-.mewyse-summary-stat-value {
+.libraeditor-summary-stat-value {
   font-size: 1.6em;
   font-weight: 600;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
 /* Sección de índice */
-.mewyse-summary-index h4 {
+.libraeditor-summary-index h4 {
   margin: 0 0 12px 0;
   font-size: 1.05em;
   font-weight: 600;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
-.mewyse-summary-index-list {
+.libraeditor-summary-index-list {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.mewyse-summary-index-item {
+.libraeditor-summary-index-item {
   padding: 10px 16px;
   cursor: pointer;
-  border-radius: var(--mewyse-radius-lg);
+  border-radius: var(--libraeditor-radius-lg);
   transition: all 0.15s ease;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
-.mewyse-summary-index-item:hover {
-  background: var(--mewyse-bg-hover);
+.libraeditor-summary-index-item:hover {
+  background: var(--libraeditor-bg-hover);
 }
 
-.mewyse-summary-index-item.mewyse-summary-heading1 {
+.libraeditor-summary-index-item.libraeditor-summary-heading1 {
   font-weight: 600;
   font-size: 1.05em;
   padding-left: 12px;
 }
 
-.mewyse-summary-index-item.mewyse-summary-heading2 {
+.libraeditor-summary-index-item.libraeditor-summary-heading2 {
   font-weight: 500;
   font-size: 0.95em;
   padding-left: 24px;
 }
 
-.mewyse-summary-index-item.mewyse-summary-heading3 {
+.libraeditor-summary-index-item.libraeditor-summary-heading3 {
   font-weight: 400;
   font-size: 0.875em;
   padding-left: 36px;
 }
 
 /* Sin encabezados */
-.mewyse-summary-no-headings {
+.libraeditor-summary-no-headings {
   text-align: center;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
   padding: 32px 0;
 }
 
@@ -2676,12 +2676,12 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
    El wrapper reserva padding-right (empuja toolbar+editor) y el panel ocupa
    ese espacio en absoluto. Toggle desde el summary-button.
    ============================================================================ */
-.mewyse-editor-wrapper.mewyse-has-outline {
+.libraeditor-editor-wrapper.libraeditor-has-outline {
   position: relative;
   padding-right: 260px;
   box-sizing: border-box;
 }
-.mewyse-outline-panel {
+.libraeditor-outline-panel {
   position: absolute;
   top: 0;
   right: 0;
@@ -2689,84 +2689,84 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   width: 260px;
   display: flex;
   flex-direction: column;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
-  border-left: 1px solid var(--mewyse-border-light);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
+  border-left: 1px solid var(--libraeditor-border-light);
   z-index: 5;
   font-size: 0.875rem;
 }
-.mewyse-outline-header {
+.libraeditor-outline-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   padding: 10px 12px;
-  border-bottom: 1px solid var(--mewyse-border-light);
+  border-bottom: 1px solid var(--libraeditor-border-light);
 }
-.mewyse-outline-title {
+.libraeditor-outline-title {
   font-weight: 600;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
-.mewyse-outline-close {
+.libraeditor-outline-close {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
 }
-.mewyse-outline-close:hover {
-  background: var(--mewyse-bg-hover);
-  color: var(--mewyse-text-primary);
+.libraeditor-outline-close:hover {
+  background: var(--libraeditor-bg-hover);
+  color: var(--libraeditor-text-primary);
 }
-.mewyse-outline-close svg { width: 16px; height: 16px; }
-.mewyse-outline-body {
+.libraeditor-outline-close svg { width: 16px; height: 16px; }
+.libraeditor-outline-body {
   flex: 1;
   overflow-y: auto;
   padding: 12px;
 }
 /* Stats compactas dentro del panel (más sobrias que en el modal). */
-.mewyse-outline-body .mewyse-summary-stats {
+.libraeditor-outline-body .libraeditor-summary-stats {
   padding: 12px;
   margin-bottom: 16px;
 }
-.mewyse-outline-body .mewyse-summary-stats-grid {
+.libraeditor-outline-body .libraeditor-summary-stats-grid {
   gap: 10px;
 }
 
 /* Responsive: en pantallas estrechas el panel pasa a overlay para no aplastar
    el editor. */
 @media (max-width: 640px) {
-  .mewyse-editor-wrapper.mewyse-has-outline {
+  .libraeditor-editor-wrapper.libraeditor-has-outline {
     padding-right: 0;
   }
-  .mewyse-outline-panel {
+  .libraeditor-outline-panel {
     width: 80%;
     max-width: 280px;
-    box-shadow: var(--mewyse-shadow-md);
+    box-shadow: var(--libraeditor-shadow-md);
   }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .mewyse-summary-modal {
+  .libraeditor-summary-modal {
     width: 95%;
     max-height: 90vh;
   }
 
-  .mewyse-summary-stats-grid {
+  .libraeditor-summary-stats-grid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
 
-  .mewyse-summary-modal-header {
+  .libraeditor-summary-modal-header {
     padding: 16px 20px;
   }
 
-  .mewyse-summary-modal-content {
+  .libraeditor-summary-modal-content {
     padding: 20px;
   }
 }
@@ -2775,7 +2775,7 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
 /* SELECCION CROSS-BLOCK */
 /* ============================================ */
 
-.mewyse-selection-overlay {
+.libraeditor-selection-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -2785,14 +2785,14 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   z-index: 1;
 }
 
-.mewyse-cross-selection-rect {
+.libraeditor-cross-selection-rect {
   position: absolute;
-  background-color: var(--mewyse-selection-bg);
+  background-color: var(--libraeditor-selection-bg);
   pointer-events: none;
   border-radius: 2px;
 }
 
-.mewyse-cross-selecting .mewyse-block {
+.libraeditor-cross-selecting .libraeditor-block {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -2800,69 +2800,69 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
 }
 
 /* Modo oscuro (opcional) */
-/* Dark mode — aplicado via clase mewyse-editor-dark (manual o auto-detección del OS) */
-.mewyse-editor-dark.mewyse-editor,
-.mewyse-editor-dark.mewyse-editor-wrapper,
-.mewyse-editor-wrapper.mewyse-editor-dark .mewyse-editor {
+/* Dark mode — aplicado via clase libraeditor-editor-dark (manual o auto-detección del OS) */
+.libraeditor-editor-dark.libraeditor-editor,
+.libraeditor-editor-dark.libraeditor-editor-wrapper,
+.libraeditor-editor-wrapper.libraeditor-editor-dark .libraeditor-editor {
   /* Paleta neutra (negro/gris) — sin tinte de color */
   /* Text colors */
-  --mewyse-text-primary: #e6e6e6;
-  --mewyse-text-secondary: #a0a0a0;
-  --mewyse-text-muted: #707070;
-  --mewyse-text-light: #5a5a5a;
-  --mewyse-text-inverse: #1a1a1a;
+  --libraeditor-text-primary: #e6e6e6;
+  --libraeditor-text-secondary: #a0a0a0;
+  --libraeditor-text-muted: #707070;
+  --libraeditor-text-light: #5a5a5a;
+  --libraeditor-text-inverse: #1a1a1a;
 
   /* Background colors */
-  --mewyse-bg-primary: #1a1a1a;
-  --mewyse-bg-secondary: #242424;
-  --mewyse-bg-hover: #2e2e2e;
-  --mewyse-bg-active: #3a3a3a;
-  --mewyse-bg-code: #0d0d0d;
-  --mewyse-bg-overlay: rgba(0, 0, 0, 0.7);
+  --libraeditor-bg-primary: #1a1a1a;
+  --libraeditor-bg-secondary: #242424;
+  --libraeditor-bg-hover: #2e2e2e;
+  --libraeditor-bg-active: #3a3a3a;
+  --libraeditor-bg-code: #0d0d0d;
+  --libraeditor-bg-overlay: rgba(0, 0, 0, 0.7);
 
   /* Syntax highlight (tokens de highlight.js) — paleta tema oscuro */
-  --mewyse-hl-keyword: #ff7b72;
-  --mewyse-hl-string: #a5d6ff;
-  --mewyse-hl-number: #79c0ff;
-  --mewyse-hl-comment: #8b949e;
-  --mewyse-hl-function: #d2a8ff;
-  --mewyse-hl-title: #7ee787;
-  --mewyse-hl-attr: #79c0ff;
-  --mewyse-hl-tag: #7ee787;
-  --mewyse-hl-meta: #8b949e;
+  --libraeditor-hl-keyword: #ff7b72;
+  --libraeditor-hl-string: #a5d6ff;
+  --libraeditor-hl-number: #79c0ff;
+  --libraeditor-hl-comment: #8b949e;
+  --libraeditor-hl-function: #d2a8ff;
+  --libraeditor-hl-title: #7ee787;
+  --libraeditor-hl-attr: #79c0ff;
+  --libraeditor-hl-tag: #7ee787;
+  --libraeditor-hl-meta: #8b949e;
 
   /* Border colors */
-  --mewyse-border-light: #333333;
-  --mewyse-border-medium: #444444;
-  --mewyse-border-dark: #565656;
+  --libraeditor-border-light: #333333;
+  --libraeditor-border-medium: #444444;
+  --libraeditor-border-dark: #565656;
 
   /* Accent / brand — gris claro neutro */
-  --mewyse-accent: #c9c9c9;
-  --mewyse-accent-hover: #e0e0e0;
-  --mewyse-accent-text: #1a1a1a;
+  --libraeditor-accent: #c9c9c9;
+  --libraeditor-accent-hover: #e0e0e0;
+  --libraeditor-accent-text: #1a1a1a;
 
   /* Status colors — danger se mantiene rojo (semántica de acción destructiva) */
-  --mewyse-danger: #ff6b6b;
-  --mewyse-danger-hover: #ff5252;
-  --mewyse-danger-bg: #3a2020;
+  --libraeditor-danger: #ff6b6b;
+  --libraeditor-danger-hover: #ff5252;
+  --libraeditor-danger-bg: #3a2020;
 
   /* Selection — blanco translúcido (neutro) */
-  --mewyse-selection-bg: rgba(255, 255, 255, 0.18);
-  --mewyse-selection-cell: rgba(255, 255, 255, 0.10);
+  --libraeditor-selection-bg: rgba(255, 255, 255, 0.18);
+  --libraeditor-selection-cell: rgba(255, 255, 255, 0.10);
 
   /* Shadows */
-  --mewyse-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.4);
-  --mewyse-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --mewyse-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --libraeditor-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.4);
+  --libraeditor-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --libraeditor-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 /* Estilos adicionales para dark mode que no se resuelven solo con variables */
-.mewyse-editor-dark blockquote.mewyse-block {
+.libraeditor-editor-dark blockquote.libraeditor-block {
   background: rgba(255, 255, 255, 0.04);
   border-left-color: rgba(255, 255, 255, 0.2);
 }
 
-.mewyse-editor-dark .mewyse-mention {
+.libraeditor-editor-dark .libraeditor-mention {
   background: rgba(255, 255, 255, 0.12);
   color: #d0d0d0;
 }
@@ -2873,121 +2873,121 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
    reescriben tamaños/espaciados, no la paleta de colores.
    =========================================================================== */
 /* border-radius: igual specificidad que los estilos inyectados por _injectContentStyles
-   (`.mewyse-editor-wrapper:has(> .mewyse-{instanceId})` también es 0,2,0); como
-   los inyectados se añaden después de mewyse.css ganarían por orden. !important
+   (`.libraeditor-editor-wrapper:has(> .libraeditor-{instanceId})` también es 0,2,0); como
+   los inyectados se añaden después de libraeditor.css ganarían por orden. !important
    asegura que la densidad compact prevalezca. */
-.mewyse-editor-compact.mewyse-editor-wrapper {
+.libraeditor-editor-compact.libraeditor-editor-wrapper {
   border-radius: 4px !important;
 }
 
-.mewyse-editor-compact.mewyse-editor-wrapper .mewyse-toolbar {
+.libraeditor-editor-compact.libraeditor-editor-wrapper .libraeditor-toolbar {
   padding: 4px 8px;
   gap: 4px;
   margin: 4px;
   border-bottom-color: transparent;
 }
 
-.mewyse-editor-compact.mewyse-editor-wrapper .mewyse-toolbar-button {
+.libraeditor-editor-compact.libraeditor-editor-wrapper .libraeditor-toolbar-button {
   padding: 4px;
   min-width: 26px;
   height: 22px;
 }
 
-.mewyse-editor-compact.mewyse-editor-wrapper .mewyse-toolbar-button svg {
+.libraeditor-editor-compact.libraeditor-editor-wrapper .libraeditor-toolbar-button svg {
   width: 13px;
   height: 13px;
 }
 
 /* Cubre los dos modos de uso: container con clase directa (sin toolbar) y
    wrapper con clase + editor interno (con toolbar). */
-.mewyse-editor-compact.mewyse-editor,
-.mewyse-editor-compact.mewyse-editor-wrapper > .mewyse-editor {
+.libraeditor-editor-compact.libraeditor-editor,
+.libraeditor-editor-compact.libraeditor-editor-wrapper > .libraeditor-editor {
   /* Densidad compact reduce el padding general PERO conserva 32px a la
      izquierda — es el carril del handle flotante. Sin esto, el handle
      queda recortado o solapado con el texto en modo compact. */
-  padding: 8px 12px 8px var(--mewyse-padding-handle);
+  padding: 8px 12px 8px var(--libraeditor-padding-handle);
   min-height: 100px;
   max-height: 250px;
   border-radius: 4px;
 }
 
-.mewyse-editor-compact.mewyse-editor h1.mewyse-block,
-.mewyse-editor-compact.mewyse-editor-wrapper > .mewyse-editor h1.mewyse-block {
+.libraeditor-editor-compact.libraeditor-editor h1.libraeditor-block,
+.libraeditor-editor-compact.libraeditor-editor-wrapper > .libraeditor-editor h1.libraeditor-block {
   font-size: 1.4em;
 }
 
-.mewyse-editor-compact.mewyse-editor h2.mewyse-block,
-.mewyse-editor-compact.mewyse-editor-wrapper > .mewyse-editor h2.mewyse-block {
+.libraeditor-editor-compact.libraeditor-editor h2.libraeditor-block,
+.libraeditor-editor-compact.libraeditor-editor-wrapper > .libraeditor-editor h2.libraeditor-block {
   font-size: 1.2em;
 }
 
-.mewyse-editor-compact.mewyse-editor h3.mewyse-block,
-.mewyse-editor-compact.mewyse-editor-wrapper > .mewyse-editor h3.mewyse-block {
+.libraeditor-editor-compact.libraeditor-editor h3.libraeditor-block,
+.libraeditor-editor-compact.libraeditor-editor-wrapper > .libraeditor-editor h3.libraeditor-block {
   font-size: 1.05em;
 }
 
-.mewyse-editor-compact.mewyse-editor blockquote.mewyse-block,
-.mewyse-editor-compact.mewyse-editor-wrapper > .mewyse-editor blockquote.mewyse-block {
+.libraeditor-editor-compact.libraeditor-editor blockquote.libraeditor-block,
+.libraeditor-editor-compact.libraeditor-editor-wrapper > .libraeditor-editor blockquote.libraeditor-block {
   padding: 0.25em 0.5em;
   margin-left: 0;
 }
 
-.mewyse-editor-compact.mewyse-editor pre.mewyse-block,
-.mewyse-editor-compact.mewyse-editor-wrapper > .mewyse-editor pre.mewyse-block {
+.libraeditor-editor-compact.libraeditor-editor pre.libraeditor-block,
+.libraeditor-editor-compact.libraeditor-editor-wrapper > .libraeditor-editor pre.libraeditor-block {
   padding: 0.375em 0.625em;
 }
 
 /* Menús flotantes en dark mode (se añaden a document.body, fuera del editor) */
-.mewyse-slash-menu.mewyse-dark,
-.mewyse-mention-menu.mewyse-dark,
-.mewyse-tag-menu.mewyse-dark,
-.mewyse-mergetag-menu.mewyse-dark,
-.mewyse-emoji-menu.mewyse-dark,
-.mewyse-format-menu.mewyse-dark,
-.mewyse-options-menu.mewyse-dark,
-.mewyse-type-menu.mewyse-dark,
-.mewyse-table-toolbar.mewyse-dark,
-.mewyse-color-picker.mewyse-dark,
-.mewyse-unified-color-picker.mewyse-dark,
-.mewyse-modal-overlay.mewyse-dark,
-.mewyse-modal-container.mewyse-dark,
-.mewyse-summary-modal.mewyse-dark,
-.mewyse-find-replace.mewyse-dark,
-.mewyse-special-chars-menu.mewyse-dark {
+.libraeditor-slash-menu.libraeditor-dark,
+.libraeditor-mention-menu.libraeditor-dark,
+.libraeditor-tag-menu.libraeditor-dark,
+.libraeditor-mergetag-menu.libraeditor-dark,
+.libraeditor-emoji-menu.libraeditor-dark,
+.libraeditor-format-menu.libraeditor-dark,
+.libraeditor-options-menu.libraeditor-dark,
+.libraeditor-type-menu.libraeditor-dark,
+.libraeditor-table-toolbar.libraeditor-dark,
+.libraeditor-color-picker.libraeditor-dark,
+.libraeditor-unified-color-picker.libraeditor-dark,
+.libraeditor-modal-overlay.libraeditor-dark,
+.libraeditor-modal-container.libraeditor-dark,
+.libraeditor-summary-modal.libraeditor-dark,
+.libraeditor-find-replace.libraeditor-dark,
+.libraeditor-special-chars-menu.libraeditor-dark {
   /* Paleta neutra (negro/gris) — coherente con el editor en dark */
-  --mewyse-text-primary: #e6e6e6;
-  --mewyse-text-secondary: #a0a0a0;
-  --mewyse-text-muted: #707070;
-  --mewyse-text-light: #5a5a5a;
-  --mewyse-bg-primary: #1a1a1a;
-  --mewyse-bg-secondary: #242424;
-  --mewyse-bg-hover: #2e2e2e;
-  --mewyse-bg-active: #3a3a3a;
-  --mewyse-bg-code: #0d0d0d;
-  --mewyse-border-light: #333333;
-  --mewyse-border-medium: #444444;
-  --mewyse-border-dark: #565656;
-  --mewyse-accent: #c9c9c9;
-  --mewyse-accent-hover: #e0e0e0;
-  --mewyse-danger: #ff6b6b;
-  --mewyse-danger-hover: #ff5252;
-  --mewyse-danger-bg: #3a2020;
-  --mewyse-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --libraeditor-text-primary: #e6e6e6;
+  --libraeditor-text-secondary: #a0a0a0;
+  --libraeditor-text-muted: #707070;
+  --libraeditor-text-light: #5a5a5a;
+  --libraeditor-bg-primary: #1a1a1a;
+  --libraeditor-bg-secondary: #242424;
+  --libraeditor-bg-hover: #2e2e2e;
+  --libraeditor-bg-active: #3a3a3a;
+  --libraeditor-bg-code: #0d0d0d;
+  --libraeditor-border-light: #333333;
+  --libraeditor-border-medium: #444444;
+  --libraeditor-border-dark: #565656;
+  --libraeditor-accent: #c9c9c9;
+  --libraeditor-accent-hover: #e0e0e0;
+  --libraeditor-danger: #ff6b6b;
+  --libraeditor-danger-hover: #ff5252;
+  --libraeditor-danger-bg: #3a2020;
+  --libraeditor-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* ============================================
    Toolbar button — estado activo (toggle)
    ============================================ */
-.mewyse-toolbar-button.active {
-  background: var(--mewyse-bg-active);
-  color: var(--mewyse-accent);
+.libraeditor-toolbar-button.active {
+  background: var(--libraeditor-bg-active);
+  color: var(--libraeditor-accent);
 }
 
 /* ============================================
    FULLSCREEN MODE
    ============================================ */
-.mewyse-editor-wrapper.mewyse-fullscreen,
-.mewyse-editor.mewyse-fullscreen {
+.libraeditor-editor-wrapper.libraeditor-fullscreen,
+.libraeditor-editor.libraeditor-fullscreen {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -3001,7 +3001,7 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   height: auto !important;
   z-index: 9998;
   border-radius: 0 !important;
-  background: var(--mewyse-bg-primary);
+  background: var(--libraeditor-bg-primary);
   margin: 0 !important;
   border: none !important;
   max-width: none !important;
@@ -3013,8 +3013,8 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
    navegadores soportan dvh; en caso contrario el fallback de top:0/bottom:0
    ya cubre el caso. */
 @supports (height: 100dvh) {
-  .mewyse-editor-wrapper.mewyse-fullscreen,
-  .mewyse-editor.mewyse-fullscreen {
+  .libraeditor-editor-wrapper.libraeditor-fullscreen,
+  .libraeditor-editor.libraeditor-fullscreen {
     /* Forzamos un mínimo igual al viewport dinámico — top/bottom siguen
        fijando los límites, esto solo ayuda en navegadores donde el sizing
        fixed con bottom:0 no respeta bien el viewport visible. */
@@ -3022,7 +3022,7 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
   }
 }
 
-.mewyse-editor-wrapper.mewyse-fullscreen > .mewyse-editor {
+.libraeditor-editor-wrapper.libraeditor-fullscreen > .libraeditor-editor {
   flex: 1;
   max-height: none !important;
   height: auto;
@@ -3033,39 +3033,39 @@ body.mewyse-scroll-lock { overflow: hidden !important; }
    haber puesto la opción de altura (minHeight/maxHeight/autoExpand) en el
    container: si no, un max-height/overflow inline dejaría contenido oculto o
    sin scroll dentro del viewport fijo. */
-.mewyse-editor.mewyse-fullscreen {
+.libraeditor-editor.libraeditor-fullscreen {
   max-height: 100vh !important;
   min-height: 0 !important;
   overflow-y: auto !important;
-  padding: var(--mewyse-padding-handle);
+  padding: var(--libraeditor-padding-handle);
 }
 
-body.mewyse-fullscreen-lock {
+body.libraeditor-fullscreen-lock {
   overflow: hidden;
 }
 
 /* ============================================
    SHOW BLOCKS (Debug view)
    ============================================ */
-.mewyse-editor.mewyse-show-blocks {
+.libraeditor-editor.libraeditor-show-blocks {
   padding-top: 28px;
 }
 
-.mewyse-editor.mewyse-show-blocks .mewyse-block {
+.libraeditor-editor.libraeditor-show-blocks .libraeditor-block {
   outline: 1px dashed rgba(102, 126, 234, 0.5);
   outline-offset: 2px;
   position: relative;
   margin-top: 26px !important;
 }
 
-.mewyse-editor.mewyse-show-blocks .mewyse-block::after {
+.libraeditor-editor.libraeditor-show-blocks .libraeditor-block::after {
   content: attr(data-block-type);
   position: absolute;
   top: -18px;
   left: 0;
   font-size: .9em;
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-  background: var(--mewyse-accent);
+  background: var(--libraeditor-accent);
   color: #fff;
   padding: 1px 6px;
   border-radius: 3px;
@@ -3078,13 +3078,13 @@ body.mewyse-fullscreen-lock {
   line-height: 1.4;
 }
 
-.mewyse-editor.mewyse-show-blocks.mewyse-rtl .mewyse-block::after {
+.libraeditor-editor.libraeditor-show-blocks.libraeditor-rtl .libraeditor-block::after {
   left: auto;
   right: 0;
 }
 
-.mewyse-editor.mewyse-show-blocks .mewyse-list-group,
-.mewyse-editor.mewyse-show-blocks .mewyse-checklist-group {
+.libraeditor-editor.libraeditor-show-blocks .libraeditor-list-group,
+.libraeditor-editor.libraeditor-show-blocks .libraeditor-checklist-group {
   outline: 1px dotted rgba(102, 126, 234, 0.3);
   outline-offset: 4px;
 }
@@ -3092,59 +3092,59 @@ body.mewyse-fullscreen-lock {
 /* ============================================
    CHARACTER COUNTER BAR
    ============================================ */
-.mewyse-char-counter {
+.libraeditor-char-counter {
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 6px 14px;
   font-size: .9em;
-  color: var(--mewyse-text-secondary);
-  background: var(--mewyse-bg-secondary);
-  border-top: 1px solid var(--mewyse-border-light);
-  border-bottom-left-radius: var(--mewyse-radius-xl);
-  border-bottom-right-radius: var(--mewyse-radius-xl);
+  color: var(--libraeditor-text-secondary);
+  background: var(--libraeditor-bg-secondary);
+  border-top: 1px solid var(--libraeditor-border-light);
+  border-bottom-left-radius: var(--libraeditor-radius-xl);
+  border-bottom-right-radius: var(--libraeditor-radius-xl);
   user-select: none;
   font-feature-settings: 'tnum' 1;
 }
 
-.mewyse-char-counter-item {
+.libraeditor-char-counter-item {
   display: inline-flex;
   gap: 4px;
   align-items: baseline;
 }
 
-.mewyse-char-counter-item .label {
-  color: var(--mewyse-text-muted);
+.libraeditor-char-counter-item .label {
+  color: var(--libraeditor-text-muted);
 }
 
-.mewyse-char-counter-item .value {
+.libraeditor-char-counter-item .value {
   font-weight: 600;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
 /* ============================================
    RTL SUPPORT
    ============================================ */
-.mewyse-rtl {
+.libraeditor-rtl {
   direction: rtl;
 }
 
-.mewyse-rtl .mewyse-editor {
+.libraeditor-rtl .libraeditor-editor {
   text-align: right;
 }
 
 /* RTL en modo wrap: invertimos el orden de grupos. En modo scroll dejamos
    que el track use dir="rtl" propio y NO invertimos el flex de la toolbar
    porque eso descolocaría la zona fija de la derecha. */
-.mewyse-rtl .mewyse-toolbar:not(.mewyse-toolbar-mode-scroll) {
+.libraeditor-rtl .libraeditor-toolbar:not(.libraeditor-toolbar-mode-scroll) {
   flex-direction: row-reverse;
 }
 
-.mewyse-rtl .mewyse-char-counter {
+.libraeditor-rtl .libraeditor-char-counter {
   flex-direction: row-reverse;
 }
 
-.mewyse-rtl .mewyse-list-group {
+.libraeditor-rtl .libraeditor-list-group {
   padding-right: 24px;
   padding-left: 0;
 }
@@ -3152,121 +3152,121 @@ body.mewyse-fullscreen-lock {
 /* ============================================
    FIND & REPLACE DIALOG
    ============================================ */
-.mewyse-find-replace {
+.libraeditor-find-replace {
   position: absolute;
   width: 340px;
-  background: var(--mewyse-bg-primary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-lg);
-  box-shadow: var(--mewyse-shadow-lg);
+  background: var(--libraeditor-bg-primary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-lg);
+  box-shadow: var(--libraeditor-shadow-lg);
   padding: 8px;
   z-index: 10010;
   display: flex;
   flex-direction: column;
   gap: 8px;
   font-family: inherit;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
   font-size: 12px;
 }
 
 /* (Paleta dark propia del find/replace eliminada: ahora usa la paleta neutra
-   común del grupo .mewyse-dark, coherente con el resto de la UI.) */
+   común del grupo .libraeditor-dark, coherente con el resto de la UI.) */
 
-.mewyse-fr-header {
+.libraeditor-fr-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 4px;
-  border-bottom: 1px solid var(--mewyse-border-light);
+  border-bottom: 1px solid var(--libraeditor-border-light);
 }
 
-.mewyse-fr-title {
+.libraeditor-fr-title {
   font-weight: 600;
   font-size: 1.05em;
-  color: var(--mewyse-text-primary);
+  color: var(--libraeditor-text-primary);
 }
 
-.mewyse-fr-close {
+.libraeditor-fr-close {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
   padding: 4px;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.mewyse-fr-close:hover {
-  background: var(--mewyse-bg-hover);
-  color: var(--mewyse-text-primary);
+.libraeditor-fr-close:hover {
+  background: var(--libraeditor-bg-hover);
+  color: var(--libraeditor-text-primary);
 }
 
-.mewyse-fr-row {
+.libraeditor-fr-row {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.mewyse-fr-find-input,
-.mewyse-fr-replace-input {
+.libraeditor-fr-find-input,
+.libraeditor-fr-replace-input {
   flex: 1;
   padding: 6px 10px;
-  border: 1px solid var(--mewyse-border-medium);
-  border-radius: var(--mewyse-radius-md);
+  border: 1px solid var(--libraeditor-border-medium);
+  border-radius: var(--libraeditor-radius-md);
   font-size: 1.05em;
   font-family: inherit;
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
   outline: none;
 }
 
-.mewyse-fr-find-input:focus,
-.mewyse-fr-replace-input:focus {
-  border-color: var(--mewyse-accent);
+.libraeditor-fr-find-input:focus,
+.libraeditor-fr-replace-input:focus {
+  border-color: var(--libraeditor-accent);
   box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.15);
 }
 
-.mewyse-fr-counter {
+.libraeditor-fr-counter {
   font-size: .8em;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
   min-width: 70px;
   text-align: right;
   font-feature-settings: 'tnum' 1;
 }
 
-.mewyse-fr-options {
+.libraeditor-fr-options {
   display: flex;
   gap: 14px;
   font-size: .9em;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
 }
 
-.mewyse-fr-options label {
+.libraeditor-fr-options label {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   cursor: pointer;
 }
 
-.mewyse-fr-options input[type="checkbox"] {
+.libraeditor-fr-options input[type="checkbox"] {
   cursor: pointer;
-  accent-color: var(--mewyse-accent);
+  accent-color: var(--libraeditor-accent);
 }
 
-.mewyse-fr-actions {
+.libraeditor-fr-actions {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
 }
 
-.mewyse-fr-btn {
+.libraeditor-fr-btn {
   padding: 5px 10px;
-  border: 1px solid var(--mewyse-border-medium);
-  background: var(--mewyse-bg-secondary);
-  color: var(--mewyse-text-primary);
-  border-radius: var(--mewyse-radius-md);
+  border: 1px solid var(--libraeditor-border-medium);
+  background: var(--libraeditor-bg-secondary);
+  color: var(--libraeditor-text-primary);
+  border-radius: var(--libraeditor-radius-md);
   cursor: pointer;
   font-family: inherit;
   display: inline-flex;
@@ -3275,49 +3275,49 @@ body.mewyse-fullscreen-lock {
   transition: all 0.15s ease;
 }
 
-.mewyse-fr-btn:hover {
-  background: var(--mewyse-bg-hover);
-  border-color: var(--mewyse-border-dark);
+.libraeditor-fr-btn:hover {
+  background: var(--libraeditor-bg-hover);
+  border-color: var(--libraeditor-border-dark);
 }
 
-.mewyse-fr-prev,
-.mewyse-fr-next {
+.libraeditor-fr-prev,
+.libraeditor-fr-next {
   padding: 5px 8px;
 }
 
-.mewyse-fr-replace-all {
-  background: var(--mewyse-accent);
+.libraeditor-fr-replace-all {
+  background: var(--libraeditor-accent);
   color: #fff;
-  border-color: var(--mewyse-accent);
+  border-color: var(--libraeditor-accent);
 }
 
-.mewyse-fr-replace-all:hover {
-  background: var(--mewyse-accent-hover);
-  border-color: var(--mewyse-accent-hover);
+.libraeditor-fr-replace-all:hover {
+  background: var(--libraeditor-accent-hover);
+  border-color: var(--libraeditor-accent-hover);
 }
 
 /* Highlights dentro del contenido del editor */
-.mewyse-search-highlight {
+.libraeditor-search-highlight {
   background: rgba(255, 221, 0, 0.4);
   border-radius: 2px;
   box-shadow: 0 0 0 1px rgba(255, 221, 0, 0.6);
 }
 
-.mewyse-search-highlight.current {
+.libraeditor-search-highlight.current {
   background: rgba(255, 152, 0, 0.6);
   box-shadow: 0 0 0 1px rgba(255, 152, 0, 0.9);
 }
 
 /* Dark mode para highlights */
-.mewyse-editor-dark .mewyse-search-highlight,
-.mewyse-editor.mewyse-editor-dark .mewyse-search-highlight {
+.libraeditor-editor-dark .libraeditor-search-highlight,
+.libraeditor-editor.libraeditor-editor-dark .libraeditor-search-highlight {
   background: rgba(255, 221, 0, 0.25);
   box-shadow: 0 0 0 1px rgba(255, 221, 0, 0.4);
   color: inherit;
 }
 
-.mewyse-editor-dark .mewyse-search-highlight.current,
-.mewyse-editor.mewyse-editor-dark .mewyse-search-highlight.current {
+.libraeditor-editor-dark .libraeditor-search-highlight.current,
+.libraeditor-editor.libraeditor-editor-dark .libraeditor-search-highlight.current {
   background: rgba(255, 152, 0, 0.4);
   box-shadow: 0 0 0 1px rgba(255, 152, 0, 0.6);
 }
@@ -3325,31 +3325,31 @@ body.mewyse-fullscreen-lock {
 /* ============================================
    Drag & drop de imágenes (visual feedback)
    ============================================ */
-.mewyse-editor.mewyse-image-drop-target {
-  outline: 2px dashed var(--mewyse-accent);
+.libraeditor-editor.libraeditor-image-drop-target {
+  outline: 2px dashed var(--libraeditor-accent);
   outline-offset: -8px;
   background-color: rgba(102, 126, 234, 0.05);
 }
 
 /* Imagen siendo arrastrada */
-.mewyse-image.mewyse-image-dragging {
+.libraeditor-image.libraeditor-image-dragging {
   opacity: 0.4;
   cursor: grabbing !important;
 }
 
 /* Cursor grab sobre imágenes (pista visual de que son arrastrables) */
-.mewyse-image {
+.libraeditor-image {
   cursor: grab;
 }
 
-.mewyse-image:active {
+.libraeditor-image:active {
   cursor: grabbing;
 }
 
 /* Celda destino de drop */
-td.mewyse-image-drop-target-cell,
-th.mewyse-image-drop-target-cell {
-  outline: 2px solid var(--mewyse-accent);
+td.libraeditor-image-drop-target-cell,
+th.libraeditor-image-drop-target-cell {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: -2px;
   background-color: rgba(102, 126, 234, 0.1);
 }
@@ -3357,13 +3357,13 @@ th.mewyse-image-drop-target-cell {
 /* ============================================
    Menú de tipos de bloque: separator + preview de styleFormats
    ============================================ */
-.mewyse-type-menu-separator {
+.libraeditor-type-menu-separator {
   height: 1px;
-  background: var(--mewyse-border-light);
+  background: var(--libraeditor-border-light);
   margin: 4px 0;
 }
 
-.mewyse-style-preview {
+.libraeditor-style-preview {
   /* El usuario define los estilos de las classes en su CSS. Este
      selector solo asegura que la clase se aplica al preview. */
   flex: 1;
@@ -3372,17 +3372,17 @@ th.mewyse-image-drop-target-cell {
 /* ============================================
    MODAL: Panel avanzado colapsable (imagen)
    ============================================ */
-.mewyse-modal-advanced-toggle {
+.libraeditor-modal-advanced-toggle {
   display: flex;
   align-items: center;
   gap: 6px;
   width: 100%;
   padding: 8px 12px;
   margin: 8px 0;
-  background: var(--mewyse-bg-secondary);
-  border: 1px solid var(--mewyse-border-light);
-  border-radius: var(--mewyse-radius-md);
-  color: var(--mewyse-text-secondary);
+  background: var(--libraeditor-bg-secondary);
+  border: 1px solid var(--libraeditor-border-light);
+  border-radius: var(--libraeditor-radius-md);
+  color: var(--libraeditor-text-secondary);
   font-family: inherit;
   font-weight: 500;
   text-align: left;
@@ -3390,21 +3390,21 @@ th.mewyse-image-drop-target-cell {
   transition: all 0.15s ease;
 }
 
-.mewyse-modal-advanced-toggle:hover {
-  background: var(--mewyse-bg-hover);
-  color: var(--mewyse-text-primary);
+.libraeditor-modal-advanced-toggle:hover {
+  background: var(--libraeditor-bg-hover);
+  color: var(--libraeditor-text-primary);
 }
 
-.mewyse-modal-advanced-toggle .dropdown-arrow {
+.libraeditor-modal-advanced-toggle .dropdown-arrow {
   display: inline-flex;
   transition: transform 0.2s ease;
 }
 
-.mewyse-modal-advanced-toggle.expanded .dropdown-arrow {
+.libraeditor-modal-advanced-toggle.expanded .dropdown-arrow {
   transform: rotate(180deg);
 }
 
-.mewyse-modal-advanced-panel {
+.libraeditor-modal-advanced-panel {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -3412,27 +3412,27 @@ th.mewyse-image-drop-target-cell {
   margin-bottom: 8px;
 }
 
-.mewyse-modal-advanced-row {
+.libraeditor-modal-advanced-row {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.mewyse-modal-advanced-row label {
+.libraeditor-modal-advanced-row label {
   flex: 0 0 100px;
-  color: var(--mewyse-text-secondary);
+  color: var(--libraeditor-text-secondary);
   font-weight: 500;
 }
 
-.mewyse-modal-advanced-inline {
+.libraeditor-modal-advanced-inline {
   display: flex;
   gap: 6px;
   flex: 1;
   align-items: center;
 }
 
-.mewyse-modal-advanced-inline select,
-.mewyse-modal-advanced-inline input[type="number"] {
+.libraeditor-modal-advanced-inline select,
+.libraeditor-modal-advanced-inline input[type="number"] {
   flex: 1;
   min-width: 0;
 }
@@ -3442,29 +3442,29 @@ th.mewyse-image-drop-target-cell {
    ============================================ */
 /* Wrapper de vídeo: dimensiones fijas (inline width/height) para poder
    redimensionar como una imagen. El facade/iframe/vídeo lo rellenan (absolutos).
-   La especificidad compuesta (`.mewyse-editor ... .mewyse-block`, 0,3,0) gana al
-   reset `.mewyse-editor-styled .mewyse-block { padding: 0 }`. */
-.mewyse-editor .mewyse-video-wrapper.mewyse-block {
+   La especificidad compuesta (`.libraeditor-editor ... .libraeditor-block`, 0,3,0) gana al
+   reset `.libraeditor-editor-styled .libraeditor-block { padding: 0 }`. */
+.libraeditor-editor .libraeditor-video-wrapper.libraeditor-block {
   position: relative;
   display: block;
   max-width: 100%;
   margin: 8px 0;
   padding: 0;
-  border-radius: var(--mewyse-radius-md);
+  border-radius: var(--libraeditor-radius-md);
   overflow: hidden;
   background-color: #000;
   outline: 2px solid transparent; /* borde de selección (no ocupa espacio) */
   cursor: pointer;
 }
-.mewyse-video-wrapper.selected {
+.libraeditor-video-wrapper.selected {
   outline-color: #4a9eff;
 }
 
 /* Previsualización, media real y placeholder rellenan el wrapper */
-.mewyse-video-wrapper .mewyse-video-facade,
-.mewyse-video-wrapper .mewyse-video-media,
-.mewyse-video-wrapper iframe,
-.mewyse-video-wrapper video {
+.libraeditor-video-wrapper .libraeditor-video-facade,
+.libraeditor-video-wrapper .libraeditor-video-media,
+.libraeditor-video-wrapper iframe,
+.libraeditor-video-wrapper video {
   position: absolute;
   top: 0;
   left: 0;
@@ -3474,7 +3474,7 @@ th.mewyse-image-drop-target-cell {
 }
 
 /* Facade (previsualización): fondo (miniatura o degradado) + botón play centrado */
-.mewyse-video-facade {
+.libraeditor-video-facade {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3482,12 +3482,12 @@ th.mewyse-image-drop-target-cell {
   background-position: center;
   background-color: #000;
 }
-.mewyse-video-facade-vimeo,
-.mewyse-video-facade-file,
-.mewyse-video-facade-generic {
+.libraeditor-video-facade-vimeo,
+.libraeditor-video-facade-file,
+.libraeditor-video-facade-generic {
   background-image: linear-gradient(135deg, #2b2b2b, #101010);
 }
-.mewyse-video-facade-label {
+.libraeditor-video-facade-label {
   position: absolute;
   left: 10px;
   bottom: 8px;
@@ -3495,7 +3495,7 @@ th.mewyse-image-drop-target-cell {
   color: rgba(255, 255, 255, 0.7);
   letter-spacing: 0.3px;
 }
-.mewyse-video-play {
+.libraeditor-video-play {
   border: none;
   background: transparent;
   padding: 0;
@@ -3503,24 +3503,24 @@ th.mewyse-image-drop-target-cell {
   line-height: 0;
   transition: transform 0.12s ease;
 }
-.mewyse-video-play:hover {
+.libraeditor-video-play:hover {
   transform: scale(1.08);
 }
-.mewyse-video-play:focus-visible {
+.libraeditor-video-play:focus-visible {
   outline: 2px solid #4a9eff;
   outline-offset: 3px;
   border-radius: 50%;
 }
 
 /* Controles del bloque (editar, resize, volver a preview): por encima del iframe */
-.mewyse-video-edit-btn,
-.mewyse-video-restore,
-.mewyse-video-resize-handle {
+.libraeditor-video-edit-btn,
+.libraeditor-video-restore,
+.libraeditor-video-resize-handle {
   position: absolute;
   z-index: 3;
 }
-.mewyse-video-edit-btn,
-.mewyse-video-restore {
+.libraeditor-video-edit-btn,
+.libraeditor-video-restore {
   top: 6px;
   right: 6px;
   width: 26px;
@@ -3529,21 +3529,21 @@ th.mewyse-image-drop-target-cell {
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: var(--mewyse-radius-sm);
+  border-radius: var(--libraeditor-radius-sm);
   background: rgba(0, 0, 0, 0.6);
   color: #fff;
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.12s ease;
 }
-.mewyse-video-restore {
+.libraeditor-video-restore {
   opacity: 1; /* siempre visible cuando el iframe está cargado */
 }
-.mewyse-video-wrapper.selected .mewyse-video-edit-btn,
-.mewyse-video-wrapper:hover .mewyse-video-edit-btn {
+.libraeditor-video-wrapper.selected .libraeditor-video-edit-btn,
+.libraeditor-video-wrapper:hover .libraeditor-video-edit-btn {
   opacity: 1;
 }
-.mewyse-video-resize-handle {
+.libraeditor-video-resize-handle {
   bottom: 0;
   right: 0;
   width: 16px;
@@ -3554,38 +3554,38 @@ th.mewyse-image-drop-target-cell {
   opacity: 0;
   transition: opacity 0.12s ease;
 }
-.mewyse-video-wrapper.selected .mewyse-video-resize-handle,
-.mewyse-video-wrapper:hover .mewyse-video-resize-handle {
+.libraeditor-video-wrapper.selected .libraeditor-video-resize-handle,
+.libraeditor-video-wrapper:hover .libraeditor-video-resize-handle {
   opacity: 1;
 }
 
-.mewyse-video-placeholder,
-.mewyse-audio-placeholder {
+.libraeditor-video-placeholder,
+.libraeditor-audio-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  color: var(--mewyse-text-muted);
+  color: var(--libraeditor-text-muted);
   font-style: italic;
-  background: var(--mewyse-bg-secondary);
-  border-radius: var(--mewyse-radius-md);
+  background: var(--libraeditor-bg-secondary);
+  border-radius: var(--libraeditor-radius-md);
 }
 
 /* ============================================
    BLOQUE AUDIO
    ============================================ */
-.mewyse-audio-wrapper {
+.libraeditor-audio-wrapper {
   display: block;
   margin: 8px 0;
 }
 
-.mewyse-audio-wrapper audio {
+.libraeditor-audio-wrapper audio {
   width: 100%;
 }
 
 /* Responsive: en móvil el diálogo ocupa toda la parte superior */
 @media (max-width: 480px) {
-  .mewyse-find-replace {
+  .libraeditor-find-replace {
     width: calc(100vw - 20px);
     left: 10px !important;
     right: 10px;
@@ -3595,43 +3595,43 @@ th.mewyse-image-drop-target-cell {
 /* ============================================
    MODAL: Propiedades de la tabla
    ============================================ */
-.mewyse-table-properties-modal {
+.libraeditor-table-properties-modal {
   min-width: 480px;
   max-width: 580px;
 }
 
-.mewyse-table-properties-grid {
+.libraeditor-table-properties-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px 18px;
   margin: 16px 0;
 }
 
-.mewyse-table-properties-modal .mewyse-modal-input-group {
+.libraeditor-table-properties-modal .libraeditor-modal-input-group {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.mewyse-table-properties-modal .mewyse-modal-input-group label {
-  color: var(--mewyse-text-secondary);
+.libraeditor-table-properties-modal .libraeditor-modal-input-group label {
+  color: var(--libraeditor-text-secondary);
   font-weight: 500;
 }
 
-.mewyse-table-properties-modal .mewyse-modal-input {
+.libraeditor-table-properties-modal .libraeditor-modal-input {
   padding: 6px 10px;
   font-family: inherit;
-  border: 1px solid var(--mewyse-border-medium);
-  border-radius: var(--mewyse-radius-md);
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
+  border: 1px solid var(--libraeditor-border-medium);
+  border-radius: var(--libraeditor-radius-md);
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
   outline: none;
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
 }
 
-.mewyse-table-properties-modal select.mewyse-modal-input {
+.libraeditor-table-properties-modal select.libraeditor-modal-input {
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
@@ -3644,57 +3644,57 @@ th.mewyse-image-drop-target-cell {
   padding-right: 26px;
 }
 
-.mewyse-table-properties-modal .mewyse-modal-input:focus {
-  border-color: var(--mewyse-accent);
+.libraeditor-table-properties-modal .libraeditor-modal-input:focus {
+  border-color: var(--libraeditor-accent);
   box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.15);
 }
 
-.mewyse-modal-color {
+.libraeditor-modal-color {
   height: 32px;
   padding: 2px;
   cursor: pointer;
 }
 
-.mewyse-modal-color-wrap {
+.libraeditor-modal-color-wrap {
   display: flex;
   gap: 6px;
   align-items: center;
 }
 
-.mewyse-modal-color-wrap .mewyse-modal-color {
+.libraeditor-modal-color-wrap .libraeditor-modal-color {
   flex: 1;
 }
 
-.mewyse-modal-btn-small {
+.libraeditor-modal-btn-small {
   padding: 4px 10px;
   font-size: .85em;
   font-family: inherit;
-  border: 1px solid var(--mewyse-border-medium);
-  background: var(--mewyse-bg-secondary);
-  color: var(--mewyse-text-secondary);
-  border-radius: var(--mewyse-radius-md);
+  border: 1px solid var(--libraeditor-border-medium);
+  background: var(--libraeditor-bg-secondary);
+  color: var(--libraeditor-text-secondary);
+  border-radius: var(--libraeditor-radius-md);
   cursor: pointer;
   white-space: nowrap;
 }
 
-.mewyse-modal-btn-small:hover {
-  background: var(--mewyse-bg-hover);
-  color: var(--mewyse-text-primary);
+.libraeditor-modal-btn-small:hover {
+  background: var(--libraeditor-bg-hover);
+  color: var(--libraeditor-text-primary);
 }
 
 /* Dark mode del modal de propiedades */
-.mewyse-table-properties-modal.mewyse-editor-dark {
-  background: var(--mewyse-bg-primary);
-  color: var(--mewyse-text-primary);
+.libraeditor-table-properties-modal.libraeditor-editor-dark {
+  background: var(--libraeditor-bg-primary);
+  color: var(--libraeditor-text-primary);
 }
 
 /* Responsive */
 @media (max-width: 600px) {
-  .mewyse-table-properties-modal {
+  .libraeditor-table-properties-modal {
     min-width: auto;
     width: calc(100vw - 32px);
   }
-  .mewyse-table-properties-grid {
+  .libraeditor-table-properties-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -3703,19 +3703,19 @@ th.mewyse-image-drop-target-cell {
    Accesibilidad: :focus-visible en elementos interactivos que faltaban.
    Misma convención que el resto (contorno con el color de acento del tema).
    ============================================ */
-.mewyse-options-menu-item:focus-visible,
-.mewyse-type-menu-item:focus-visible,
-.mewyse-summary-button:focus-visible,
-.mewyse-summary-close:focus-visible,
-.mewyse-outline-close:focus-visible,
-.mewyse-fr-close:focus-visible,
-.mewyse-fr-btn:focus-visible,
-.mewyse-color-button:focus-visible,
-.mewyse-add-block:focus-visible,
-.mewyse-toolbar-scroll-arrow:focus-visible,
-.mewyse-modal-advanced-toggle:focus-visible,
-.mewyse-modal-btn-small:focus-visible {
-  outline: 2px solid var(--mewyse-accent);
+.libraeditor-options-menu-item:focus-visible,
+.libraeditor-type-menu-item:focus-visible,
+.libraeditor-summary-button:focus-visible,
+.libraeditor-summary-close:focus-visible,
+.libraeditor-outline-close:focus-visible,
+.libraeditor-fr-close:focus-visible,
+.libraeditor-fr-btn:focus-visible,
+.libraeditor-color-button:focus-visible,
+.libraeditor-add-block:focus-visible,
+.libraeditor-toolbar-scroll-arrow:focus-visible,
+.libraeditor-modal-advanced-toggle:focus-visible,
+.libraeditor-modal-btn-small:focus-visible {
+  outline: 2px solid var(--libraeditor-accent);
   outline-offset: 1px;
 }
 
@@ -3725,21 +3725,21 @@ th.mewyse-image-drop-target-cell {
    El método print() abre una ventana limpia; esto es defensa para Ctrl+P directo.
    ============================================ */
 @media print {
-  .mewyse-toolbar,
-  .mewyse-floating-handle,
-  .mewyse-char-counter,
-  .mewyse-outline-panel,
-  .mewyse-summary-button,
-  .mewyse-add-block,
-  .mewyse-table-toolbar,
-  .mewyse-callout-variant,
-  .mewyse-overlay,
-  [class*="mewyse-"][class*="-menu"],
-  [class*="mewyse-"][class*="-picker"],
-  [class*="mewyse-"][class*="-modal"] {
+  .libraeditor-toolbar,
+  .libraeditor-floating-handle,
+  .libraeditor-char-counter,
+  .libraeditor-outline-panel,
+  .libraeditor-summary-button,
+  .libraeditor-add-block,
+  .libraeditor-table-toolbar,
+  .libraeditor-callout-variant,
+  .libraeditor-overlay,
+  [class*="libraeditor-"][class*="-menu"],
+  [class*="libraeditor-"][class*="-picker"],
+  [class*="libraeditor-"][class*="-modal"] {
     display: none !important;
   }
-  .mewyse-editor {
+  .libraeditor-editor {
     max-height: none !important;
     overflow: visible !important;
     padding-left: 0 !important;

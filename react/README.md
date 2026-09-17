@@ -1,27 +1,27 @@
-# meWYSE — componente React
+# LibraEditor — componente React
 
-Wrapper **no controlado** del editor meWYSE. El núcleo sigue siendo ES5 sin
+Wrapper **no controlado** del editor LibraEditor. El núcleo sigue siendo ES5 sin
 dependencias; este envoltorio no necesita build (ESM + `React.createElement`).
 
 ## Instalación
 
 ```bash
-npm install mewyse react react-dom
+npm install libraeditor react react-dom
 ```
 
 ## Uso
 
 ```jsx
 import { useRef } from 'react';
-import { MeWyse } from 'mewyse/react';
-import 'mewyse/style.css'; // estilos del editor
+import { LibraEditor } from 'libraeditor/react';
+import 'libraeditor/style.css'; // estilos del editor
 
 export default function Editor() {
   const ref = useRef(null);
 
   return (
     <>
-      <MeWyse
+      <LibraEditor
         ref={ref}
         toolbar
         theme="dark"
@@ -68,7 +68,7 @@ cliente:
 'use client';
 // o con carga dinámica:
 import dynamic from 'next/dynamic';
-const MeWyse = dynamic(() => import('mewyse/react').then(m => m.MeWyse), { ssr: false });
+const LibraEditor = dynamic(() => import('libraeditor/react').then(m => m.LibraEditor), { ssr: false });
 ```
 
 ## Notas

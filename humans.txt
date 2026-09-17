@@ -9,7 +9,7 @@ Doctype: HTML5
 Standards: HTML5, CSS3, ES2020+
 
 /* COMPONENTS */
-Name: meWYSE
-Version: 1.0.0
+Name: LibraEditor
+Version: 2.0.0
 License: MIT
-Repository: https://github.com/marcosesperon/meWYSE
+Repository: https://github.com/marcosesperon/LibraEditor

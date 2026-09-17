@@ -1,6 +1,6 @@
-// Tipos de meWYSE (núcleo). El editor es un constructor ES5 sin dependencias.
+// Tipos de LibraEditor (núcleo). El editor es un constructor ES5 sin dependencias.
 
-export interface MeWyseBlock {
+export interface LibraEditorBlock {
   id: number;
   /** 'paragraph' | 'heading1'..'heading3' | 'quote' | 'code' | 'bulletList' |
    *  'numberList' | 'checklist' | 'table' | 'image' | 'video' | 'audio' |
@@ -30,12 +30,12 @@ export interface MeWyseBlock {
   [key: string]: any;
 }
 
-export interface MeWyseChangePayload {
+export interface LibraEditorChangePayload {
   /** Referencia al propio editor: permite usar su API pública (isDirty,
    *  resetDirty, getHTML…) desde el callback sin capturar la instancia en una
    *  variable externa. */
-  editor: meWYSE;
-  blocks: MeWyseBlock[];
+  editor: LibraEditor;
+  blocks: LibraEditorBlock[];
   html: string;
   markdown: string;
   plainText: string;
@@ -51,7 +51,7 @@ export interface MeWyseChangePayload {
 /** Contexto que reciben los callbacks de una acción (onClick/isEnabled/isActive).
  *  Extiende el payload de onChange (perezoso: html/json/markdown/plainText solo
  *  se serializan al leerse). NO hacer JSON.stringify del ctx: `editor` es circular. */
-export interface MeWyseActionContext extends MeWyseChangePayload {
+export interface LibraEditorActionContext extends LibraEditorChangePayload {
   /** Nombre de la acción que se está ejecutando. */
   action: string;
   /** Desde dónde se disparó. 'state' al evaluar isEnabled/isActive. */
@@ -78,7 +78,7 @@ export interface MeWyseActionContext extends MeWyseChangePayload {
  *  - `name` ESTÁNDAR (bold, link, print… ver STANDARD_ACTION_NAMES) → sobrescribe
  *    esa acción en toolbar, menú flotante Y atajo de teclado.
  *  - `name` NUEVO → acción custom (requiere `onClick`). */
-export interface MeWyseActionDef {
+export interface LibraEditorActionDef {
   /** Identificador. Estándar = override; nuevo = acción custom. */
   name: string;
   /** SVG en crudo (empieza por '<'), clave de WYSIWYG_ICONS, o texto (etiqueta). */
@@ -94,26 +94,26 @@ export interface MeWyseActionDef {
   position?: 'start' | 'end' | { after?: string; before?: string; group?: 'new' };
   /** Acción a ejecutar. Obligatorio en custom; en un override, omitirlo deja el
    *  comportamiento estándar (útil para solo cambiar icon/tooltip). */
-  onClick?: (ctx: MeWyseActionContext) => void;
+  onClick?: (ctx: LibraEditorActionContext) => void;
   /** Deshabilita el botón si no hay selección de texto no colapsada. */
   requiresSelection?: boolean;
   /** Habilitado dinámicamente (se reevalúa al cambiar foco/selección). */
-  isEnabled?: (ctx: MeWyseActionContext) => boolean;
+  isEnabled?: (ctx: LibraEditorActionContext) => boolean;
   /** Estado "activo" (fondo resaltado), como negrita sobre texto en negrita. */
-  isActive?: (ctx: MeWyseActionContext) => boolean;
+  isActive?: (ctx: LibraEditorActionContext) => boolean;
 }
 
-export interface MeWyseMention {
+export interface LibraEditorMention {
   id: string | number;
   name: string;
   avatar?: string;
   [key: string]: any;
 }
 
-export interface MeWyseOptions {
+export interface LibraEditorOptions {
   /** Selector CSS o elemento del DOM donde montar el editor. */
   target: string | HTMLElement;
-  blocks?: MeWyseBlock[];
+  blocks?: LibraEditorBlock[];
   /** Toolbar declarativa (estilo TinyMCE):
    *  - `true` → todos los ítems por defecto
    *  - string → ítems separados por espacios, `|` crea grupos (ej. 'undo redo | bold italic | link')
@@ -139,7 +139,7 @@ export interface MeWyseOptions {
    *  estándar sobrescribe esa acción (con `ctx.callDefault()` disponible); un
    *  `name` nuevo añade un botón propio. El orden del array decide el orden
    *  entre acciones custom con la misma ancla. */
-  actions?: MeWyseActionDef[];
+  actions?: LibraEditorActionDef[];
   /** Acciones estándar a desactivar por nombre, sin tener que redeclarar la
    *  toolbar: desaparecen del botón, del menú flotante y de su atajo de teclado. */
   disabledActions?: string[];
@@ -160,7 +160,7 @@ export interface MeWyseOptions {
    *  HTML). No afecta a contenido programático (blocks/loadFromJSON). */
   disabledBlocks?: string[];
   charCounter?: boolean;
-  mentions?: MeWyseMention[];
+  mentions?: LibraEditorMention[];
   tags?: any[];
   mergeTags?: Array<{ id: string; name: string; label?: string }>;
   styleFormats?: Array<{ title: string; block: string; className: string }>;
@@ -180,22 +180,22 @@ export interface MeWyseOptions {
    *  ese tiempo de inactividad. No afecta a los efectos internos (textarea,
    *  autosave, historial), que siguen siendo inmediatos. */
   onChangeDebounce?: number;
-  onChange?: (data: MeWyseChangePayload) => void;
-  onFocus?: (data: MeWyseChangePayload) => void;
-  onBlur?: (data: MeWyseChangePayload) => void;
+  onChange?: (data: LibraEditorChangePayload) => void;
+  onFocus?: (data: LibraEditorChangePayload) => void;
+  onBlur?: (data: LibraEditorChangePayload) => void;
   [key: string]: any;
 }
 
-export default class meWYSE {
-  constructor(options: MeWyseOptions);
-  blocks: MeWyseBlock[];
+export default class LibraEditor {
+  constructor(options: LibraEditorOptions);
+  blocks: LibraEditorBlock[];
   getHTML(): string;
   getSafeHTML(): string;
   getHTMLSource(): string;
   getJSON(): string;
   getMarkdown(): string;
   getPlainText(): string;
-  loadFromJSON(json: string | MeWyseBlock[]): void;
+  loadFromJSON(json: string | LibraEditorBlock[]): void;
   loadFromHTML(html: string): void;
   loadFromMarkdown(md: string): void;
   /** ¿El contenido ha cambiado respecto a la última línea base "limpia"?
@@ -215,7 +215,7 @@ export default class meWYSE {
   getResolvedHTML?(values: Record<string, string>): string;
   /** Registra (o sustituye) una acción en runtime y repinta la toolbar.
    *  Nombre estándar = override; nombre nuevo = acción custom. */
-  registerAction(def: MeWyseActionDef): boolean;
+  registerAction(def: LibraEditorActionDef): boolean;
   /** Elimina una acción registrada: una custom desaparece; un override se retira
    *  y la acción estándar vuelve a su comportamiento por defecto. */
   unregisterAction(name: string): boolean;

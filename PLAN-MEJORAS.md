@@ -1,12 +1,12 @@
-# Plan de mejoras de meWYSE — comparativa con el mercado y roadmap
+# Plan de mejoras de LibraEditor — comparativa con el mercado y roadmap
 
-> Documento de trabajo (aprobado 2026-07-08). Deriva de comparar meWYSE con los editores WYSIWYG
+> Documento de trabajo (aprobado 2026-07-08). Deriva de comparar LibraEditor con los editores WYSIWYG
 > del mercado. Se desarrolla **sprint a sprint / feature a feature**; antes de implementar cada
 > feature se presenta el detalle y se espera aprobación. Marca cada casilla al completarla.
 >
 > **Invariantes**: núcleo ES5 sin dependencias (deps solo OPCIONALES y lazy si el consumidor
 > activa la feature); el modelo `this.blocks` es un **array PLANO**; el **sanitizer** `_sanitizeBlock`
-> ([mewyse.js:15992](mewyse.js:15992)) es allow-list destructivo → **toda propiedad/tipo nuevo debe
+> ([libraeditor.js:15992](libraeditor.js:15992)) es allow-list destructivo → **toda propiedad/tipo nuevo debe
 > registrarse ahí o se pierde en silencio**. Checklist por bloque nuevo: `VALID_BLOCK_TYPES` →
 > `createBlockElement` → `render` (si agrupa) → **`_sanitizeBlock`** → `getHTML`/`getHTMLSource`/
 > `getMarkdown` → slash menu + i18n.
@@ -15,7 +15,7 @@
 
 ## Comparativa (resumen)
 
-meWYSE ya cubre (paridad o mejor): bloques + JSON limpio (14 tipos), slash/@/#/emoji, formato
+LibraEditor ya cubre (paridad o mejor): bloques + JSON limpio (14 tipos), slash/@/#/emoji, formato
 inline completo (incl. quitar enlace), tablas avanzadas, media (vídeo/audio/imagen), import/export
 HTML·MD·JSON·texto + pegado Word, find&replace, fullscreen, show blocks, contador, RTL, outline,
 temas dark/compact/custom, i18n es/en, styleFormats, listas anidadas, undo/redo, cross-block,
@@ -39,8 +39,8 @@ especiales, merge tags, imprimir/PDF/Word, autosave, TOC como bloque, salto de p
   VERIFICADO: guarda tras el debounce, restaura vía loadFromJSON, no pisa `options.blocks`.
 - [x] **1.3 ✅ Salto de página**: tipo `pageBreak` (VALID_BLOCK_TYPES + createBlockElement +
   _sanitizeBlock + getHTML/getHTMLSource/getMarkdown + slash menu + i18n + sets no-editable). Render
-  `div.mewyse-page-break` con marcador visual; CSS `@media print { break-after: page }`; export HTML
-  = `<div class="mewyse-page-break">`, MD = `<!-- pagebreak -->`. VERIFICADO: sobrevive al sanitizer en round-trip JSON.
+  `div.libraeditor-page-break` con marcador visual; CSS `@media print { break-after: page }`; export HTML
+  = `<div class="libraeditor-page-break">`, MD = `<!-- pagebreak -->`. VERIFICADO: sobrevive al sanitizer en round-trip JSON.
 - [x] **1.4 ✅ Fuente / tamaño / interlineado + caracteres especiales**: `line-height` añadido a
   `ALLOWED_CSS_PROPS` y `font-family`/`font-size`/`line-height` a `CONTENT_STYLE_PROPS` (sobreviven al
   export). Opción opt-in `fontControls` → `showFontMenu` (familia sin comillas, tamaños en lista
@@ -53,7 +53,7 @@ especiales, merge tags, imprimir/PDF/Word, autosave, TOC como bloque, salto de p
   `- * +`→bullet, `1.`→number, `>`→quote, ` ``` `→code, `[] [x]`→checklist. Usa `_editableTextContent`
   (ignora cápsulas). VERIFICADO: todos convierten; texto normal no dispara. (commit `d5eaea3`)
 - [x] **2.2 ✅ Callout / aviso**: tipo `callout` + `calloutVariant` (CALLOUT_VARIANTS, default info).
-  Render `div.mewyse-callout` (icono no editable que abre `showCalloutVariantMenu` + div editable);
+  Render `div.libraeditor-callout` (icono no editable que abre `showCalloutVariantMenu` + div editable);
   `_sanitizeBlock` (content + variante validada); export HTML = clase, MD = `> [!NOTE/TIP/WARNING/CAUTION]`;
   slash menu + i18n + CSS (4 variantes, texto con color explícito). VERIFICADO: round-trip sobrevive al
   sanitizer; variante inválida → info; cambio de variante y edición OK. (commit `9e695e6`)
@@ -64,7 +64,7 @@ especiales, merge tags, imprimir/PDF/Word, autosave, TOC como bloque, salto de p
 
 ## Sprint 3 — ERP y autoformato inline (medio, riesgo bajo-medio) ✅ COMPLETADO
 - [x] **3.1 ✅ Merge tags / variables `{{campo}}`**: opción `mergeTags: [{id,name,label?}]`; inserción
-  por trigger `{{` (menú filtrable) y botón de toolbar. Cápsula `span.mewyse-mergetag[data-merge-name]`
+  por trigger `{{` (menú filtrable) y botón de toolbar. Cápsula `span.libraeditor-mergetag[data-merge-name]`
   no editable. Sanitizer: clase en `ALLOWED_SPAN_CLASSES` + `data-merge-name` (regex `^[\w.]+$`) en
   `ATTR_WHITELIST.SPAN` + `_editableTextContent` + paste. Export: `getMarkdown`/`htmlToMarkdownInline`
   → `{{name}}`; `getResolvedHTML(valuesMap)` sustituye por el valor escapado (sin mutar el modelo).
@@ -80,7 +80,7 @@ especiales, merge tags, imprimir/PDF/Word, autosave, TOC como bloque, salto de p
 ## Sprint 4 — Mayor riesgo (medio, riesgo medio-alto) ✅ COMPLETADO
 - [x] **4.1 ✅ Syntax highlight en código** (dep opcional lazy): opciones `codeHighlight`+`codeHighlightUrl`
   (highlight.js). Bloque code con `language` (set cerrado `CODE_LANGUAGES` + selector por bloque). **Modelo
-  siempre texto plano**: el input lee `textContent` (marcador `data-mewyse-code`), resalta al render y
+  siempre texto plano**: el input lee `textContent` (marcador `data-libraeditor-code`), resalta al render y
   re-pinta al blur (`_highlightCode`/`_rehighlightCodeElement`); `_initCodeHighlight` carga la lib lazy.
   Export `class="language-xxx"` (HTML) y ` ```lang ` (MD); fallback a texto escapado. Tokens `.hljs-*`
   mapeados a variables de tema (self-contained). VERIFICADO: modelo plano tras editar, round-trip preserva
@@ -112,6 +112,6 @@ especiales, merge tags, imprimir/PDF/Word, autosave, TOC como bloque, salto de p
 - Deps lazy: sin activar la opción el núcleo funciona igual (fallback); la lib se carga una sola vez.
 
 ## Ficheros
-`mewyse.js` (sanitizer/whitelists, `createBlockElement`, `render`, `changeBlockType`, handlers,
-export, tags, opciones; nuevo helper `_loadScriptOnce`), `mewyse.css` (callout/toggle/page-break/
-merge-tag, `@media print`, tokens highlight, `.mewyse-lh-*`), `index.html` (demos), `README.md`/`CLAUDE.md`.
+`libraeditor.js` (sanitizer/whitelists, `createBlockElement`, `render`, `changeBlockType`, handlers,
+export, tags, opciones; nuevo helper `_loadScriptOnce`), `libraeditor.css` (callout/toggle/page-break/
+merge-tag, `@media print`, tokens highlight, `.libraeditor-lh-*`), `index.html` (demos), `README.md`/`CLAUDE.md`.

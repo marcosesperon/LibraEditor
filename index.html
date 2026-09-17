@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>meWYSE — Block Editor</title>
+  <title>LibraEditor — Block Editor</title>
   <meta name="description" content="Editor WYSIWYG basado en bloques al estilo Notion, desarrollado en JavaScript ECMAScript 5 puro. Sin dependencias, sin build system, un solo archivo">
   <meta name="author" content="Marcos Esperon">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="meWYSE — Block Editor">
+  <meta property="og:title" content="LibraEditor — Block Editor">
   <meta property="og:description" content="Editor WYSIWYG basado en bloques al estilo Notion, desarrollado en JavaScript ECMAScript 5 puro. Sin dependencias, sin build system, un solo archivo">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://github.com/marcosesperon/meWYSE">
+  <meta property="og:url" content="https://github.com/marcosesperon/LibraEditor">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="meWYSE — Block Editor">
+  <meta name="twitter:title" content="LibraEditor — Block Editor">
   <meta name="twitter:description" content="Editor WYSIWYG basado en bloques al estilo Notion, desarrollado en JavaScript ECMAScript 5 puro. Sin dependencias, sin build system, un solo archivo">
   <meta name="twitter:creator" content="@marcosesperon">
 
@@ -23,7 +23,7 @@
   <link rel="author" href="https://github.com/marcosesperon">
   <link rel="author" href="/humans.txt" type="text/plain">
 
-  <link rel="stylesheet" href="mewyse.css">
+  <link rel="stylesheet" href="libraeditor.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -405,11 +405,11 @@
     }
 
     /* ===== Dark theme content overrides ===== */
-    .mewyse-editor-dark.mewyse-editor pre.mewyse-block { color: #c8d6e5; }
-    .mewyse-editor-dark.mewyse-editor table th { background: var(--mewyse-bg-secondary); }
+    .libraeditor-editor-dark.libraeditor-editor pre.libraeditor-block { color: #c8d6e5; }
+    .libraeditor-editor-dark.libraeditor-editor table th { background: var(--libraeditor-bg-secondary); }
 
     /* ===== contentStyles demo ===== */
-    #noStylesEditor .mewyse-editor { padding: 16px; min-height: 200px; max-height: 500px; overflow-y: auto; border: 1px solid #e4e4e7; border-radius: 12px; background: #fff; }
+    #noStylesEditor .libraeditor-editor { padding: 16px; min-height: 200px; max-height: 500px; overflow-y: auto; border: 1px solid #e4e4e7; border-radius: 12px; background: #fff; }
     #noStylesEditor h1 { font-size: 2em; color: #1e40af; border-bottom: 2px solid #3b82f6; padding-bottom: 8px; }
     #noStylesEditor h2 { font-size: 1.5em; color: #2563eb; }
     #noStylesEditor h3 { font-size: 1.2em; color: #71717a; }
@@ -451,7 +451,7 @@
   </style>
 
   <!-- Analítica de visitas (GoatCounter) -->
-  <script data-goatcounter="https://mewyse.goatcounter.com/count"
+  <script data-goatcounter="https://libraeditor.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -459,10 +459,10 @@
   <header class="header">
     <a class="header-brand" href="#">
       <span class="dot"></span>
-      meWYSE
+      LibraEditor
     </a>
     <div class="header-links">
-      <a href="https://github.com/marcosesperon/meWYSE" target="_blank" rel="noopener" class="github-link">GitHub</a>
+      <a href="https://github.com/marcosesperon/LibraEditor" target="_blank" rel="noopener" class="github-link">GitHub</a>
       <a class="bmc-btn" href="https://buymeacoffee.com/marcosesperon" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
         Buy me a coffee
@@ -472,7 +472,7 @@
 
   <!-- Hero -->
   <section class="hero">
-    <h1>meWYSE</h1>
+    <h1>LibraEditor</h1>
     <p>Editor de bloques al estilo Notion. ECMAScript 5 puro, sin dependencias, un solo archivo.</p>
     <div class="hero-badges">
       <span class="badge badge-blue">ES5 Compatible</span>
@@ -509,7 +509,7 @@
     <div class="demo-section">
       <h2>Editor Basico</h2>
       <p>Editor aplicado a un <code>textarea</code>. Ideal para formularios y campos de texto enriquecido.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#basicEditor',
   onChange: function(data) {
     console.log('Contenido:', data.plainText);
@@ -521,7 +521,7 @@ editor.focus();        // primer bloque
 editor.focus(blockId); // bloque especifico
 
 // Para auto-foco al inicializar:
-// new meWYSE({ target: '#editor', autoFocus: true });</code></pre>
+// new LibraEditor({ target: '#editor', autoFocus: true });</code></pre>
       <textarea id="basicEditor" placeholder="Escribe aqui..." aria-label="Editor basico"></textarea>
       <div class="controls">
         <h3>Controles</h3>
@@ -540,7 +540,7 @@ editor.focus(blockId); // bloque especifico
     <div class="demo-section">
       <h2>Editor con Toolbar</h2>
       <p>Editor con barra de herramientas superior para acceso rapido a formato.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#toolbarEditor',
   toolbar: true,
   onChange: function(data) {
@@ -565,7 +565,7 @@ editor.focus(blockId); // bloque especifico
     <div class="demo-section">
       <h2>Toolbar en modo wrap (multifila)</h2>
       <p>Por defecto la toolbar va en <strong>una sola fila con scroll horizontal</strong> (<code>toolbarOverflow: 'scroll'</code>). Con <code>toolbarOverflow: 'wrap'</code> los botones que no caben <strong>saltan a la siguiente fila</strong>.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#wrapEditor',
   toolbar: true,
   toolbarOverflow: 'wrap'
@@ -580,7 +580,7 @@ editor.focus(blockId); // bloque especifico
       <div class="config-hint">
         Selecciona una palabra del editor para ver el men&uacute; flotante; sus botones muestran tooltip al pasar el cursor.
       </div>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#noToolbarEditor',
   toolbar: false
 });</code></pre>
@@ -597,7 +597,7 @@ editor.focus(blockId); // bloque especifico
       <div class="config-hint">
         Selecciona una palabra para ver el men&uacute; flotante con color, fuente, tama&ntilde;o, enlace&hellip; Pulsa <strong>negrita</strong> sin seleccionar nada y empieza a escribir: el texto sale en negrita y el bot&oacute;n queda resaltado.
       </div>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#selectionFloatingEditor',
   toolbar: true
   // selectionTools: 'floating'  // valor por defecto
@@ -609,7 +609,7 @@ editor.focus(blockId); // bloque especifico
       <div class="config-hint">
         Fíjate en color, fuente, tama&ntilde;o, enlace, may&uacute;sculas&hellip; salen en gris. Selecciona texto y se habilitan; negrita/cursiva/subrayado/tachado est&aacute;n siempre activas.
       </div>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#selectionToolbarEditor',
   toolbar: true,
   selectionTools: 'toolbar'
@@ -627,7 +627,7 @@ editor.focus(blockId); // bloque especifico
       <div class="config-hint">
         <strong>MAY</strong> (junto a negrita) y <strong>#</strong> (contar) solo se habilitan al <strong>seleccionar texto</strong> (<code>requiresSelection</code>). <strong>Fecha</strong> est&aacute; en su propio grupo tras las de inserci&oacute;n. <strong>H1?</strong> solo se habilita con el cursor en un <strong>t&iacute;tulo 1</strong> (<code>isEnabled</code>). Selecciona texto y mira tambi&eacute;n el <strong>men&uacute; flotante</strong>: MAY y # aparecen ah&iacute; (<code>placement: 'both'</code>).
       </div>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#actionsEditor',
   toolbar: true,
   actions: [
@@ -667,7 +667,7 @@ editor.focus(blockId); // bloque especifico
       <div class="config-hint">
         Aqu&iacute; <strong>tachado e imprimir est&aacute;n desactivados</strong> (tampoco funciona <code>Ctrl+Shift+X</code>). Y <strong>negrita est&aacute; sobrescrita</strong>: registra la llamada en el panel de abajo y luego aplica la negrita real con <code>ctx.callDefault()</code> &mdash; pru&eacute;balo con el bot&oacute;n, desde el men&uacute; flotante y con <code>Ctrl+B</code> (mira el campo <code>source</code>).
       </div>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#actionsOverrideEditor',
   toolbar: true,
   // Quitar estandar (boton + menu flotante + atajo)
@@ -717,8 +717,8 @@ editor.setActionDisabled('print', true);   // y false para reactivarla</code></p
       <div class="config-hint">
         Coloca el cursor donde quieras cortar y pulsa el bot&oacute;n de salto de p&aacute;gina de la toolbar (o <code>/salto</code>). Al imprimir, el contenido tras el corte empieza en una p&aacute;gina nueva.
       </div>
-      <pre class="docs-code"><code>var editor = new meWYSE({ target: '#pageBreakEditor', toolbar: true });
-// El bloque se exporta como: &lt;div class="mewyse-page-break"&gt;&lt;/div&gt;
+      <pre class="docs-code"><code>var editor = new LibraEditor({ target: '#pageBreakEditor', toolbar: true });
+// El bloque se exporta como: &lt;div class="libraeditor-page-break"&gt;&lt;/div&gt;
 // (CSS: break-after: page; page-break-after: always)</code></pre>
       <div id="pageBreakEditor"></div>
       <div class="controls">
@@ -739,7 +739,7 @@ editor.setActionDisabled('print', true);   // y false para reactivarla</code></p
       <div class="config-hint">
         Prueba: haz clic dentro del editor y luego fuera <em>sin tocar nada</em> &rarr; el estado sigue en <strong>&laquo;sin cambios&raquo;</strong> (la conversi&oacute;n HTML&rarr;bloques no cuenta). Ahora <em>edita</em> cualquier texto &rarr; mientras escribes pasa a <strong>&laquo;con cambios&raquo;</strong>; al hacer clic <em>fuera</em>, el <code>onBlur</code> de este demo llama a <code>resetDirty()</code> (simulando guardar) y vuelve a <strong>&laquo;sin cambios&raquo;</strong>.
       </div>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#dirtyTrackingSource',   // textarea ya con HTML
   toolbar: true,
   onBlur: function (data) {
@@ -764,7 +764,7 @@ editor.setActionDisabled('print', true);   // y false para reactivarla</code></p
     <!-- Demo: Bloques de tipo desconocido (robustez de datos) -->
     <div class="demo-section">
       <h2>Bloques de tipo desconocido</h2>
-      <p>Se carga un JSON con un bloque cuyo <code>type</code> el editor <strong>no reconoce</strong> (aqu&iacute; <code>chart</code>, como si viniera de una versi&oacute;n m&aacute;s nueva o de un plugin). En vez de perderlo o aplanarlo a un p&aacute;rrafo, meWYSE lo <strong>preserva &iacute;ntegro</strong>: lo muestra como un <em>placeholder de solo lectura</em> y lo re-emite tal cual en <code>getJSON()</code>. As&iacute; puedes cargar y volver a guardar sin destruir contenido que no entiendes.</p>
+      <p>Se carga un JSON con un bloque cuyo <code>type</code> el editor <strong>no reconoce</strong> (aqu&iacute; <code>chart</code>, como si viniera de una versi&oacute;n m&aacute;s nueva o de un plugin). En vez de perderlo o aplanarlo a un p&aacute;rrafo, LibraEditor lo <strong>preserva &iacute;ntegro</strong>: lo muestra como un <em>placeholder de solo lectura</em> y lo re-emite tal cual en <code>getJSON()</code>. As&iacute; puedes cargar y volver a guardar sin destruir contenido que no entiendes.</p>
       <div class="config-hint">
         El bloque <code>chart</code> aparece como &laquo;Bloque no reconocido&raquo;. Pulsa <em>Ver JSON</em>: el bloque sigue ah&iacute; con su <code>data</code> intacto (round-trip fiel).
       </div>
@@ -791,7 +791,7 @@ editor.setActionDisabled('print', true);   // y false para reactivarla</code></p
     <div class="demo-section">
       <h2>Editor con Summary</h2>
       <p>Editor con boton de resumen, estadisticas e indice de navegacion. Al pulsar el boton de resumen se ancla un <strong>panel de esquema</strong> a la derecha (vista tipo Word): el contenido se encoge y el indice de titulos queda siempre visible y navegable, actualizandose en vivo. El boton de cerrar del panel vuelve a ver solo el editor. (Sin toolbar, el boton abre el modal de resumen clasico.)</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#summaryEditor',
   toolbar: true,
   summary: true,
@@ -821,7 +821,7 @@ editor.setActionDisabled('print', true);   // y false para reactivarla</code></p
     <div class="demo-section">
       <h2>Sistema de Menciones</h2>
       <p>Escribe <code>@</code> para mencionar usuarios con autocompletado y avatares.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#mentionsEditor',
   toolbar: true,
   mentions: [
@@ -846,7 +846,7 @@ editor.setActionDisabled('print', true);   // y false para reactivarla</code></p
     <div class="demo-section">
       <h2>Modo ReadOnly (visualizaci&oacute;n)</h2>
       <p>Pasa <code>readOnly: true</code> para que el editor solo muestre el contenido sin permitir edici&oacute;n. No se monta toolbar, ni floating handle, ni autocompletes; los bloques quedan con <code>contenteditable=&quot;false&quot;</code>. La selecci&oacute;n nativa y el copy/paste hacia fuera siguen funcionando.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#readOnlyEditor',
   readOnly: true,
   blocks: [
@@ -861,7 +861,7 @@ editor.setActionDisabled('print', true);   // y false para reactivarla</code></p
     <div class="demo-section">
       <h2>Sistema de Etiquetas</h2>
       <p>Escribe <code>#</code> para insertar etiquetas con autocompletado. Cada etiqueta puede llevar un <code>color</code> opcional — se renderiza como una c&aacute;psula con ese color de fondo y contraste autom&aacute;tico. Sin color, usa un gen&eacute;rico del tema.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#tagsEditor',
   toolbar: true,
   tags: [
@@ -889,7 +889,7 @@ editor.setActionDisabled('print', true);   // y false para reactivarla</code></p
     <div class="demo-section">
       <h2>Editor con Div</h2>
       <p>El editor funciona con cualquier elemento, no solo con <code>textarea</code>.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#divEditor',
   toolbar: true
 });
@@ -914,10 +914,10 @@ editor.setActionDisabled('print', true);   // y false para reactivarla</code></p
       <h2>Internacionalizacion (i18n)</h2>
       <p>Editor en ingles. Todos los menus y tooltips se muestran en el idioma configurado.</p>
       <pre class="docs-code"><code>// Ingles
-var editor = new meWYSE({ target: '#editor', lang: 'en' });
+var editor = new LibraEditor({ target: '#editor', lang: 'en' });
 
 // Traducciones personalizadas (parcial o completo)
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   lang: {
     blockTypes: { paragraph: 'Paragraphe', heading1: 'Titre 1' },
@@ -939,7 +939,7 @@ var editor = new meWYSE({
     <div class="demo-section">
       <h2>Tema Dark</h2>
       <p>Dark mode se auto-detecta segun el sistema. Tambien puedes forzarlo con <code>theme: 'dark'</code>.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#darkEditor',
   toolbar: true,
   theme: 'dark'
@@ -963,7 +963,7 @@ var editor = new meWYSE({
     <div class="demo-section">
       <h2>Tema Compact</h2>
       <p>Editor compacto con <code>theme: 'compact'</code>. Ideal para sidebars y formularios.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#compactEditor',
   toolbar: true,
   theme: 'compact'
@@ -985,7 +985,7 @@ var editor = new meWYSE({
     <div class="demo-section">
       <h2>Sin estilos de contenido</h2>
       <p>Con <code>contentStyles: false</code>, los headings, blockquotes, tablas, etc. heredan los estilos CSS de la pagina.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#noStylesEditor',
   toolbar: true,
   contentStyles: false
@@ -1011,7 +1011,7 @@ var editor = new meWYSE({
     <div class="demo-section">
       <h2>Buscar y Reemplazar &middot; Fullscreen &middot; Show Blocks &middot; Contador</h2>
       <p>Atajo <code>Ctrl+F</code> / <code>Cmd+F</code> para abrir el panel de busqueda. El boton &quot;pantalla completa&quot; expande el editor sobre toda la ventana. El boton &quot;ajuste de texto&quot; activa/desactiva el salto de linea automatico del contenido dentro del bloque (opcion <code>wordWrap</code>, activa por defecto; desactivable con <code>wordWrap: false</code> o el boton <code>wordWrapToggle: false</code>). &quot;Mostrar bloques&quot; muestra los limites de cada bloque y su tipo para debugging. La barra inferior muestra el contador de palabras, caracteres y tiempo de lectura en tiempo real.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#toolsEditor',
   toolbar: true,         // todos los items (find, fullscreen, showblocks... ya incluidos)
   charCounter: true      // barra inferior con palabras/caracteres/tiempo
@@ -1024,7 +1024,7 @@ var editor = new meWYSE({
     <div class="demo-section">
       <h2>Toolbar con scroll horizontal</h2>
       <p>Pasa <code>toolbarOverflow: 'scroll'</code> para que la toolbar se mantenga en una sola fila con scroll horizontal cuando los botones no caben. La rueda vertical se traduce a scroll horizontal sobre la barra, las flechas/fades aparecen solo cuando hay overflow, y los botones de mover bloque (&uarr; &darr;) quedan anclados a la derecha sin moverse. Encoge la ventana para forzar el overflow.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#scrollToolbarEditor',
   toolbar: true,
   toolbarOverflow: 'scroll'  // default 'wrap'
@@ -1036,7 +1036,7 @@ var editor = new meWYSE({
     <div class="demo-section">
       <h2>Soporte RTL (derecha-a-izquierda)</h2>
       <p>Para idiomas como &aacute;rabe, hebreo o urdu. Pasa <code>rtl: true</code> en las opciones.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#rtlEditor',
   toolbar: true,
   rtl: true
@@ -1072,8 +1072,8 @@ var editor = new meWYSE({
     </style>
     <div class="demo-section">
       <h2>Estilos custom (styleFormats)</h2>
-      <p>Define estilos personalizados que aparecen en el dropdown de tipos de bloque. La p&aacute;gina define los CSS, meWYSE solo aplica las clases. Abre el dropdown &quot;Texto&quot; en la toolbar para verlos.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <p>Define estilos personalizados que aparecen en el dropdown de tipos de bloque. La p&aacute;gina define los CSS, LibraEditor solo aplica las clases. Abre el dropdown &quot;Texto&quot; en la toolbar para verlos.</p>
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#styleFormatsEditor',
   toolbar: true,
   styleFormats: [
@@ -1095,7 +1095,7 @@ var editor = new meWYSE({
       <h2>Listas anidadas, dropdown de caso y atajos de teclado</h2>
       <p>Pulsa <code>Tab</code> dentro de un &iacute;tem de lista para anidar (hasta 5 niveles), <code>Shift+Tab</code> para des-anidar. El bot&oacute;n &quot;Aa&quot; del toolbar abre un dropdown con 5 opciones de caso: MAY&Uacute;SCULAS, min&uacute;sculas, T&iacute;tulo, Oraci&oacute;n e Invertir.</p>
       <p><strong>Atajos nuevos:</strong> <code>Ctrl+E</code> (c&oacute;digo inline), <code>Ctrl+Shift+X</code> (tachado), <code>Ctrl+Shift+K</code> (limpiar formato), <code>Ctrl+Alt+1/2/3</code> (H1/H2/H3), <code>Ctrl+Shift+7/8</code> (lista numerada/vi&ntilde;etas).</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#nestedEditor',
   toolbar: true
 });
@@ -1116,7 +1116,7 @@ editor.loadFromJSON([
     <div class="demo-section">
       <h2>Callbacks onFocus / onBlur</h2>
       <p>Los callbacks <code>onFocus</code> y <code>onBlur</code> se disparan solo al entrar/salir del editor (no al moverse entre bloques internos ni al usar la toolbar/menus/modales). &Uacute;til para validaciones al perder foco.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#focusEditor',
   toolbar: true,
   onFocus: function(data) {
@@ -1148,7 +1148,7 @@ editor.loadFromJSON([
 // - Im&aacute;genes en celdas de tabla &harr; otras celdas
 // - Im&aacute;genes en celdas &harr; bloques independientes
 // - Archivos arrastrados desde el OS &rarr; cualquier bloque o celda
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#dragDropEditor',
   toolbar: true,
   imageMaxSize: 1024000  // opcional: l&iacute;mite 1MB
@@ -1160,7 +1160,7 @@ var editor = new meWYSE({
     <div class="demo-section">
       <h2>Soporte Markdown</h2>
       <p>Importar y exportar contenido en formato Markdown.</p>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#markdownEditor',
   toolbar: true,
   onChange: function(data) {
@@ -1203,14 +1203,14 @@ editor.loadFromMarkdown(editor.getMarkdown());</code></pre>
         Variables: escribe <code>{{</code> o usa el bot&oacute;n de variable para insertar
         <code>{{cliente}}</code>, <code>{{importe}}</code>&hellip;
       </div>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#novedadesEditor',
   // Toolbar declarativa: fontsize/font ya van en el default; anadimos exportar
   toolbar: 'undo redo | blocktype fontsize font | bold italic underline | ' +
            'link forecolor specialchars mergetags | align | table image | ' +
            'print exportword exportpdf | moveup movedown',
   autosave: true,       // guarda el borrador en localStorage
-  autosaveKey: 'mewyse-demo-novedades'
+  autosaveKey: 'libraeditor-demo-novedades'
 });</code></pre>
       <div id="novedadesEditor"></div>
       <div class="controls">
@@ -1242,7 +1242,7 @@ editor.loadFromMarkdown(editor.getMarkdown());</code></pre>
         (<code>/desplegable</code>). &Iacute;ndice: se actualiza solo con los t&iacute;tulos
         (<code>/indice</code>).
       </div>
-      <pre class="docs-code"><code>var editor = new meWYSE({
+      <pre class="docs-code"><code>var editor = new LibraEditor({
   target: '#sprint4Editor',
   toolbar: true,
   codeHighlight: true,   // activa el resaltado
@@ -1257,20 +1257,20 @@ editor.loadFromMarkdown(editor.getMarkdown());</code></pre>
       <h2>Altura configurable</h2>
       <p>Controla la altura por opciones: <code>minHeight</code>, <code>maxHeight</code> y <code>autoExpand</code> (crece con el contenido).</p>
       <pre class="docs-code"><code>// 1) Crece con el contenido, hasta 320px y luego scroll interno
-new meWYSE({ target: '#autoHeightEditor', toolbar: true,
+new LibraEditor({ target: '#autoHeightEditor', toolbar: true,
              autoExpand: true, minHeight: 100, maxHeight: 320 });
 
 // 2) Sin tope: crece indefinidamente (scrollea la p&aacute;gina)
-new meWYSE({ target: '#growEditor', autoExpand: true, minHeight: 80 });
+new LibraEditor({ target: '#growEditor', autoExpand: true, minHeight: 80 });
 
 // 3) Caja fija: alto tope 180px con scroll interno (sin autoExpand)
-new meWYSE({ target: '#fixedHeightEditor', toolbar: true, maxHeight: 180 });
+new LibraEditor({ target: '#fixedHeightEditor', toolbar: true, maxHeight: 180 });
 
 // 4) Solo suelo: alto minimo 260px (crece si hay mas contenido)
-new meWYSE({ target: '#minHeightEditor', toolbar: true, minHeight: 260 });
+new LibraEditor({ target: '#minHeightEditor', toolbar: true, minHeight: 260 });
 
 // 5) Valores CSS en string (vh/em) tambien valen
-new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });</code></pre>
+new LibraEditor({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });</code></pre>
       <h3>1) autoExpand + minHeight 100 / maxHeight 320</h3>
       <div id="autoHeightEditor"></div>
       <h3 style="margin-top:16px;">2) autoExpand sin tope (minHeight 80)</h3>
@@ -1302,7 +1302,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
         Abre el men&uacute; slash con <code>/</code> o mira la toolbar: no ver&aacute;s v&iacute;deo, audio ni tabla.
         No afecta al contenido cargado por <code>blocks</code>/<code>loadFromJSON</code>.
       </div>
-      <pre class="docs-code"><code>new meWYSE({
+      <pre class="docs-code"><code>new LibraEditor({
   target: '#disabledEditor',
   toolbar: true,
   disabledBlocks: ['video', 'audio', 'table']
@@ -1317,7 +1317,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     <p>Creado por <a href="https://buymeacoffee.com/marcosesperon" target="_blank" rel="noopener">Marcos Esper&oacute;n</a> &middot; MIT License</p>
   </footer>
 
-  <script src="mewyse.js"></script>
+  <script src="libraeditor.js"></script>
   <script>
     // Variables globales para los editores
     var basicEditor;
@@ -1350,7 +1350,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor basico
     function initBasicEditor() {
-      basicEditor = new meWYSE({
+      basicEditor = new LibraEditor({
         target: '#basicEditor',
         onChange: function(data) {
           console.log('Editor basico - Contenido:', data.plainText);
@@ -1360,7 +1360,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor con toolbar
     function initToolbarEditor() {
-      toolbarEditor = new meWYSE({
+      toolbarEditor = new LibraEditor({
         target: '#toolbarEditor',
         toolbar: true,
         onChange: function(data) {
@@ -1371,7 +1371,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor con toolbar en modo wrap (multifila)
     function initWrapEditor() {
-      wrapEditor = new meWYSE({
+      wrapEditor = new LibraEditor({
         target: '#wrapEditor',
         toolbar: true,
         toolbarOverflow: 'wrap',
@@ -1383,7 +1383,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor sin toolbar (menu flotante de formato al seleccionar texto)
     function initNoToolbarEditor() {
-      noToolbarEditor = new meWYSE({
+      noToolbarEditor = new LibraEditor({
         target: '#noToolbarEditor',
         toolbar: false,
         blocks: [
@@ -1403,13 +1403,13 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
         { id: 2, type: 'paragraph', content: 'Selecciona una parte de este texto para probar las herramientas de formato. Negrita, cursiva, subrayado y tachado funcionan tambien con solo el caret (sin seleccionar).' }
       ];
       // 1) floating (por defecto): las tools de seleccion van al menu flotante
-      selectionFloatingEditor = new meWYSE({
+      selectionFloatingEditor = new LibraEditor({
         target: '#selectionFloatingEditor',
         toolbar: true,
         blocks: demoBlocks
       });
       // 2) toolbar: se muestran en la toolbar pero deshabilitadas hasta que hay seleccion
-      selectionToolbarEditor = new meWYSE({
+      selectionToolbarEditor = new LibraEditor({
         target: '#selectionToolbarEditor',
         toolbar: true,
         selectionTools: 'toolbar',
@@ -1420,7 +1420,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     // Inicializar editores de acciones personalizables (actions / disabledActions)
     function initActionsEditors() {
       // 1) Acciones propias: posiciones, placement y estado dinamico
-      actionsEditor = new meWYSE({
+      actionsEditor = new LibraEditor({
         target: '#actionsEditor',
         toolbar: true,
         blocks: [
@@ -1468,7 +1468,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
       // 2) Desactivar estandar + sobrescribir una estandar con callDefault
       var v_llamadas = [];
-      actionsOverrideEditor = new meWYSE({
+      actionsOverrideEditor = new LibraEditor({
         target: '#actionsOverrideEditor',
         toolbar: true,
         blocks: [
@@ -1499,7 +1499,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor con salto de pagina
     function initPageBreakEditor() {
-      pageBreakEditor = new meWYSE({
+      pageBreakEditor = new LibraEditor({
         target: '#pageBreakEditor',
         toolbar: true,
         blocks: [
@@ -1522,7 +1522,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
         '<p>Se revisan los <strong>puntos pendientes</strong> del sprint.</p>' +
         '<ul><li>Cerrar la migracion desde TinyMCE</li><li>Documentar la API publica</li></ul>';
 
-      dirtyEditor = new meWYSE({
+      dirtyEditor = new LibraEditor({
         target: '#dirtyTrackingSource',
         toolbar: true,
         // El payload trae hasChanges; tambien vale dirtyEditor.hasChanges()/isDirty().
@@ -1575,7 +1575,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Demo de bloques de tipo desconocido: se preservan integros (no se pierden).
     function initUnknownEditor() {
-      unknownEditor = new meWYSE({ target: '#unknownEditor', toolbar: true });
+      unknownEditor = new LibraEditor({ target: '#unknownEditor', toolbar: true });
       // Cargar un JSON con un bloque 'chart' que el editor NO reconoce.
       unknownEditor.loadFromJSON([
         { type: 'heading2', content: 'Informe de ventas' },
@@ -1587,7 +1587,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor con summary
     function initSummaryEditor() {
-      summaryEditor = new meWYSE({
+      summaryEditor = new LibraEditor({
         target: '#summaryEditor',
         toolbar: true,
         summary: true,
@@ -1603,7 +1603,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor con menciones
     function initMentionsEditor() {
-      mentionsEditor = new meWYSE({
+      mentionsEditor = new LibraEditor({
         target: '#mentionsEditor',
         toolbar: true,
         mentions: [
@@ -1625,7 +1625,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor en modo readOnly (visualización)
     function initReadOnlyEditor() {
-      readOnlyEditor = new meWYSE({
+      readOnlyEditor = new LibraEditor({
         target: '#readOnlyEditor',
         readOnly: true,
         // Mentions y tags se incluyen para que el editor reconozca las clases
@@ -1639,7 +1639,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
         blocks: [
           { id: 1, type: 'heading2', content: 'Documento solo de lectura' },
           { id: 2, type: 'paragraph', content: 'Este editor está montado con <b>readOnly: true</b>. No hay toolbar ni floating handle. Los bloques no admiten edición pero sí selección nativa para <i>copiar al portapapeles</i>.' },
-          { id: 3, type: 'paragraph', content: 'Asignado a <span class="mewyse-mention" data-mention-id="JG" data-mention-name="Juan García" contenteditable="false">@Juan García</span> con prioridad <span class="mewyse-tag" data-tag-id="1" data-tag-name="urgente" data-tag-color="#dc2626" contenteditable="false" style="background-color: #dc2626; color: #fff">#urgente</span>.' },
+          { id: 3, type: 'paragraph', content: 'Asignado a <span class="libraeditor-mention" data-mention-id="JG" data-mention-name="Juan García" contenteditable="false">@Juan García</span> con prioridad <span class="libraeditor-tag" data-tag-id="1" data-tag-name="urgente" data-tag-color="#dc2626" contenteditable="false" style="background-color: #dc2626; color: #fff">#urgente</span>.' },
           { id: 4, type: 'bulletList', content: 'Ítem uno' },
           { id: 5, type: 'bulletList', content: 'Ítem dos' },
           { id: 6, type: 'quote', content: 'Las citas también se renderizan correctamente.' }
@@ -1649,7 +1649,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor con etiquetas
     function initTagsEditor() {
-      tagsEditor = new meWYSE({
+      tagsEditor = new LibraEditor({
         target: '#tagsEditor',
         toolbar: true,
         tags: [
@@ -1671,7 +1671,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor con div
     function initDivEditor() {
-      divEditor = new meWYSE({
+      divEditor = new LibraEditor({
         target: '#divEditor',
         toolbar: true,
         onChange: function(data) {
@@ -1682,15 +1682,15 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor dark
     function initDarkEditor() {
-      darkEditor = new meWYSE({
+      darkEditor = new LibraEditor({
         target: '#darkEditor',
         toolbar: true,
         theme: 'dark',
         blocks: [
           { id: 1, type: 'heading1', content: 'Tema Dark' },
-          { id: 2, type: 'paragraph', content: 'Este editor usa theme: \'dark\'. Los estilos se aplican via CSS variables sobre la clase mewyse-editor-dark.' },
+          { id: 2, type: 'paragraph', content: 'Este editor usa theme: \'dark\'. Los estilos se aplican via CSS variables sobre la clase libraeditor-editor-dark.' },
           { id: 3, type: 'quote', content: 'Las citas tambien se adaptan al tema oscuro.' },
-          { id: 4, type: 'code', content: 'var editor = new meWYSE({\n  target: \'#editor\',\n  theme: \'dark\'\n});' }
+          { id: 4, type: 'code', content: 'var editor = new LibraEditor({\n  target: \'#editor\',\n  theme: \'dark\'\n});' }
         ],
         onChange: function(data) {
           console.log('Editor dark - Contenido:', data.plainText);
@@ -1700,7 +1700,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor compact
     function initCompactEditor() {
-      compactEditor = new meWYSE({
+      compactEditor = new LibraEditor({
         target: '#compactEditor',
         toolbar: true,
         theme: 'compact',
@@ -1722,7 +1722,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
       var container = document.getElementById('i18nEditor');
       container.innerHTML = '';
 
-      i18nEditor = new meWYSE({
+      i18nEditor = new LibraEditor({
         target: '#i18nEditor',
         toolbar: true,
         summary: true,
@@ -1914,7 +1914,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor sin estilos de contenido
     function initNoStylesEditor() {
-      noStylesEditor = new meWYSE({
+      noStylesEditor = new LibraEditor({
         target: '#noStylesEditor',
         toolbar: true,
         contentStyles: false,
@@ -1923,7 +1923,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
           { id: 2, type: 'paragraph', content: 'Este editor usa <code>contentStyles: false</code>. Los headings, citas y codigo usan los estilos CSS definidos en la pagina.' },
           { id: 3, type: 'heading2', content: 'Subtitulo con estilos de la pagina' },
           { id: 4, type: 'quote', content: 'Esta cita usa los estilos de blockquote de la pagina.' },
-          { id: 5, type: 'code', content: 'var editor = new meWYSE({\n  target: \'#editor\',\n  contentStyles: false\n});' },
+          { id: 5, type: 'code', content: 'var editor = new LibraEditor({\n  target: \'#editor\',\n  contentStyles: false\n});' },
           { id: 6, type: 'bulletList', content: 'Los estilos de lista tambien se heredan' },
           { id: 7, type: 'bulletList', content: 'Cada editor puede tener su propia configuracion' }
         ],
@@ -1947,7 +1947,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor con todas las herramientas (find, fullscreen, show blocks, counter)
     function initToolsEditor() {
-      toolsEditor = new meWYSE({
+      toolsEditor = new LibraEditor({
         target: '#toolsEditor',
         toolbar: true, // find/fullscreen/showblocks ya van en el default
         charCounter: true,
@@ -1966,7 +1966,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor con toolbar scrollable
     function initScrollToolbarEditor() {
-      scrollToolbarEditor = new meWYSE({
+      scrollToolbarEditor = new LibraEditor({
         target: '#scrollToolbarEditor',
         toolbar: true,
         theme: 'compact',
@@ -1981,12 +1981,12 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor RTL
     function initRtlEditor() {
-      rtlEditor = new meWYSE({
+      rtlEditor = new LibraEditor({
         target: '#rtlEditor',
         toolbar: true,
         rtl: true,
         blocks: [
-          { id: 1, type: 'heading1', content: 'مرحبا بك في meWYSE' },
+          { id: 1, type: 'heading1', content: 'مرحبا بك في LibraEditor' },
           { id: 2, type: 'paragraph', content: 'هذا محرر يدعم الكتابة من اليمين إلى اليسار. جرب كتابة نص عربي أو عبري.' },
           { id: 3, type: 'paragraph', content: 'También funciona con texto en espanol mezclado con العربية en la misma linea.' },
           { id: 4, type: 'bulletList', content: 'العنصر الأول' },
@@ -1999,7 +1999,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     // Inicializar editor con styleFormats custom
     var styleFormatsEditor;
     function initStyleFormatsEditor() {
-      styleFormatsEditor = new meWYSE({
+      styleFormatsEditor = new LibraEditor({
         target: '#styleFormatsEditor',
         toolbar: true,
         styleFormats: [
@@ -2020,7 +2020,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     // Inicializar editor con listas anidadas y casechange
     var nestedEditor;
     function initNestedEditor() {
-      nestedEditor = new meWYSE({
+      nestedEditor = new LibraEditor({
         target: '#nestedEditor',
         toolbar: true,
         blocks: [
@@ -2067,7 +2067,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
         renderLog();
       };
 
-      focusEditor = new meWYSE({
+      focusEditor = new LibraEditor({
         target: '#focusEditor',
         toolbar: true,
         blocks: [
@@ -2086,7 +2086,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     // Inicializar editor con drag & drop de imágenes
     var dragDropEditor;
     function initDragDropEditor() {
-      dragDropEditor = new meWYSE({
+      dragDropEditor = new LibraEditor({
         target: '#dragDropEditor',
         toolbar: true,
         blocks: [
@@ -2108,7 +2108,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // Inicializar editor Markdown
     function initMarkdownEditor() {
-      markdownEditor = new meWYSE({
+      markdownEditor = new LibraEditor({
         target: '#markdownEditor',
         toolbar: true,
         blocks: [
@@ -2202,13 +2202,13 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
 
     // ===== Demo Novedades (Sprint 1 y 2) =====
     function initNovedadesEditor() {
-      novedadesEditor = new meWYSE({
+      novedadesEditor = new LibraEditor({
         target: '#novedadesEditor',
         // Toolbar declarativa: todos los ítems + exportar (print/word/pdf), que no
         // van en el default.
         toolbar: 'undo redo | blocktype fontsize font | bold italic underline strikethrough subscript superscript case removeformat | link forecolor specialchars mergetags | align outdent indent | table image video audio | find wordwrap summary showblocks fullscreen | print exportword exportpdf | moveup movedown',
         autosave: true,
-        autosaveKey: 'mewyse-demo-novedades',
+        autosaveKey: 'libraeditor-demo-novedades',
         mergeTags: [
           { id: 'cli', name: 'cliente', label: 'Nombre del cliente' },
           { id: 'imp', name: 'importe', label: 'Importe total' },
@@ -2242,7 +2242,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     // ===== Demo Novedades (Sprint 4): resaltado de sintaxis =====
     var sprint4Editor;
     function initSprint4Editor() {
-      sprint4Editor = new meWYSE({
+      sprint4Editor = new LibraEditor({
         target: '#sprint4Editor',
         toolbar: true,
         codeHighlight: true,
@@ -2270,7 +2270,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
       return a;
     }
     function initHeightEditors() {
-      autoHeightEditor = new meWYSE({
+      autoHeightEditor = new LibraEditor({
         target: '#autoHeightEditor', toolbar: true,
         autoExpand: true, minHeight: 100, maxHeight: 320,
         blocks: [
@@ -2278,24 +2278,24 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
           { id: 2, type: 'paragraph', content: 'Escribe varias lineas: el editor crece hasta 320px y luego hace scroll interno.' }
         ]
       });
-      growEditor = new meWYSE({
+      growEditor = new LibraEditor({
         target: '#growEditor', autoExpand: true, minHeight: 80,
         blocks: [
           { id: 1, type: 'paragraph', content: 'Sin maxHeight: crece indefinidamente con el contenido (scrollea la pagina, no el editor).' }
         ]
       });
       // 3) Caja fija con scroll: mucho contenido para que se vea el scroll a 180px
-      fixedHeightEditor = new meWYSE({
+      fixedHeightEditor = new LibraEditor({
         target: '#fixedHeightEditor', toolbar: true, maxHeight: 180,
         blocks: fillerBlocks(12)
       });
       // 4) Solo suelo: poco contenido, pero mantiene 260px de alto minimo
-      minHeightEditor = new meWYSE({
+      minHeightEditor = new LibraEditor({
         target: '#minHeightEditor', toolbar: true, minHeight: 260,
         blocks: [ { id: 1, type: 'paragraph', content: 'Poco contenido, pero el editor mantiene 260px de alto minimo.' } ]
       });
       // 5) Valores en string CSS (em / vh)
-      vhHeightEditor = new meWYSE({
+      vhHeightEditor = new LibraEditor({
         target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh',
         blocks: fillerBlocks(15)
       });
@@ -2304,7 +2304,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     // ===== Demo vídeo con previsualización =====
     var videoEditor;
     function initVideoEditor() {
-      videoEditor = new meWYSE({
+      videoEditor = new LibraEditor({
         target: '#videoEditor', toolbar: true,
         blocks: [
           { id: 1, type: 'paragraph', content: 'Ejemplo: el iframe no se carga hasta pulsar play.' },
@@ -2317,7 +2317,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     // ===== Demo bloques desactivados (disabledBlocks) =====
     var disabledEditor;
     function initDisabledEditor() {
-      disabledEditor = new meWYSE({
+      disabledEditor = new LibraEditor({
         target: '#disabledEditor', toolbar: true,
         disabledBlocks: ['video', 'audio', 'table'],
         blocks: [
@@ -2425,7 +2425,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
     function updateConfigCode(cfg) {
       var codeEl = document.getElementById('configCode');
       if (!codeEl) return;
-      var lines = ["var editor = new meWYSE({", "  target: '#configEditor',"];
+      var lines = ["var editor = new LibraEditor({", "  target: '#configEditor',"];
       var keys = [];
       for (var k in cfg) { if (cfg.hasOwnProperty(k)) keys.push(k); }
       keys.forEach(function(k, i) {
@@ -2452,7 +2452,7 @@ new meWYSE({ target: '#vhHeightEditor', minHeight: '10em', maxHeight: '35vh' });
       // Construir la config real (con target y contenido de ejemplo)
       var full = { target: '#configEditor', blocks: configDemoBlocks() };
       for (var k in cfg) { if (cfg.hasOwnProperty(k)) full[k] = cfg[k]; }
-      configEditor = new meWYSE(full);
+      configEditor = new LibraEditor(full);
     }
 
     function initConfigurator() {

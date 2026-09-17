@@ -1,7 +1,7 @@
 /**
- * meWYSE — componente React (wrapper NO controlado).
+ * LibraEditor — componente React (wrapper NO controlado).
  *
- * Envuelve el núcleo ES5 (../mewyse.js). Sin build: ESM + React.createElement.
+ * Envuelve el núcleo ES5 (../libraeditor.js). Sin build: ESM + React.createElement.
  * - No controlado: `defaultValue` fija el contenido inicial; los cambios se
  *   notifican por `onChange`. Cambiar `defaultValue` después NO recarga (usa la
  *   API imperativa por ref: loadFromJSON / loadFromHTML / clear...).
@@ -9,21 +9,21 @@
  *   servidor no toca el DOM.
  *
  * Uso:
- *   import { MeWyse } from 'mewyse/react';
- *   import 'mewyse/style.css';
- *   <MeWyse toolbar theme="dark" defaultValue={blocks} onChange={d => ...} />
+ *   import { LibraEditor } from 'libraeditor/react';
+ *   import 'libraeditor/style.css';
+ *   <LibraEditor toolbar theme="dark" defaultValue={blocks} onChange={d => ...} />
  */
 import { createElement, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
-// El núcleo (../mewyse.js) exporta vía CommonJS (`module.exports`) y, en el
-// navegador, como global (`window.meWYSE`). Import defensivo que cubre:
+// El núcleo (../libraeditor.js) exporta vía CommonJS (`module.exports`) y, en el
+// navegador, como global (`window.LibraEditor`). Import defensivo que cubre:
 //  - Bundlers (Vite/webpack/Next): `_core.default` (interop CJS→ESM).
 //  - ESM nativo en navegador: el propio import ejecuta el IIFE, que setea el
-//    global; caemos a `globalThis.meWYSE`.
-import * as _core from '../mewyse.js';
-var meWYSE =
-  (_core && (_core.default || _core.meWYSE)) ||
-  (typeof globalThis !== 'undefined' && globalThis.meWYSE) ||
-  (typeof window !== 'undefined' && window.meWYSE);
+//    global; caemos a `globalThis.LibraEditor`.
+import * as _core from '../libraeditor.js';
+var LibraEditor =
+  (_core && (_core.default || _core.LibraEditor)) ||
+  (typeof globalThis !== 'undefined' && globalThis.LibraEditor) ||
+  (typeof window !== 'undefined' && window.LibraEditor);
 
 // Claves que consume el wrapper (no se pasan como opciones al núcleo).
 var WRAPPER_KEYS = {
@@ -43,7 +43,7 @@ function toBlocks(v) {
   return undefined;
 }
 
-export var MeWyse = forwardRef(function MeWyse(props, ref) {
+export var LibraEditor = forwardRef(function LibraEditor(props, ref) {
   var hostRef = useRef(null);
   var edRef = useRef(null);
   // Siempre el último `props` (para llamar a los callbacks actuales sin re-crear
@@ -72,7 +72,7 @@ export var MeWyse = forwardRef(function MeWyse(props, ref) {
     options.onFocus = function (data) { var f = propsRef.current.onFocus; if (f) f(data); };
     options.onBlur = function (data) { var f = propsRef.current.onBlur; if (f) f(data); };
 
-    var editor = new meWYSE(options);
+    var editor = new LibraEditor(options);
     edRef.current = editor;
 
     // Limpieza en unmount (compatible con StrictMode: destroy() es idempotente).
@@ -113,4 +113,4 @@ export var MeWyse = forwardRef(function MeWyse(props, ref) {
   );
 });
 
-export default MeWyse;
+export default LibraEditor;

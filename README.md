@@ -1,4 +1,4 @@
-# meWYSE — Block Editor
+# LibraEditor — Block Editor
 
 Editor WYSIWYG basado en bloques al estilo Notion, desarrollado en JavaScript ECMAScript 5 puro. Sin dependencias, sin build system, un solo archivo.
 
@@ -54,34 +54,34 @@ Si este proyecto te resulta util, puedes apoyar su desarrollo:
 - **Content Styles**: Opción para heredar estilos CSS de la página
 - **Accesibilidad**: ARIA attributes, focus-visible, navegación por teclado
 - **Código ES5 sin dependencias**: Funciona en todos los navegadores modernos (Chrome, Firefox, Safari, Edge) sin build tools
-- **Componente React opcional**: wrapper `mewyse/react` (`<MeWyse>`), no controlado, SSR-safe, con types — ver [react/README.md](react/README.md)
+- **Componente React opcional**: wrapper `libraeditor/react` (`<LibraEditor>`), no controlado, SSR-safe, con types — ver [react/README.md](react/README.md)
 
 ## Inicio Rápido
 
 ### Como componente React
 
 ```bash
-npm install mewyse react react-dom
+npm install libraeditor react react-dom
 ```
 
 ```jsx
-import { MeWyse } from 'mewyse/react';
-import 'mewyse/style.css';
+import { LibraEditor } from 'libraeditor/react';
+import 'libraeditor/style.css';
 
-<MeWyse toolbar theme="dark" defaultValue={blocks} onChange={d => console.log(d.json)} />
+<LibraEditor toolbar theme="dark" defaultValue={blocks} onChange={d => console.log(d.json)} />
 ```
 
 `target` acepta un selector CSS **o** un elemento del DOM (el wrapper usa el
-segundo). El núcleo se exporta como CommonJS (`require('mewyse')`) y como global
-(`window.meWYSE`) para `<script>`. Detalles en [react/README.md](react/README.md).
+segundo). El núcleo se exporta como CommonJS (`require('libraeditor')`) y como global
+(`window.LibraEditor`) para `<script>`. Detalles en [react/README.md](react/README.md).
 
 ## Uso con `<script>` (sin build)
 
 ### 1. Incluir archivos
 
 ```html
-<link rel="stylesheet" href="mewyse.css">
-<script src="mewyse.js"></script>
+<link rel="stylesheet" href="libraeditor.css">
+<script src="libraeditor.js"></script>
 ```
 
 ### 2. Crear contenedor
@@ -100,7 +100,7 @@ segundo). El núcleo se exporta como CommonJS (`require('mewyse')`) y como globa
 ### 3. Inicializar
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#miEditor',
   toolbar: true,
   onChange: function(data) {
@@ -127,7 +127,7 @@ var editor = new meWYSE({
 
 ```javascript
 {
-  editor: meWYSE,         // referencia al propio editor (API sin variable externa)
+  editor: LibraEditor,         // referencia al propio editor (API sin variable externa)
   blocks: Array,          // array de bloques internos
   plainText: String,      // texto plano de bloques
   html: String,           // getHTML()
@@ -161,7 +161,7 @@ var editor = new meWYSE({
 ### Constructor
 
 ```javascript
-new meWYSE(options)
+new LibraEditor(options)
 ```
 
 | Opción | Tipo | Default | Descripción |
@@ -181,7 +181,7 @@ new meWYSE(options)
 | `tags` | Array | `[]` | Lista de etiquetas para el trigger `#`. Cada item: `{ id, name, color? }` |
 | `mergeTags` | Array | `[]` | Lista de variables `{{campo}}` (trigger `{{` y botón de toolbar). Cada item: `{ id, name, label? }` |
 | `autosave` | boolean | `false` | Guarda el contenido (JSON) en `localStorage` con debounce en cada cambio. No auto-restaura (usa `restoreDraft()`) |
-| `autosaveKey` | string | `'mewyse-draft'` | Clave de `localStorage` para el borrador de autosave |
+| `autosaveKey` | string | `'libraeditor-draft'` | Clave de `localStorage` para el borrador de autosave |
 | `pdfLib` | string | `''` | URL (lazy) de una librería tipo html2pdf.js para `exportPdf()` con fidelidad. Sin ella, `exportPdf()` cae a `print()` |
 | `codeHighlight` | boolean | `false` | Resaltado de sintaxis en los bloques de código (dep opcional lazy). El modelo se mantiene en texto plano; añade un selector de lenguaje por bloque |
 | `codeHighlightUrl` | string | `''` | URL (lazy) de highlight.js. Si no se define o falla la carga, el código cae a texto plano escapado (fallback) |
@@ -210,19 +210,19 @@ La opción `toolbar` es **declarativa** (estilo TinyMCE). Por defecto (`toolbar:
 
 ```javascript
 // Todas las opciones (default)
-new meWYSE({ target: '#ed', toolbar: true });
+new LibraEditor({ target: '#ed', toolbar: true });
 
 // Personalizada: los ítems se separan por espacios; `|` crea grupos (separadores)
-new meWYSE({ target: '#ed', toolbar: 'undo redo | blocktype | bold italic underline | link forecolor | align' });
+new LibraEditor({ target: '#ed', toolbar: 'undo redo | blocktype | bold italic underline | link forecolor | align' });
 
 // Varias filas (con toolbarOverflow: 'wrap')
-new meWYSE({ target: '#ed', toolbarOverflow: 'wrap', toolbar: [
+new LibraEditor({ target: '#ed', toolbarOverflow: 'wrap', toolbar: [
   'undo redo | blocktype fontsize',
   'bold italic underline strikethrough | link forecolor | align'
 ] });
 
 // Sin toolbar (menú flotante al seleccionar texto)
-new meWYSE({ target: '#ed', toolbar: false });
+new LibraEditor({ target: '#ed', toolbar: false });
 ```
 
 **Ítems disponibles** (los nombres desconocidos se ignoran; los grupos que queden vacíos se omiten):
@@ -246,7 +246,7 @@ new meWYSE({ target: '#ed', toolbar: false });
 Toolbar, menú flotante y atajos de teclado comparten un **registro central de acciones**. Eso permite **añadir botones propios**, **desactivar** acciones estándar y **cambiar el comportamiento** de una estándar — sin tener que redeclarar el resto de la toolbar. Los nombres de las acciones estándar son los **ítems de la tabla de arriba**.
 
 ```javascript
-new meWYSE({
+new LibraEditor({
   target: '#ed',
   toolbar: true,
 
@@ -384,7 +384,7 @@ pulsaciones: si editas y luego deshaces hasta el estado original, vuelve a
 `false`. El payload de `onChange`/`onFocus`/`onBlur` también incluye `isDirty`.
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#mi-textarea',      // textarea ya con HTML
   onBlur: function (data) {
     if (data.hasChanges) {       // o data.editor.hasChanges() / data.editor.isDirty()
@@ -452,7 +452,7 @@ Con `autosave: true`, el editor guarda el contenido (JSON) en `localStorage` con
 restaura automáticamente para no pisar `options.blocks`; el consumidor decide:
 
 ```javascript
-var editor = new meWYSE({ target: '#editor', autosave: true, autosaveKey: 'doc-42' });
+var editor = new LibraEditor({ target: '#editor', autosave: true, autosaveKey: 'doc-42' });
 
 editor.hasDraft();     // ¿hay un borrador guardado?
 editor.restoreDraft(); // Cargar el borrador (pasa por el sanitizer). Devuelve true si había
@@ -474,7 +474,7 @@ editor.destroy();        // Destruir editor y limpiar eventos
 El callback recibe un objeto con todas las exportaciones del contenido:
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   onChange: function(data) {
     data.blocks;     // Array de objetos bloque
@@ -549,7 +549,7 @@ perezosa** (highlight.js). El núcleo sigue sin dependencias: la librería solo 
 la opción, y si no carga (o no se activa) el bloque cae a texto plano escapado sin romperse.
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   codeHighlight: true,   // activa el resaltado
   // La librería se descarga una sola vez, solo si codeHighlight es true
@@ -563,7 +563,7 @@ var editor = new meWYSE({
   Python, Java, JSON, HTML, CSS…). Sin lenguaje seleccionado se auto-detecta.
 - El resaltado se aplica al renderizar y se **re-pinta al perder el foco** (sin saltos de caret).
 - No necesita la hoja de estilos externa de la librería: los colores de los tokens se mapean a
-  las **variables del tema** de meWYSE (claro/oscuro).
+  las **variables del tema** de LibraEditor (claro/oscuro).
 - Export: `<pre><code class="language-xxx">` en HTML y ` ```lenguaje ` en Markdown.
 
 ```javascript
@@ -604,7 +604,7 @@ derivado (no se almacena) y se **actualiza solo** a medida que editas los títul
 - Cada entrada enlaza a su título (clic → scroll + foco), con indentación por nivel (h1/h2/h3).
 - Si aún no hay títulos, muestra un texto de "sin títulos".
 - Export: cuando existe un TOC, los títulos se emiten con un id de ancla
-  (`id="mewyse-h-{id}"`) y el índice como `<nav class="mewyse-toc">` con enlaces; Markdown lo
+  (`id="libraeditor-h-{id}"`) y el índice como `<nav class="libraeditor-toc">` con enlaces; Markdown lo
   degrada a una lista anidada `- [texto](#ancla)`.
 
 ## Atajos de Teclado
@@ -670,7 +670,7 @@ insertan escribiendo `/` (menú slash). Ideal para formularios, comentarios o ca
 donde una toolbar fija ocuparía demasiado.
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#miEditor',
   toolbar: false
 });
@@ -749,7 +749,7 @@ Por defecto el editor crece con el contenido entre un mínimo y un máximo (con 
 interno). Se puede configurar con opciones (número = px, o string CSS como `'30vh'`):
 
 ```javascript
-new meWYSE({ target: '#ed', autoExpand: true, minHeight: 100, maxHeight: 320 });
+new LibraEditor({ target: '#ed', autoExpand: true, minHeight: 100, maxHeight: 320 });
 ```
 
 - `minHeight` / `maxHeight`: suelo / techo del área de edición.
@@ -800,49 +800,49 @@ Es transparente: no requiere configuración ni cambios en tu código.
 
 ```javascript
 // Por defecto: tema CLARO (sin especificar theme)
-var editor = new meWYSE({ target: '#editor' });
+var editor = new LibraEditor({ target: '#editor' });
 
 // Forzar dark mode
-var editor = new meWYSE({ target: '#editor', theme: 'dark' });
+var editor = new LibraEditor({ target: '#editor', theme: 'dark' });
 
 // Seguir al sistema
-var editor = new meWYSE({ target: '#editor', theme: 'auto' });
+var editor = new LibraEditor({ target: '#editor', theme: 'auto' });
 // → Detecta prefers-color-scheme del OS
 // → Escucha cambios en tiempo real
 ```
 
-El dark mode aplica la clase `mewyse-editor-dark` al contenedor y sobreescribe las CSS variables (colores de texto, fondos, bordes, etc.).
+El dark mode aplica la clase `libraeditor-editor-dark` al contenedor y sobreescribe las CSS variables (colores de texto, fondos, bordes, etc.).
 
-Los menús flotantes (slash, menciones, formato, opciones) reciben la clase `mewyse-dark` automáticamente.
+Los menús flotantes (slash, menciones, formato, opciones) reciben la clase `libraeditor-dark` automáticamente.
 
 ### Tema Compact
 
 ```javascript
-var editor = new meWYSE({ target: '#editor', theme: 'compact' });
+var editor = new LibraEditor({ target: '#editor', theme: 'compact' });
 ```
 
 Reduce padding, fuentes y espaciado. Ideal para sidebars y formularios con espacio limitado.
 
 ### Temas Custom
 
-Cualquier valor de `theme` añade la clase `mewyse-editor-{theme}` al contenedor. Define tus propios estilos sobreescribiendo las CSS variables:
+Cualquier valor de `theme` añade la clase `libraeditor-editor-{theme}` al contenedor. Define tus propios estilos sobreescribiendo las CSS variables:
 
 ```css
-.mewyse-editor-miTema {
-  --mewyse-bg-primary: #fff8e1;
-  --mewyse-text-primary: #3e2723;
-  --mewyse-accent: #ff6f00;
+.libraeditor-editor-miTema {
+  --libraeditor-bg-primary: #fff8e1;
+  --libraeditor-text-primary: #3e2723;
+  --libraeditor-accent: #ff6f00;
 }
 ```
 
 ## Estilos de Contenido
 
-Todo el CSS vive en `mewyse.css` (cargado vía `<link>`). Por defecto, el editor activa los estilos de contenido añadiendo la clase `mewyse-editor-styled` al wrapper y al container (las reglas visuales de `mewyse.css` cuelgan de esa clase).
+Todo el CSS vive en `libraeditor.css` (cargado vía `<link>`). Por defecto, el editor activa los estilos de contenido añadiendo la clase `libraeditor-editor-styled` al wrapper y al container (las reglas visuales de `libraeditor.css` cuelgan de esa clase).
 
-Con `contentStyles: false`, el editor **no añade** `mewyse-editor-styled`, por lo que no se aplica ningún estilo visual de contenido ni del contenedor (solo unas reglas estructurales mínimas). La página es responsable de estilizar todo:
+Con `contentStyles: false`, el editor **no añade** `libraeditor-editor-styled`, por lo que no se aplica ningún estilo visual de contenido ni del contenedor (solo unas reglas estructurales mínimas). La página es responsable de estilizar todo:
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#miEditor',
   toolbar: true,
   contentStyles: false
@@ -851,7 +851,7 @@ var editor = new meWYSE({
 
 ```css
 /* La página define sus propios estilos para el contenido del editor */
-#miEditor .mewyse-editor {
+#miEditor .libraeditor-editor {
   padding: 16px;
   min-height: 200px;
   border: 1px solid #ddd;
@@ -868,14 +868,14 @@ var editor = new meWYSE({
 Se pueden mezclar editores con y sin estilos inyectados en la misma página:
 
 ```javascript
-var ed1 = new meWYSE({ target: '#a' });                        // estilos propios
-var ed2 = new meWYSE({ target: '#b', contentStyles: false });   // hereda de la página
+var ed1 = new LibraEditor({ target: '#a' });                        // estilos propios
+var ed2 = new LibraEditor({ target: '#b', contentStyles: false });   // hereda de la página
 ```
 
 ## Menciones (@mentions)
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   toolbar: true,
   mentions: [
@@ -901,7 +901,7 @@ var editor = new meWYSE({
 **HTML generado:**
 
 ```html
-<span class="mewyse-mention"
+<span class="libraeditor-mention"
       data-mention-id="1"
       data-mention-name="Juan García"
       contenteditable="false">@Juan García</span>
@@ -922,7 +922,7 @@ Para plantillas de documento (facturas, cartas, informes del ERP). Se insertan c
 editables y se resuelven al generar el documento:
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor', toolbar: true,
   mergeTags: [
     { id: 'cli', name: 'cliente', label: 'Nombre del cliente' },
@@ -932,7 +932,7 @@ var editor = new meWYSE({
 ```
 
 - **Insertar**: escribe `{{` (abre el menú filtrable) o usa el botón de la toolbar. Se inserta una
-  cápsula `<span class="mewyse-mergetag" data-merge-name="cliente">{{cliente}}</span>`.
+  cápsula `<span class="libraeditor-mergetag" data-merge-name="cliente">{{cliente}}</span>`.
 - **Exportar como plantilla**: `getHTML()`/`getMarkdown()` emiten el literal `{{cliente}}`.
 - **Resolver** (generar el documento final): `editor.getResolvedHTML({ cliente: 'ACME S.L.', importe: '1.250,00' })`
   sustituye cada variable por su valor **escapado** (sin mutar el editor). Las variables sin valor
@@ -943,7 +943,7 @@ var editor = new meWYSE({
 Similar a las menciones, pero con el trigger `#` y una lista de etiquetas configurable:
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   tags: [
     { id: 'urgente', name: 'Urgente', color: '#e53935' },
@@ -959,7 +959,7 @@ var editor = new meWYSE({
 | `name` | string | Nombre a mostrar | Sí |
 | `color` | string | Color de fondo de la cápsula (hex) | No |
 
-**Uso:** escribe `#`, filtra escribiendo, navega con `↑`/`↓` y selecciona con `Enter`. Se inserta una cápsula `<span class="mewyse-tag" ...>` con el color de contraste calculado automáticamente.
+**Uso:** escribe `#`, filtra escribiendo, navega con `↑`/`↓` y selecciona con `Enter`. Se inserta una cápsula `<span class="libraeditor-tag" ...>` con el color de contraste calculado automáticamente.
 
 ## Soporte Markdown
 
@@ -1027,7 +1027,7 @@ Con `summary: true` (activo por defecto), aparece un botón (☰) en la toolbar:
   - Se refresca en vivo mientras editas. Sin toolbar/wrapper, cae a un modal clásico.
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   toolbar: true,
   summary: true
@@ -1038,13 +1038,13 @@ var editor = new meWYSE({
 
 ```javascript
 // Español (por defecto)
-var editor = new meWYSE({ target: '#editor' });
+var editor = new LibraEditor({ target: '#editor' });
 
 // Inglés
-var editor = new meWYSE({ target: '#editor', lang: 'en' });
+var editor = new LibraEditor({ target: '#editor', lang: 'en' });
 
 // Traducciones personalizadas (parcial o completo)
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   lang: {
     blockTypes: {
@@ -1100,7 +1100,7 @@ Atajo `Ctrl/Cmd+F` (o botón de la lupa en la toolbar) abre un panel flotante co
 
 ```javascript
 // Habilitado por defecto. Para desactivar:
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   findReplace: false
 });
@@ -1112,7 +1112,7 @@ Expande el editor a toda la ventana del navegador. Pulsa **Escape** para salir.
 
 ```javascript
 // Habilitado por defecto. Para desactivar el botón:
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   fullscreen: false
 });
@@ -1123,7 +1123,7 @@ var editor = new meWYSE({
 Modo que dibuja bordes punteados alrededor de cada bloque y muestra su tipo. Útil para diseñadores, QA, o al entender la estructura de un documento.
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   showBlocksToggle: true  // default true
 });
@@ -1134,7 +1134,7 @@ var editor = new meWYSE({
 Barra inferior que muestra palabras, caracteres y tiempo estimado de lectura en tiempo real.
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   toolbar: true,
   charCounter: true  // default false
@@ -1146,7 +1146,7 @@ var editor = new meWYSE({
 Para idiomas como árabe, hebreo o urdu:
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   toolbar: true,
   rtl: true,
@@ -1156,7 +1156,7 @@ var editor = new meWYSE({
 
 ### Pegado desde Word / Excel / Google Docs
 
-meWYSE limpia automáticamente el HTML pegado desde aplicaciones Office:
+LibraEditor limpia automáticamente el HTML pegado desde aplicaciones Office:
 
 - Elimina namespaces `mso-*`, `v:*`, `w:*`, `m:*`, comentarios XML y metadatos
 - Convierte párrafos simulando listas (con viñetas `·`, `•`, `o` o numeración) en `<ul>`/`<ol>` reales
@@ -1198,9 +1198,9 @@ El editor añade controles internos a las celdas (botones de opciones de fila/co
 
 Al llamar `editor.getHTML()` o `editor.getJSON()`, el contenido de las tablas se **limpia automáticamente** eliminando:
 
-- `<button class="mewyse-table-row-control">` / `col-control`
-- `<div class="mewyse-table-resize-handle">`
-- `<button class="mewyse-table-add-row">` / `add-col`
+- `<button class="libraeditor-table-row-control">` / `col-control`
+- `<div class="libraeditor-table-resize-handle">`
+- `<button class="libraeditor-table-add-row">` / `add-col`
 - Atributo `contenteditable` y `data-placeholder` en `<p>` internos
 - `position: relative` en `<td>`/`<th>`
 - Estilos internos del editor (`padding: 8px; margin: 0; min-height: 1em`) en los `<p>` de celdas
@@ -1209,7 +1209,7 @@ Al llamar `editor.getHTML()` o `editor.getJSON()`, el contenido de las tablas se
 ```html
 <tbody><tr><td style="border: 1px solid #ddd; padding: 0; position: relative;">
   <p contenteditable="true" data-placeholder="" style="padding: 8px; margin: 0; min-height: 1em;">Cell</p>
-  <button class="mewyse-table-row-control" tabindex="-1" contenteditable="false">
+  <button class="libraeditor-table-row-control" tabindex="-1" contenteditable="false">
     <svg>...</svg>
   </button>
 </td>...
@@ -1229,7 +1229,7 @@ La limpieza se aplica automáticamente en `updateBlockContent()` (cuando el edit
 Definir estilos personalizados que aparecen en el dropdown de tipos de bloque:
 
 ```javascript
-var editor = new meWYSE({
+var editor = new LibraEditor({
   target: '#editor',
   toolbar: true,
   styleFormats: [
@@ -1255,7 +1255,7 @@ Al abrir el dropdown de tipos aparecerán tras los tipos estándar con un previe
 
 ## Migración desde TinyMCE / CKEditor
 
-El método `loadFromHTML(html)` permite migrar contenido HTML generado por otros editores al modelo de bloques de meWYSE sin pérdida de datos.
+El método `loadFromHTML(html)` permite migrar contenido HTML generado por otros editores al modelo de bloques de LibraEditor sin pérdida de datos.
 
 ### Elementos soportados en la migración
 
@@ -1271,9 +1271,9 @@ El método `loadFromHTML(html)` permite migrar contenido HTML generado por otros
 | `<audio src="...">` | Bloque `audio` |
 | `<hr>` | divider |
 
-### Equivalencia de configuración TinyMCE → meWYSE
+### Equivalencia de configuración TinyMCE → LibraEditor
 
-| Config TinyMCE | meWYSE |
+| Config TinyMCE | LibraEditor |
 |----------------|--------|
 | `plugins: 'paste ... table textcolor visualblocks wordcount casechange'` | Incluido nativo |
 | `plugins: 'fullscreen code'` | `fullscreen` ✅ / `code` (vista HTML) no aplica — modelo block-based |
@@ -1304,8 +1304,8 @@ tinymce.init({
   }
 });
 
-// Después (meWYSE)
-var editor = new meWYSE({
+// Después (LibraEditor)
+var editor = new LibraEditor({
   target: '#editor',
   toolbar: true,
   lang: 'es',
@@ -1321,7 +1321,7 @@ editor.loadFromHTML(contenidoLegacyDeTinyMCE);
 
 ## Seguridad (XSS Protection)
 
-meWYSE sanitiza **automáticamente** todo el contenido que entra al modelo de bloques contra inyección de código (XSS). No hace falta configurar nada — el whitelist estricto se aplica en todos los puntos de entrada.
+LibraEditor sanitiza **automáticamente** todo el contenido que entra al modelo de bloques contra inyección de código (XSS). No hace falta configurar nada — el whitelist estricto se aplica en todos los puntos de entrada.
 
 ### Puntos de entrada protegidos
 
@@ -1346,12 +1346,12 @@ meWYSE sanitiza **automáticamente** todo el contenido que entra al modelo de bl
 - URLs peligrosas en `href`: `javascript:`, `vbscript:`, `livescript:`, cualquier `data:` y `file:` (incluye ataques con tabs, newlines o mayúsculas). En `src` de imagen solo se permiten `http(s)`, rutas relativas y `data:image/*` (excepto SVG)
 - CSS peligroso: `expression()`, `url(...)`, `@import`, `javascript:`, comillas, comentarios y escapes con backslash en style
 - `<a target="_blank">` se fuerza a tener `rel="noopener noreferrer"`
-- Clases CSS en `<span>`: solo se permiten `mewyse-mention`, `mewyse-emoji`, `mewyse-search-highlight`
+- Clases CSS en `<span>`: solo se permiten `libraeditor-mention`, `libraeditor-emoji`, `libraeditor-search-highlight`
 
 ### Qué se preserva
 
-- Menciones: `<span class="mewyse-mention" data-mention-id data-mention-name contenteditable="false">`
-- Emojis: `<span class="mewyse-emoji" data-name data-type="emoji" contenteditable="false">`
+- Menciones: `<span class="libraeditor-mention" data-mention-id data-mention-name contenteditable="false">`
+- Emojis: `<span class="libraeditor-emoji" data-name data-type="emoji" contenteditable="false">`
 - Colores inline: `<span style="color: red; background-color: yellow">`
 - Enlaces seguros: `<a href="https://..." title target rel>`
 - Formato de texto: `<b>`, `<i>`, `<u>`, `<s>`, `<code>`, `<mark>`, `<sub>`, `<sup>`
@@ -1378,7 +1378,7 @@ var safeHtml = editor.getSafeHTML(); // Extra seguro: re-sanitiza antes de devol
 
 ### Defensa en profundidad
 
-Aunque meWYSE sanitiza proactivamente, para aplicaciones críticas se recomienda añadir **Content Security Policy (CSP)** en la aplicación:
+Aunque LibraEditor sanitiza proactivamente, para aplicaciones críticas se recomienda añadir **Content Security Policy (CSP)** en la aplicación:
 
 ```
 Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'
@@ -1392,7 +1392,7 @@ Esto bloquea cualquier script inline aunque se escapara alguna vulnerabilidad.
 // Estos intentos de inyección son neutralizados automáticamente:
 
 // 1. Script en bloque inicial
-new meWYSE({
+new LibraEditor({
   target: '#editor',
   blocks: [{ id: 1, type: 'paragraph',
              content: '<script>alert(1)</script>Hola' }]
@@ -1416,31 +1416,31 @@ editor.loadFromJSON([{ id: 1, type: 'paragraph',
 
 ## Personalización CSS
 
-El editor usa clases CSS con prefijo `mewyse-` y CSS custom properties con prefijo `--mewyse-`.
+El editor usa clases CSS con prefijo `libraeditor-` y CSS custom properties con prefijo `--libraeditor-`.
 
 ### Clases principales
 
 | Clase | Elemento |
 |-------|----------|
-| `.mewyse-editor-wrapper` | Wrapper (contiene toolbar + editor) |
-| `.mewyse-editor` | Contenedor del editor |
-| `.mewyse-toolbar` | Barra de herramientas |
-| `.mewyse-block` | Cada bloque de contenido |
-| `.mewyse-floating-handle` | Handle de arrastre flotante |
-| `.mewyse-format-menu` | Menú flotante de formato |
-| `.mewyse-slash-menu` | Menú slash (/) |
-| `.mewyse-mention-menu` | Menú de menciones (@) |
-| `.mewyse-emoji-menu` | Menú de emojis (:) |
-| `.mewyse-options-menu` | Menú contextual de bloque |
-| `.mewyse-table-wrapper` | Wrapper de tablas |
-| `.mewyse-image-wrapper` | Wrapper de imágenes |
-| `.mewyse-find-replace` | Diálogo flotante de buscar/reemplazar |
-| `.mewyse-search-highlight` | Marca una coincidencia de búsqueda |
-| `.mewyse-search-highlight.current` | Coincidencia actualmente seleccionada |
-| `.mewyse-fullscreen` | Editor en modo pantalla completa |
-| `.mewyse-show-blocks` | Modo debug con bordes visibles |
-| `.mewyse-char-counter` | Barra inferior con contador |
-| `.mewyse-rtl` | Editor en modo RTL |
+| `.libraeditor-editor-wrapper` | Wrapper (contiene toolbar + editor) |
+| `.libraeditor-editor` | Contenedor del editor |
+| `.libraeditor-toolbar` | Barra de herramientas |
+| `.libraeditor-block` | Cada bloque de contenido |
+| `.libraeditor-floating-handle` | Handle de arrastre flotante |
+| `.libraeditor-format-menu` | Menú flotante de formato |
+| `.libraeditor-slash-menu` | Menú slash (/) |
+| `.libraeditor-mention-menu` | Menú de menciones (@) |
+| `.libraeditor-emoji-menu` | Menú de emojis (:) |
+| `.libraeditor-options-menu` | Menú contextual de bloque |
+| `.libraeditor-table-wrapper` | Wrapper de tablas |
+| `.libraeditor-image-wrapper` | Wrapper de imágenes |
+| `.libraeditor-find-replace` | Diálogo flotante de buscar/reemplazar |
+| `.libraeditor-search-highlight` | Marca una coincidencia de búsqueda |
+| `.libraeditor-search-highlight.current` | Coincidencia actualmente seleccionada |
+| `.libraeditor-fullscreen` | Editor en modo pantalla completa |
+| `.libraeditor-show-blocks` | Modo debug con bordes visibles |
+| `.libraeditor-char-counter` | Barra inferior con contador |
+| `.libraeditor-rtl` | Editor en modo RTL |
 
 ### CSS Variables
 
@@ -1448,18 +1448,18 @@ Las variables se definen en `:root` y pueden sobreescribirse por tema:
 
 ```css
 /* Principales variables disponibles */
---mewyse-text-primary      /* Color de texto principal */
---mewyse-text-secondary    /* Color de texto secundario */
---mewyse-text-muted        /* Color de texto atenuado */
---mewyse-bg-primary        /* Fondo principal */
---mewyse-bg-secondary      /* Fondo secundario (toolbar) */
---mewyse-bg-hover          /* Fondo en hover */
---mewyse-border-light      /* Color de bordes */
---mewyse-accent            /* Color de acento */
---mewyse-shadow-sm         /* Sombra pequeña */
---mewyse-shadow-md         /* Sombra mediana */
---mewyse-radius-md         /* Border radius mediano */
---mewyse-radius-xl         /* Border radius grande */
+--libraeditor-text-primary      /* Color de texto principal */
+--libraeditor-text-secondary    /* Color de texto secundario */
+--libraeditor-text-muted        /* Color de texto atenuado */
+--libraeditor-bg-primary        /* Fondo principal */
+--libraeditor-bg-secondary      /* Fondo secundario (toolbar) */
+--libraeditor-bg-hover          /* Fondo en hover */
+--libraeditor-border-light      /* Color de bordes */
+--libraeditor-accent            /* Color de acento */
+--libraeditor-shadow-sm         /* Sombra pequeña */
+--libraeditor-shadow-md         /* Sombra mediana */
+--libraeditor-radius-md         /* Border radius mediano */
+--libraeditor-radius-xl         /* Border radius grande */
 ```
 
 ## Compatibilidad

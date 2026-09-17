@@ -1,6 +1,6 @@
 {
-  "name": "mewyse",
-  "version": "1.0.0",
+  "name": "libraeditor",
+  "version": "2.0.0",
   "description": "Editor WYSIWYG de bloques al estilo Notion en ECMAScript 5 puro, sin dependencias. Incluye wrapper de React opcional.",
   "keywords": [
     "wysiwyg",
@@ -16,29 +16,29 @@
   "author": "Marcos Esperón",
   "repository": {
     "type": "git",
-    "url": "https://github.com/marcosesperon/meWYSE.git"
+    "url": "https://github.com/marcosesperon/LibraEditor.git"
   },
-  "main": "mewyse.js",
-  "module": "mewyse.js",
-  "types": "mewyse.d.ts",
+  "main": "libraeditor.js",
+  "module": "libraeditor.js",
+  "types": "libraeditor.d.ts",
   "exports": {
     ".": {
-      "types": "./mewyse.d.ts",
-      "default": "./mewyse.js"
+      "types": "./libraeditor.d.ts",
+      "default": "./libraeditor.js"
     },
     "./react": {
       "types": "./react/index.d.ts",
-      "import": "./react/MeWyse.mjs",
-      "default": "./react/MeWyse.mjs"
+      "import": "./react/LibraEditor.mjs",
+      "default": "./react/LibraEditor.mjs"
     },
-    "./style.css": "./mewyse.css",
-    "./mewyse.css": "./mewyse.css"
+    "./style.css": "./libraeditor.css",
+    "./libraeditor.css": "./libraeditor.css"
   },
   "files": [
-    "mewyse.js",
-    "mewyse.css",
-    "mewyse.d.ts",
-    "react/MeWyse.mjs",
+    "libraeditor.js",
+    "libraeditor.css",
+    "libraeditor.d.ts",
+    "react/LibraEditor.mjs",
     "react/index.d.ts",
     "react/README.md"
   ],
