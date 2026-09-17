@@ -7249,12 +7249,11 @@
 
     // Recortar bloques de texto vacíos SOLO al inicio y al final. Los vacíos
     // intermedios se conservan (separación visual intencionada del usuario).
-    // Imágenes/tablas/divisores/medios nunca se consideran "vacíos".
+    // Solo los tipos de TRIMMABLE_EMPTY_BLOCK_TYPES cuentan como "vacíos": el
+    // resto (imágenes, tablas, divisores, medios, toc, toggle, callout...) nunca
+    // se recorta, porque su contenido real no vive en `content`.
     var isEmptyTextBlock = function(block) {
-      if (block.type === 'divider' || block.type === 'pageBreak' || block.type === 'image' ||
-          block.type === 'video' || block.type === 'audio' || block.type === 'table') {
-        return false;
-      }
+      if (!TRIMMABLE_EMPTY_BLOCK_TYPES[block.type]) return false;
       if (typeof block.content === 'string') return block.content.trim() === '';
       return !block.content;
     };
@@ -12860,17 +12859,18 @@
       }
     }
 
-    // Si el último bloque está vacío, no incluirlo. SOLO se recorta un tipo
-    // CONOCIDO (el párrafo vacío por defecto del editor). Un bloque de tipo
-    // desconocido preservado no tiene `content` string y NO debe recortarse
-    // (contiene datos íntegros que hay que conservar en el export).
+    // Si el último bloque está vacío, no incluirlo. SOLO se recortan los tipos
+    // de TRIMMABLE_EMPTY_BLOCK_TYPES (texto), donde un `content` vacío significa
+    // de verdad "no hay nada escrito". El resto se conserva aunque su `content`
+    // esté vacío, porque su información vive en otras propiedades o en el propio
+    // tipo: recortarlos seria perder datos (p. ej. un bloque `toc` final, cuyo
+    // `content` es SIEMPRE '' por diseño, o un bloque de tipo desconocido).
     if (blocks.length > 0) {
       var lastBlock = blocks[blocks.length - 1];
       var isEmpty = !lastBlock.content ||
                     (typeof lastBlock.content === 'string' && lastBlock.content.trim() === '');
 
-      if (isEmpty && VALID_BLOCK_TYPES[lastBlock.type] &&
-          lastBlock.type !== 'divider' && lastBlock.type !== 'pageBreak' && lastBlock.type !== 'image') {
+      if (isEmpty && TRIMMABLE_EMPTY_BLOCK_TYPES[lastBlock.type]) {
         blocks.pop();
       }
     }
@@ -19020,6 +19020,22 @@
     'checklist': 1, 'table': 1, 'image': 1, 'divider': 1,
     'video': 1, 'audio': 1, 'pageBreak': 1, 'callout': 1,
     'toggle': 1, 'toc': 1
+  };
+
+  // Tipos cuyo bloque VACÍO es simple "ruido" y por tanto puede recortarse en
+  // los extremos del documento (el caso típico: el párrafo final que el editor
+  // mantiene siempre para poder seguir escribiendo).
+  //
+  // Es una lista BLANCA a propósito, no una lista de excepciones: así un tipo
+  // nuevo se CONSERVA por defecto, que es lo seguro. Los tipos que no están
+  // aquí o bien no tienen contenido por diseño (divider, pageBreak, toc), o
+  // guardan su información fuera de `content` (image, video, audio, table,
+  // toggle -> toggleTitle, callout -> calloutVariant), de modo que recortarlos
+  // por tener el `content` vacío seria PERDER DATOS.
+  var TRIMMABLE_EMPTY_BLOCK_TYPES = {
+    'paragraph': 1, 'heading1': 1, 'heading2': 1, 'heading3': 1,
+    'quote': 1, 'code': 1, 'bulletList': 1, 'numberList': 1,
+    'checklist': 1
   };
 
   // Variantes válidas del bloque callout (validadas en el sanitizer).
