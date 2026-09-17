@@ -3097,7 +3097,7 @@ body.libraeditor-fullscreen-lock {
   align-items: center;
   gap: 16px;
   padding: 6px 14px;
-  font-size: .9em;
+  font-size: 10px;
   color: var(--libraeditor-text-secondary);
   background: var(--libraeditor-bg-secondary);
   border-top: 1px solid var(--libraeditor-border-light);
